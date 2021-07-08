@@ -66,11 +66,7 @@ class ResultTableModel(QAbstractTableModel):
 
         if role == Qt.TextAlignmentRole:
             if index.column() == 0 or index.column() == 1:
-                t = Qt.AlignmentFlag.AlignVertical_Mask | Qt.AlignmentFlag.AlignRight
-                text = Qt.AlignRight | Qt.AlignVCenter
-                tex2 = Qt.AlignRight
-                tex3 = Qt.AlignVCenter
-                return Qt.AlignVCenter | Qt.AlignRight
+                return Qt.AlignRight  # TODO: AlignVCenter as well
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
         if orientation != Qt.Horizontal or role != Qt.DisplayRole:
