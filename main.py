@@ -29,17 +29,39 @@
 
 import math
 import sys
+from enum import Enum
 from typing import List, Optional, Union, Any
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
-from PySide2.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
+from PySide2.QtWidgets import QApplication, QMainWindow, QHeaderView, QMessageBox
 from ui_mainwindow import Ui_MainWindow
 from PySide2.QtCharts import QtCharts
 
 
+class HarqMode(Enum):
+    BLIND_TRANSMISSION = 0
+    FEEDBACK = 1
+
+
+class OutOfRangeError(ValueError):
+    def __init__(self, field_name: str, value, minimum, maximum):
+        self.field_name = field_name
+        self.value = value
+        self.minimum = minimum
+        self.maximum = maximum
+        super().__init__(f"Value for field: `{field_name}`: {value} out of range: [{minimum}, {maximum}]")
+
+
 class ResultRow:
-    def __init__(self, run: Optional[int], result: Optional[float]):
+    def __init__(self, run: int, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
+                 harq_mode: HarqMode, blind_retransmissions: int, result: float):
         self.run = run
+        self.numerology = numerology
+        self.resource_blocks = resource_blocks
+        self.layers = layers
+        self.max_modulation = max_modulation
+        self.harq_mode = harq_mode
+        self.blind_retransmissions = blind_retransmissions
         self.result = result
 
 
@@ -52,7 +74,7 @@ class ResultTableModel(QAbstractTableModel):
         return len(self._results)
 
     def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
-        return 2
+        return 8
 
     def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
              role: int = ...) -> Any:
@@ -61,11 +83,28 @@ class ResultTableModel(QAbstractTableModel):
             result = self._results[index.row()]
             if index.column() == 0:
                 return result.run
-            else:
+            elif index.column() == 1:
+                return result.numerology
+            elif index.column() == 2:
+                return result.resource_blocks
+            elif index.column() == 3:
+                return result.layers
+            elif index.column() == 4:
+                return result.max_modulation
+            elif index.column() == 5:
+                if result.harq_mode == HarqMode.BLIND_TRANSMISSION:
+                    return "Blind Transmission"
+                elif result.harq_mode == HarqMode.FEEDBACK:
+                    return "Feedback"
+                else:
+                    raise ValueError("Unsupported HARQ Mode")
+            elif index.column() == 6:
+                return result.blind_retransmissions
+            elif index.column() == 7:
                 return result.result
 
         if role == Qt.TextAlignmentRole:
-            if index.column() == 0 or index.column() == 1:
+            if index.column() != 5:
                 return Qt.AlignRight  # TODO: AlignVCenter as well
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
@@ -73,113 +112,131 @@ class ResultTableModel(QAbstractTableModel):
             return
 
         if section == 0:
-            return "Run"
+            return "Run Index"
         elif section == 1:
+            return "Numerology"
+        elif section == 2:
+            return "Resource Blocks (PRB)"
+        elif section == 3:
+            return "Layers"
+        elif section == 4:
+            return "Max Modulation (QAM)"
+        elif section == 5:
+            return "HARQ Mode"
+        elif section == 6:
+            return "Blind Transmissions"
+        elif section == 7:
             return "Data Rate (Mbps)"
 
-        return
-
-    def append(self, result: float):
-        new_result = ResultRow(len(self._results), result)
+    def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
+               harq_mode: HarqMode, blind_retransmissions: int, result: float):
+        new_result = ResultRow(
+            run=len(self._results),
+            numerology=numerology,
+            resource_blocks=resource_blocks,
+            layers=layers,
+            max_modulation=max_modulation,
+            harq_mode=harq_mode,
+            blind_retransmissions=blind_retransmissions,
+            result=result)
 
         self.beginInsertRows(QModelIndex(), len(self._results), len(self._results))
         self._results.append(new_result)
         self.endInsertRows()
 
 
-def calculate_nr(mode: str = "unicast", UE_maxQm: int = 64, f: float = 1.0, num_subchan: int = 1,
-                 subchannel_size: int = 52) -> float:
-    # INPUT CONFIGURATIONS
-    # mode = "unicast"  # ["unicast", "groupcast/broadcast"]
-    # UE_maxQm = "256 QAM"  # [64 QAM, 256 QAM]
-    # UE_maxQm = "64 QAM"  # [64 QAM, 256 QAM]
+def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modulation: int,
+                 harq_mode: HarqMode, blind_transmissions: Optional[int]) -> float:
+    # ----- Range checks -----
+    # numerology
+    if numerology != 0 and numerology != 1:
+        raise OutOfRangeError(field_name="numerology", value=numerology, minimum=0, maximum=1)
 
-    # Scaling Factor
-    # f = 1
+    # resource_blocks
+    if numerology == 0 and (resource_blocks > 52 or resource_blocks < 11):
+        raise OutOfRangeError(field_name="resource_blocks", value=resource_blocks, minimum=11, maximum=52)
 
-    u = [0, 1]  # ?? numerology for FR1 is 0,1,2; NR n14 band only support first two.
+    if numerology == 1 and (resource_blocks > 24 or resource_blocks < 11):
+        raise OutOfRangeError(field_name="resource_blocks", value=resource_blocks, minimum=11, maximum=11)
 
-    # number of RBs of BW 10 MHz of different numerologies
-    NRB_bw_u_max = [52, 24, 11]
-    NRB_bw_u = NRB_bw_u_max[1:len(u)]
+    # layers
+    if layers != 1 and layers != 2:
+        raise OutOfRangeError(field_name="layers", value=layers, minimum=1, maximum=2)
 
-    u = 0
-    # num_subchan = 1
-    # bandwidth part, [11, 52]
+    # ue_support_max_modulation
+    if ue_max_modulation != 64 and ue_max_modulation != 256:
+        raise ValueError("`ue_max_modulation` May only be 64 or 256")
 
-    # subchannel_size = 52
-    NRB_bw_u = num_subchan * subchannel_size
+    # TODO: Only `BLIND_TRANSMISSION` HARQ mode is currently supported
+    if harq_mode != HarqMode.BLIND_TRANSMISSION:
+        raise ValueError("Only the `BLIND_TRANSMISSION` HARQ mode is currently supported")
 
-    if NRB_bw_u > NRB_bw_u_max[u]:
-        sys.exit("The assigned RBs are higher than the maximum for Band14.")
+    # blind_retransmissions
+    if harq_mode == HarqMode.BLIND_TRANSMISSION and (blind_transmissions < 1 or blind_transmissions > 32):
+        raise OutOfRangeError(field_name="blind_retransmissions", value=blind_transmissions, minimum=1, maximum=32)
 
-    # DETERMINISTIC CONFIGURATIONS
+    # ----- Derived values -----
 
-    if mode == "unicast":
-        v_layers = 2
-        if UE_maxQm == 64:
-            Qm = 6
-        elif UE_maxQm == 256:
-            Qm = 8
-        else:
-            sys.exit("Unsupported QAM Number")
-        Rmax = 948 / 1024
+    if ue_max_modulation == 64:
+        modulation_order = 6
+    elif ue_max_modulation == 256:
+        modulation_order = 8
     else:
-        v_layers = 1
-        # TODO: expand
-        Qm = 0
-        Rmax = 0
+        # Shouldn't happen, but just in case
+        raise ValueError("Unsupported `ue_max_modulation` value")
 
-    # Symbol Duration
-    Tu = 1e-3 / (14 * (2 ** u))
+    # From `Rmax`
+    coding_rate = 948 / 1024
+    symbol_duration = 1e-3 / (14 * (2 ** numerology))
 
-    # Overhead Radio Calculation
+    # ----- Physical Side Link Control Channel -----
 
-    # Blind Retransmissions
-    N_blind_ret = 1
+    # ported from:
+    # RE_sci1_RB = [10, 12, 15, 20, 25]
+    # RE_sci1_sym = [2, 3]
+    # re_sci1 = min(RE_sci1_RB) * 12 * min(RE_sci1_sym)
+    re_sci1 = 10 * 12 * 2
 
-    # PSCCH
-
-    # minimum number of resource elements for PSCCH
-    # two symbols, 10 RBs, and 12 RE per RB
-    RE_sci1_RB = [10, 12, 15, 20, 25]
-    RE_sci1_sym = [2, 3]
-    RE_sci1 = min(RE_sci1_RB) * 12 * min(RE_sci1_sym)
-
-    # PSSCH SCI 2
-
-    if mode == "unicast":
-        l_sci2 = 35  # SCI2-A
-    else:
-        l_sci2 = 48  # SCI2-B
-    l_crc = 24
+    sci2_a = 35
+    crc = 24
     beta_offset = 1.125
-    Q_sci2 = 2
-    RE_sci2 = math.ceil((l_sci2 + l_crc) * beta_offset / (Q_sci2 * Rmax))
+    q_sci2 = 2
+    re_sci2 = math.ceil((sci2_a + crc) * beta_offset / (q_sci2 * coding_rate))
 
-    # DMRS, ACG, and Guard symbol
-    RE_dmrs = NRB_bw_u * 2 * 6
-    RE_agc = NRB_bw_u * 1 * 12
-    RE_guard = NRB_bw_u * 1 * 12
+    # ----- DMRS, ACG, and Guard symbol -----
+    # Calculations simplified using
+    # resource_blocks = NRB_bw_u = num_subchan * subchannel_size
+    dmrs = resource_blocks * 2 * 6
+    agc = resource_blocks * 12
+    guard = resource_blocks * 12
 
     # S-SSB
     # number of resource elements for SSB every 160 millisecond
-    RE_SSB = NRB_bw_u * 14 * 12
+
+    # Simplified using
+    # resource_blocks = NRB_bw_u = num_subchan * subchannel_size
+    ssb = resource_blocks * 14 * 12
+
     # average number of resource elements for SSB per slot
-    slot_duration_in_millisecond = 1 / (2 ** u)
-    RE_SSB_per_millisecond = RE_SSB / 160
-    RE_SSB_per_slot = RE_SSB_per_millisecond * slot_duration_in_millisecond
+    # Simplified from: 1 / (2 ** u) given u = 0
+    slot_duration_in_milliseconds = 1
 
-    # In case that the assigned subchannels do not cover the 11 RBs for SSB,
-    # then there is no SSB OH
-    # RE_SSB_per_slot = 0
+    ssb_per_millisecond = ssb / 160
+    ssb_per_slot = ssb_per_millisecond * slot_duration_in_milliseconds
 
-    # OH ratio
-    RE_total = N_blind_ret * NRB_bw_u * 14 * 12
-    OH_total = RE_sci1 + RE_sci2 + RE_dmrs + RE_agc + RE_guard + RE_SSB_per_slot + (
-            N_blind_ret - 1) * NRB_bw_u * 14 * 12
-    OH = OH_total / RE_total
-    data_rate = 1e-6 * v_layers * Qm * f * Rmax * NRB_bw_u * 12 * (1 - OH) / Tu
+    # Overhead Ratio
+    # Both below simplified using: resource_blocks = NRB_bw_u = num_subchan * subchannel_size
+    resource_total = blind_transmissions * resource_blocks * 14 * 12
+    overhead_total = re_sci1 + re_sci2 + dmrs + agc + guard + ssb_per_slot + (
+            blind_transmissions - 1) * resource_blocks * 14 * 12
+
+    overhead_ratio = overhead_total / resource_total
+
+    # removed scaling factor (`f`)
+    # simplified using: resource_blocks = NRB_bw_u = num_subchan * subchannel_size
+    # original: data_rate = 1e-6 * v_layers * Qm * f * Rmax * NRB_bw_u * 12 * (1 - OH) / Tu
+    data_rate = 1e-6 * layers * modulation_order * coding_rate * resource_blocks * 12 * (
+            1 - overhead_ratio) / symbol_duration
 
     return data_rate
 
@@ -190,11 +247,19 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.ui.comboBoxMode.addItem("unicast", userData=0)
-        self.ui.comboBoxMode.addItem("groupcast/broadcast", userData=1)
+        self.ui.comboNumerology.addItem("0", userData=0)
+        self.ui.comboNumerology.addItem("1", userData=1)
 
-        self.ui.comboBoxMaxQm.addItem("64 QAM", userData="64")
-        self.ui.comboBoxMaxQm.addItem("256 QAM", userData="256")
+        self.ui.comboLayers.addItem("1", userData=1)
+        self.ui.comboLayers.addItem("2", userData=2)
+        # Have 2 Layers selected by default
+        self.ui.comboLayers.setCurrentIndex(self.ui.comboLayers.findData(2, Qt.UserRole))
+
+        self.ui.comboModulation.addItem("64 QAM", userData=64)
+        self.ui.comboModulation.addItem("256 QAM", userData=256)
+
+        self.ui.comboHarq.addItem("Blind Transmission", HarqMode.BLIND_TRANSMISSION)
+        self.ui.comboHarq.addItem("Feedback Channel", HarqMode.FEEDBACK)
 
         # Charts
         self.chart = QtCharts.QChart()
@@ -228,20 +293,53 @@ class MainWindow(QMainWindow):
         self.tableModel = ResultTableModel()
         self.ui.tableResult.setModel(self.tableModel)
         self.ui.tableResult.horizontalHeader().setStretchLastSection(True)
+        self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
 
         # Signals
         self.ui.btnCalculate.clicked.connect(self.btn_clicked)
+        self.ui.comboNumerology.activated.connect(self.numerology_changed)
+
+    @QtCore.Slot()
+    def numerology_changed(self):  # We don't need the new index, so ignore it
+        numerology = int(self.ui.comboNumerology.currentData(Qt.UserRole))
+        if numerology == 0:
+            self.ui.spinResourceBlocks.setMaximum(52)
+            self.ui.spinResourceBlocks.setValue(52)
+        elif numerology == 1:
+            self.ui.spinResourceBlocks.setMaximum(24)
+            self.ui.spinResourceBlocks.setValue(24)
+        else:
+            raise ValueError("Unsupported Numerology")
 
     @QtCore.Slot()
     def btn_clicked(self):
-        qm = int(self.ui.comboBoxMaxQm.currentData(Qt.UserRole))
-        scale_factor = float(self.ui.spinScaleFactor.value())
-        subchannel_count = int(self.ui.spinSubChannels.value())
-        subchannel_size = int(self.ui.spinSubchannelSize.value())
+        numerology = int(self.ui.comboNumerology.currentData(Qt.UserRole))
+        resource_blocks = self.ui.spinResourceBlocks.value()
+        layers = int(self.ui.comboLayers.currentData(Qt.UserRole))
+        max_modulation = int(self.ui.comboModulation.currentData(Qt.UserRole))
+        harq_mode = self.ui.comboHarq.currentData(Qt.UserRole)
+        blind_retransmissions = self.ui.spinBlindRetransmissions.value()
 
-        data_rate = calculate_nr(UE_maxQm=qm, f=scale_factor, num_subchan=subchannel_count,
-                                 subchannel_size=subchannel_size)
-        self.tableModel.append(data_rate)
+        try:
+            data_rate = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=layers,
+                                     ue_max_modulation=max_modulation,
+                                     harq_mode=harq_mode, blind_transmissions=blind_retransmissions)
+        except OutOfRangeError as e:
+            QMessageBox.critical(self, "Value out of Range", str(e))
+            return
+        except ValueError as e:
+            QMessageBox.critical(self, "Invalid Value", str(e))
+            return
+
+        self.tableModel.append(
+            numerology=numerology,
+            resource_blocks=resource_blocks,
+            layers=layers,
+            max_modulation=max_modulation,
+            harq_mode=harq_mode,
+            blind_retransmissions=blind_retransmissions,
+            result=data_rate,
+        )
         self.series.barSets()[0].insert(0, data_rate)
 
 
@@ -251,5 +349,3 @@ if __name__ == '__main__':
     window.show()
 
     app.exec_()
-
-    print(calculate_nr())
