@@ -287,6 +287,7 @@ class MainWindow(QMainWindow):
         self.series.attachAxis(self.y_axis)
 
         self.ui.chartView.setChart(self.chart)
+        self.ui.chartView.setVisible(False)
 
         # Result table
 
