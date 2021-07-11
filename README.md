@@ -24,14 +24,26 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Compile UI Files
+## Run
+
+```shell
+python main.py
+```
+
+# Development
+Follow the [Installation](#installation) instructions above
+
+## Compiling UI Files
+If the UI is updated, then the Python class(es) need to be recompiled, run the
+following in the virtual environment
 
 ```shell
 pyside2-uic  main-window.ui > ui_mainwindow.py
 ```
 
-## Run
+The UI compiler makes a slight mistake with an import in the generated file,
+correct it with the shell command below
 
 ```shell
-python main.py
+sed -i 's/from qtcharts.qchartview import QtCharts.QChartView/from PySide2.QtCharts import */g' ui_mainwindow.py
 ```
