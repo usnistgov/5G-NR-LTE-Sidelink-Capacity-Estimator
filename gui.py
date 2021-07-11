@@ -28,7 +28,7 @@
 # employees is not subject to copyright protection within the United States.
 
 from core import calculate_nr, HarqMode, OutOfRangeError
-from typing import List, Union, Any
+from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
 from PySide2.QtCharts import QtCharts
@@ -38,15 +38,17 @@ from ui_mainwindow import Ui_MainWindow
 
 class ResultRow:
     def __init__(self, run: int, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
-                 harq_mode: HarqMode, blind_retransmissions: int, result: float):
+                 harq_mode: HarqMode, result: float, blind_retransmissions: Optional[int],
+                 feedback_channel_period: Optional[int]):
         self.run = run
         self.numerology = numerology
         self.resource_blocks = resource_blocks
         self.layers = layers
         self.max_modulation = max_modulation
         self.harq_mode = harq_mode
-        self.blind_retransmissions = blind_retransmissions
         self.result = result
+        self.blind_retransmissions = blind_retransmissions
+        self.feedback_channel_period = feedback_channel_period
 
 
 class ResultTableModel(QAbstractTableModel):
@@ -58,7 +60,7 @@ class ResultTableModel(QAbstractTableModel):
         return len(self._results)
 
     def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
-        return 8
+        return 9
 
     def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
              role: int = ...) -> Any:
@@ -83,8 +85,16 @@ class ResultTableModel(QAbstractTableModel):
                 else:
                     raise ValueError("Unsupported HARQ Mode")
             elif index.column() == 6:
-                return result.blind_retransmissions
+                if result.harq_mode == HarqMode.BLIND_TRANSMISSION:
+                    return result.blind_retransmissions
+                else:
+                    return "N/A"
             elif index.column() == 7:
+                if result.harq_mode == HarqMode.FEEDBACK:
+                    return result.feedback_channel_period
+                else:
+                    return "N/A"
+            elif index.column() == 8:
                 return result.result
 
         if role == Qt.TextAlignmentRole:
@@ -110,10 +120,13 @@ class ResultTableModel(QAbstractTableModel):
         elif section == 6:
             return "Blind Transmissions"
         elif section == 7:
+            return "Feedback Channel Period"
+        elif section == 8:
             return "Data Rate (Mbps)"
 
     def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
-               harq_mode: HarqMode, blind_retransmissions: int, result: float):
+               harq_mode: HarqMode, result: float, blind_retransmissions: Optional[int],
+               feedback_channel_period: Optional[int]):
         new_result = ResultRow(
             run=len(self._results),
             numerology=numerology,
@@ -121,8 +134,10 @@ class ResultTableModel(QAbstractTableModel):
             layers=layers,
             max_modulation=max_modulation,
             harq_mode=harq_mode,
+            result=result,
             blind_retransmissions=blind_retransmissions,
-            result=result)
+            feedback_channel_period=feedback_channel_period
+        )
 
         self.beginInsertRows(QModelIndex(), len(self._results), len(self._results))
         self._results.append(new_result)
@@ -146,8 +161,15 @@ class MainWindow(QMainWindow):
         self.ui.comboModulation.addItem("64 QAM", userData=64)
         self.ui.comboModulation.addItem("256 QAM", userData=256)
 
-        self.ui.comboHarq.addItem("Blind Transmission", HarqMode.BLIND_TRANSMISSION)
-        self.ui.comboHarq.addItem("Feedback Channel", HarqMode.FEEDBACK)
+        self.ui.comboHarq.addItem("Blind Transmission", userData=HarqMode.BLIND_TRANSMISSION)
+        self.ui.comboHarq.addItem("Feedback Channel", userData=HarqMode.FEEDBACK)
+
+        # Manually trigger this slot, so we only see the relevant inputs for the starting HARQ mode
+        self.harq_mode_changed()
+
+        self.ui.comboFeedbackChannel.addItem("1", userData=1)
+        self.ui.comboFeedbackChannel.addItem("2", userData=2)
+        self.ui.comboFeedbackChannel.addItem("4", userData=4)
 
         # Charts
         self.chart = QtCharts.QChart()
@@ -187,6 +209,7 @@ class MainWindow(QMainWindow):
         # Signals
         self.ui.btnCalculate.clicked.connect(self.btn_clicked)
         self.ui.comboNumerology.activated.connect(self.numerology_changed)
+        self.ui.comboHarq.activated.connect(self.harq_mode_changed)
 
     @QtCore.Slot()
     def numerology_changed(self):  # We don't need the new index, so ignore it
@@ -201,18 +224,44 @@ class MainWindow(QMainWindow):
             raise ValueError("Unsupported Numerology")
 
     @QtCore.Slot()
+    def harq_mode_changed(self):  # We don't need the new index, so ignore it
+        harq_mode = self.ui.comboHarq.currentData(Qt.UserRole)
+        if harq_mode == HarqMode.BLIND_TRANSMISSION:
+            self.ui.lblFeedbackChannel.hide()
+            self.ui.comboFeedbackChannel.hide()
+
+            self.ui.lblBlindTransmissions.show()
+            self.ui.spinBlindTransmissions.show()
+        elif harq_mode == HarqMode.FEEDBACK:
+            self.ui.lblBlindTransmissions.hide()
+            self.ui.spinBlindTransmissions.hide()
+
+            self.ui.lblFeedbackChannel.show()
+            self.ui.comboFeedbackChannel.show()
+        else:
+            raise ValueError("Unsupported HARQ mode")
+
+    @QtCore.Slot()
     def btn_clicked(self):
         numerology = int(self.ui.comboNumerology.currentData(Qt.UserRole))
         resource_blocks = self.ui.spinResourceBlocks.value()
         layers = int(self.ui.comboLayers.currentData(Qt.UserRole))
         max_modulation = int(self.ui.comboModulation.currentData(Qt.UserRole))
         harq_mode = self.ui.comboHarq.currentData(Qt.UserRole)
-        blind_retransmissions = self.ui.spinBlindRetransmissions.value()
+
+        blind_retransmissions = None
+        if harq_mode == HarqMode.BLIND_TRANSMISSION:
+            blind_retransmissions = self.ui.spinBlindTransmissions.value()
+
+        feedback_channel_period = None
+        if harq_mode == HarqMode.FEEDBACK:
+            feedback_channel_period = self.ui.comboFeedbackChannel.currentData(Qt.UserRole)
 
         try:
             data_rate = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=layers,
                                      ue_max_modulation=max_modulation,
-                                     harq_mode=harq_mode, blind_transmissions=blind_retransmissions)
+                                     harq_mode=harq_mode, blind_transmissions=blind_retransmissions,
+                                     feedback_channel_period=feedback_channel_period)
         except OutOfRangeError as e:
             QMessageBox.critical(self, "Value out of Range", str(e))
             return
@@ -226,7 +275,8 @@ class MainWindow(QMainWindow):
             layers=layers,
             max_modulation=max_modulation,
             harq_mode=harq_mode,
-            blind_retransmissions=blind_retransmissions,
             result=data_rate,
+            blind_retransmissions=blind_retransmissions,
+            feedback_channel_period=feedback_channel_period,
         )
         self.series.barSets()[0].insert(0, data_rate)

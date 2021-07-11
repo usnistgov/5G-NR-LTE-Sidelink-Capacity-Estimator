@@ -47,7 +47,8 @@ class OutOfRangeError(ValueError):
 
 
 def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modulation: int,
-                 harq_mode: HarqMode, blind_transmissions: Optional[int]) -> float:
+                 harq_mode: HarqMode, blind_transmissions: Optional[int],
+                 feedback_channel_period: Optional[int]) -> float:
     # ----- Range checks -----
     # numerology
     if numerology != 0 and numerology != 1:
@@ -68,13 +69,18 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     if ue_max_modulation != 64 and ue_max_modulation != 256:
         raise ValueError("`ue_max_modulation` May only be 64 or 256")
 
-    # TODO: Only `BLIND_TRANSMISSION` HARQ mode is currently supported
-    if harq_mode != HarqMode.BLIND_TRANSMISSION:
-        raise ValueError("Only the `BLIND_TRANSMISSION` HARQ mode is currently supported")
-
     # blind_retransmissions
     if harq_mode == HarqMode.BLIND_TRANSMISSION and (blind_transmissions < 1 or blind_transmissions > 32):
         raise OutOfRangeError(field_name="blind_retransmissions", value=blind_transmissions, minimum=1, maximum=32)
+    elif harq_mode == HarqMode.FEEDBACK:  # Keep us at one transmission for FEEDBACK mode
+        blind_transmissions = 1  # TODO: Verify this as either 1 or 0
+
+    # feedback_channel_period
+    if harq_mode == HarqMode.FEEDBACK and (
+            feedback_channel_period != 1 and feedback_channel_period != 2 and feedback_channel_period != 4):
+        raise ValueError("Feedback Channel Period must be 1, 2, or 4")
+    elif harq_mode == HarqMode.BLIND_TRANSMISSION:  # Zero out feedback channel period for BLIND_TRANSMISSION mode
+        feedback_channel_period = 0
 
     # ----- Derived values -----
 
@@ -125,10 +131,21 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     ssb_per_millisecond = ssb / 160
     ssb_per_slot = ssb_per_millisecond * slot_duration_in_milliseconds
 
+    if feedback_channel_period == 0:
+        re_feedback = 0
+    elif feedback_channel_period == 1:
+        re_feedback = resource_blocks * 36
+    elif feedback_channel_period == 2:
+        re_feedback = resource_blocks * 18
+    elif feedback_channel_period == 4:
+        re_feedback = resource_blocks * 9
+    else:
+        raise ValueError(f"Unsupported feedback channel period: {feedback_channel_period}")
+
     # Overhead Ratio
     # Both below simplified using: resource_blocks = NRB_bw_u = num_subchan * subchannel_size
     resource_total = blind_transmissions * resource_blocks * 14 * 12
-    overhead_total = re_sci1 + re_sci2 + dmrs + agc + guard + ssb_per_slot + (
+    overhead_total = re_sci1 + re_sci2 + dmrs + agc + guard + ssb_per_slot + re_feedback + (
             blind_transmissions - 1) * resource_blocks * 14 * 12
 
     overhead_ratio = overhead_total / resource_total

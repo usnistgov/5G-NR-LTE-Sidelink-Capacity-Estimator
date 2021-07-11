@@ -54,6 +54,7 @@ if __name__ == '__main__':
     parser.add_argument("--harq-mode", choices=["B", "Blind", "BlindTransmission", "Blind_Transmission",
                                                 "F", "Feedback", "FeedbackChannel", "Feedback_Channel"], type=str)
     parser.add_argument("--blind-transmissions", type=int)
+    parser.add_argument("--feedback-channel-period", choices=[1, 2, 4], type=int)
 
     args = parser.parse_args()
 

@@ -63,14 +63,22 @@ def cli_nr(args):
     else:  # Shouldn't happen, but just in case
         sys.exit("Error, unsupported HARQ Mode")
 
+    blind_transmissions = None
+    feedback_channel_period = None
     if harq_mode == HarqMode.BLIND_TRANSMISSION:
         if args.blind_transmissions is not None:
             blind_transmissions = args.blind_transmissions
         else:
             blind_transmissions = 1
+    elif harq_mode == HarqMode.FEEDBACK:
+        if args.feedback_channel_period is not None:
+            feedback_channel_period = args.feedback_channel_period
+        else:
+            feedback_channel_period = 1
 
     data_rate = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=args.layers,
                              ue_max_modulation=args.ue_max_modulation,
-                             harq_mode=harq_mode, blind_transmissions=blind_transmissions)
+                             harq_mode=harq_mode, blind_transmissions=blind_transmissions,
+                             feedback_channel_period=feedback_channel_period)
 
     return data_rate

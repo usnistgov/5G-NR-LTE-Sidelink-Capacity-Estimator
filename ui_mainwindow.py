@@ -81,17 +81,27 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(1, QFormLayout.FieldRole, self.spinResourceBlocks)
 
-        self.label = QLabel(self.centralwidget)
-        self.label.setObjectName(u"label")
+        self.lblBlindTransmissions = QLabel(self.centralwidget)
+        self.lblBlindTransmissions.setObjectName(u"lblBlindTransmissions")
 
-        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.label)
+        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.lblBlindTransmissions)
 
-        self.spinBlindRetransmissions = QSpinBox(self.centralwidget)
-        self.spinBlindRetransmissions.setObjectName(u"spinBlindRetransmissions")
-        self.spinBlindRetransmissions.setMinimum(1)
-        self.spinBlindRetransmissions.setMaximum(32)
+        self.spinBlindTransmissions = QSpinBox(self.centralwidget)
+        self.spinBlindTransmissions.setObjectName(u"spinBlindTransmissions")
+        self.spinBlindTransmissions.setMinimum(1)
+        self.spinBlindTransmissions.setMaximum(32)
 
-        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.spinBlindRetransmissions)
+        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.spinBlindTransmissions)
+
+        self.lblFeedbackChannel = QLabel(self.centralwidget)
+        self.lblFeedbackChannel.setObjectName(u"lblFeedbackChannel")
+
+        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.lblFeedbackChannel)
+
+        self.comboFeedbackChannel = QComboBox(self.centralwidget)
+        self.comboFeedbackChannel.setObjectName(u"comboFeedbackChannel")
+
+        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.comboFeedbackChannel)
 
 
         self.verticalLayoutFormSubmit.addLayout(self.formLayout)
@@ -147,7 +157,8 @@ class Ui_MainWindow(object):
         self.lblHarq.setText(QCoreApplication.translate("MainWindow", u"HARQ Mode", None))
         self.lblResourceBlocks.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))
         self.spinResourceBlocks.setSuffix(QCoreApplication.translate("MainWindow", u"PRB", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Blind Transmissions", None))
+        self.lblBlindTransmissions.setText(QCoreApplication.translate("MainWindow", u"Blind Transmissions", None))
+        self.lblFeedbackChannel.setText(QCoreApplication.translate("MainWindow", u"Feedback Channel Period", None))
         self.btnCalculate.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
     # retranslateUi
 
