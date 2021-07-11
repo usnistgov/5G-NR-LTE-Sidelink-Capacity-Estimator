@@ -28,46 +28,49 @@
 # employees is not subject to copyright protection within the United States.
 
 import sys
-from argparse import ArgumentParser
-from gui import MainWindow
-from cli import cli_nr
-from core import OutOfRangeError
-from PySide2.QtWidgets import QApplication
+from core import calculate_nr, HarqMode
 
-if __name__ == '__main__':
-    parser = ArgumentParser()
 
-    mode_group = parser.add_mutually_exclusive_group()
-    mode_group.add_argument("-c", "--cli", help="Run the program in CLI mode", action="store_true")
-    mode_group.add_argument("-g", "--gui", help="Run the program showing the GUI. Ignores all other arguments",
-                            action="store_true")
+def cli_nr(args):
+    if "numerology" not in args:
+        sys.exit("Argument '--numerology' required in NR mode")
 
-    nr_lte_group = parser.add_mutually_exclusive_group()
-    nr_lte_group.add_argument("-n", "--nr", help="Perform the calculation for NR", action="store_true")
-    nr_lte_group.add_argument("-l", "--lte", help="Perform the calculation for LTE", action="store_true")
+    numerology = args.numerology
 
-    # NR Args
-    parser.add_argument("--numerology", choices=[0, 1], type=int)
-    parser.add_argument("--resource-blocks", type=int)
-    parser.add_argument("--layers", choices=[1, 2], type=int)
-    parser.add_argument("--ue-max-modulation", choices=[64, 256], type=int)
-    parser.add_argument("--harq-mode", choices=["B", "Blind", "BlindTransmission", "Blind_Transmission",
-                                                "F", "Feedback", "FeedbackChannel", "Feedback_Channel"], type=str)
-    parser.add_argument("--blind-transmissions", type=int)
-
-    args = parser.parse_args()
-
-    if args.cli:
-        try:
-            data_rate = cli_nr(args)
-        except OutOfRangeError as e:
-            sys.exit("Out of range error: " + str(e))
-        except ValueError as e:
-            sys.exit("Value error: " + str(e))
-
-        print(f"Data rate: {data_rate}")
+    if args.resource_blocks is None:
+        if numerology == 0:
+            resource_blocks = 52
+        elif numerology == 1:
+            resource_blocks = 24
+        else:  # Just in case...
+            sys.exit(f"Unsupported Numerology: {numerology}")
     else:
-        app = QApplication(sys.argv)
-        window = MainWindow()
-        window.show()
-        app.exec_()
+        resource_blocks = args.resource_blocks
+
+    if args.layers is None:
+        sys.exit("Argument '--layers' required in NR mode")
+
+    if args.ue_max_modulation is None:
+        sys.exit("Argument '--ue-max-modulation' required in NR mode")
+
+    if args.harq_mode is None:
+        sys.exit("Argument '--harq_mode' required in NR mode")
+
+    if args.harq_mode.upper()[0] == 'B':  # BLIND_TRANSMISSION
+        harq_mode = HarqMode.BLIND_TRANSMISSION
+    elif args.harq_mode[0] == 'F':  # FEEDBACK
+        harq_mode = HarqMode.FEEDBACK
+    else:  # Shouldn't happen, but just in case
+        sys.exit("Error, unsupported HARQ Mode")
+
+    if harq_mode == HarqMode.BLIND_TRANSMISSION:
+        if args.blind_transmissions is not None:
+            blind_transmissions = args.blind_transmissions
+        else:
+            blind_transmissions = 1
+
+    data_rate = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=args.layers,
+                             ue_max_modulation=args.ue_max_modulation,
+                             harq_mode=harq_mode, blind_transmissions=blind_transmissions)
+
+    return data_rate
