@@ -114,7 +114,7 @@ class ResultTableModel(QAbstractTableModel):
         elif section == 3:
             return "Layers"
         elif section == 4:
-            return "Max Modulation (QAM)"
+            return "UE Max Modulation (QAM)"
         elif section == 5:
             return "HARQ Mode"
         elif section == 6:
