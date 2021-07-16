@@ -124,9 +124,7 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     # resource_blocks = NRB_bw_u = num_subchan * subchannel_size
     ssb = resource_blocks * 14 * 12
 
-    # average number of resource elements for SSB per slot
-    # Simplified from: 1 / (2 ** u) given u = 0
-    slot_duration_in_milliseconds = 1
+    slot_duration_in_milliseconds = 1 / (2 ** numerology)
 
     ssb_per_millisecond = ssb / 160
     ssb_per_slot = ssb_per_millisecond * slot_duration_in_milliseconds
