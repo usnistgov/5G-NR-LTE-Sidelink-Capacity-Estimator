@@ -69,9 +69,9 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     if ue_max_modulation != 64 and ue_max_modulation != 256:
         raise ValueError("`ue_max_modulation` May only be 64 or 256")
 
-    # blind_retransmissions
+    # blind_transmissions
     if harq_mode == HarqMode.BLIND_TRANSMISSION and (blind_transmissions < 1 or blind_transmissions > 32):
-        raise OutOfRangeError(field_name="blind_retransmissions", value=blind_transmissions, minimum=1, maximum=32)
+        raise OutOfRangeError(field_name="blind_transmissions", value=blind_transmissions, minimum=1, maximum=32)
     elif harq_mode == HarqMode.FEEDBACK:  # Keep us at one transmission for FEEDBACK mode
         blind_transmissions = 1  # TODO: Verify this as either 1 or 0
 
