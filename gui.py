@@ -31,7 +31,6 @@ from core import calculate_nr, HarqMode, OutOfRangeError
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
-from PySide2.QtCharts import QtCharts
 from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox
 from ui_mainwindow import Ui_MainWindow
 
@@ -171,34 +170,6 @@ class MainWindow(QMainWindow):
         self.ui.comboFeedbackChannel.addItem("2", userData=2)
         self.ui.comboFeedbackChannel.addItem("4", userData=4)
 
-        # Charts
-        self.chart = QtCharts.QChart()
-        self.chart.setMargins(QMargins(0, 0, 0, 0))
-        self.chart.legend().setVisible(False)
-
-        self.series = QtCharts.QBarSeries()
-        bar_set = QtCharts.QBarSet("Result")
-        self.series.append(bar_set)
-        self.chart.addSeries(self.series)
-
-        self.x_axis = QtCharts.QBarCategoryAxis()
-        self.x_axis.append(["SCS 15kHz"])
-        self.chart.addAxis(self.x_axis, Qt.AlignBottom)
-        self.series.attachAxis(self.x_axis)
-
-        self.y_axis = QtCharts.QValueAxis()
-        self.y_axis.setRange(0, 100)
-        self.y_axis.setTickCount(12)
-        # self.y_axis.setTickInterval(10)
-        self.y_axis.applyNiceNumbers()
-
-        self.y_axis.setTitleText("Mbps")
-        self.chart.addAxis(self.y_axis, Qt.AlignLeft)
-        self.series.attachAxis(self.y_axis)
-
-        self.ui.chartView.setChart(self.chart)
-        self.ui.chartView.setVisible(False)
-
         # Result table
 
         self.tableModel = ResultTableModel()
@@ -279,4 +250,3 @@ class MainWindow(QMainWindow):
             blind_retransmissions=blind_retransmissions,
             feedback_channel_period=feedback_channel_period,
         )
-        self.series.barSets()[0].insert(0, data_rate)

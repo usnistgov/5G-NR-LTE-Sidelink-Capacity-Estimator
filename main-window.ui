@@ -133,13 +133,6 @@
       </attribute>
      </widget>
     </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayoutChart">
-      <item>
-       <widget class="QtCharts.QChartView" name="chartView" native="true"/>
-      </item>
-     </layout>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -154,13 +147,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QtCharts.QChartView</class>
-   <extends>QWidget</extends>
-   <header>qtcharts.qchartview.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

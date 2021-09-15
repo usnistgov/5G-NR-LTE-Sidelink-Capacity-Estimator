@@ -12,8 +12,6 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from PySide2.QtCharts import *
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -124,16 +122,6 @@ class Ui_MainWindow(object):
         self.tableResult.horizontalHeader().setVisible(True)
 
         self.horizontalLayout.addWidget(self.tableResult)
-
-        self.verticalLayoutChart = QVBoxLayout()
-        self.verticalLayoutChart.setObjectName(u"verticalLayoutChart")
-        self.chartView = QtCharts.QChartView(self.centralwidget)
-        self.chartView.setObjectName(u"chartView")
-
-        self.verticalLayoutChart.addWidget(self.chartView)
-
-
-        self.horizontalLayout.addLayout(self.verticalLayoutChart)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
