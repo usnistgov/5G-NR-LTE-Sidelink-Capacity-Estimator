@@ -27,7 +27,7 @@
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
 
-from core import calculate_nr, HarqMode, OutOfRangeError
+from core import calculate_nr, calculate_lte, HarqMode, OutOfRangeError
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
@@ -143,6 +143,80 @@ class ResultTableModel(QAbstractTableModel):
         self.endInsertRows()
 
 
+class ResultRowLte:
+    def __init__(self, run: int, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
+        self.run = run
+        self.mcs = mcs
+        self.resource_blocks = resource_blocks
+        self.period_size = period_size
+        self.pscch_size = pscch_size
+        self.result = result
+
+
+class ResultTableLteModel(QAbstractTableModel):
+    def __init__(self):
+        super().__init__()
+        self._results: List[ResultRowLte] = []
+
+    def rowCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
+        return len(self._results)
+
+    def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
+        return 6
+
+    def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
+             role: int = ...) -> Any:
+
+        if role == Qt.DisplayRole:
+            result = self._results[index.row()]
+            if index.column() == 0:
+                return result.run
+            elif index.column() == 1:
+                return result.mcs
+            elif index.column() == 2:
+                return result.resource_blocks
+            elif index.column() == 3:
+                return result.period_size
+            elif index.column() == 4:
+                return result.pscch_size
+            elif index.column() == 5:
+                return result.result
+
+        if role == Qt.TextAlignmentRole:
+            return Qt.AlignRight  # TODO: AlignVCenter as well
+
+    def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
+        if orientation != Qt.Horizontal or role != Qt.DisplayRole:
+            return
+
+        if section == 0:
+            return "Run Index"
+        elif section == 1:
+            return "MCS"
+        elif section == 2:
+            return "Resource Blocks (PRB)"
+        elif section == 3:
+            return "Period Size [SF]"
+        elif section == 4:
+            return "PSCCH Size [SF]"
+        elif section == 5:
+            return "Data Rate (Mbps)"
+
+    def append(self, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
+        new_result = ResultRowLte(
+            run=len(self._results),
+            mcs=mcs,
+            resource_blocks=resource_blocks,
+            period_size=period_size,
+            pscch_size=pscch_size,
+            result=result
+        )
+
+        self.beginInsertRows(QModelIndex(), len(self._results), len(self._results))
+        self._results.append(new_result)
+        self.endInsertRows()
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -177,20 +251,28 @@ class MainWindow(QMainWindow):
         self.ui.tableResult.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
 
+        # LTE Result Table
+
+        self.tableModelLte = ResultTableLteModel()
+        self.ui.tableResultLte.setModel(self.tableModelLte)
+        self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
+        self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
+
         # Signals
         self.ui.btnCalculate.clicked.connect(self.btn_clicked)
         self.ui.comboNumerology.activated.connect(self.numerology_changed)
         self.ui.comboHarq.activated.connect(self.harq_mode_changed)
+        self.ui.btnCalculateLte.clicked.connect(self.btn_clicked_lte)
 
     @QtCore.Slot()
     def numerology_changed(self):  # We don't need the new index, so ignore it
         numerology = int(self.ui.comboNumerology.currentData(Qt.UserRole))
         if numerology == 0:
-            self.ui.spinResourceBlocks.setMaximum(52)
-            self.ui.spinResourceBlocks.setValue(52)
+            self.ui.spinResourceBlocksNr.setMaximum(52)
+            self.ui.spinResourceBlocksNr.setValue(52)
         elif numerology == 1:
-            self.ui.spinResourceBlocks.setMaximum(24)
-            self.ui.spinResourceBlocks.setValue(24)
+            self.ui.spinResourceBlocksNr.setMaximum(24)
+            self.ui.spinResourceBlocksNr.setValue(24)
         else:
             raise ValueError("Unsupported Numerology")
 
@@ -215,7 +297,7 @@ class MainWindow(QMainWindow):
     @QtCore.Slot()
     def btn_clicked(self):
         numerology = int(self.ui.comboNumerology.currentData(Qt.UserRole))
-        resource_blocks = self.ui.spinResourceBlocks.value()
+        resource_blocks = self.ui.spinResourceBlocksNr.value()
         layers = int(self.ui.comboLayers.currentData(Qt.UserRole))
         max_modulation = int(self.ui.comboModulation.currentData(Qt.UserRole))
         harq_mode = self.ui.comboHarq.currentData(Qt.UserRole)
@@ -249,4 +331,26 @@ class MainWindow(QMainWindow):
             result=data_rate,
             blind_retransmissions=blind_retransmissions,
             feedback_channel_period=feedback_channel_period,
+        )
+
+    @QtCore.Slot()
+    def btn_clicked_lte(self):
+        mcs = self.ui.spinMcs.value()
+        resource_blocks = self.ui.spinResourceBlocksLte.value()
+        period_size = self.ui.spinPeriodSize.value()
+        pscch_size = self.ui.spinPscchSize.value()
+
+        data_rate = calculate_lte(
+            mcs=mcs,
+            resource_blocks=resource_blocks,
+            period_size=period_size,
+            control_channel_size=pscch_size
+        )
+
+        self.tableModelLte.append(
+            mcs=mcs,
+            resource_blocks=resource_blocks,
+            period_size=period_size,
+            pscch_size=pscch_size,
+            result=data_rate
         )

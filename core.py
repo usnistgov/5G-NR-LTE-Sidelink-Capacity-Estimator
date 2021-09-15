@@ -28,6 +28,7 @@
 # employees is not subject to copyright protection within the United States.
 
 import math
+import lte_values
 from enum import Enum
 from typing import Optional
 
@@ -155,3 +156,39 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
             1 - overhead_ratio) / symbol_duration
 
     return data_rate
+
+
+def calculate_lte(mcs: int, resource_blocks: int, period_size: int, control_channel_size: int):
+    tbs_index = lte_values.mcs_tbs[mcs]
+
+    transport_block_size = lte_values.tbs_prbs[tbs_index][resource_blocks]
+
+    shared_channel_size = period_size - control_channel_size
+
+    # Fixed to 4 in LTE
+    harq_tranmissions = 4
+
+    shared_channel_without_harq_subframes = shared_channel_size // harq_tranmissions
+    unused_subframes_per_period = shared_channel_size - shared_channel_without_harq_subframes * harq_tranmissions
+
+    capacity_bits_per_period = shared_channel_without_harq_subframes * transport_block_size
+
+    capacity_average_bits = capacity_bits_per_period / period_size
+
+    periods_per_sec = 1 / (period_size / 1000)
+    shared_channel_without_harq_subframes_per_sec = math.floor(periods_per_sec) * shared_channel_without_harq_subframes
+
+    last_period_size_in_one_sec_subframes = period_size * (periods_per_sec - math.floor(periods_per_sec))
+
+    pssch_last_period = last_period_size_in_one_sec_subframes
+    if last_period_size_in_one_sec_subframes - control_channel_size > 0:
+        pssch_last_period = last_period_size_in_one_sec_subframes - control_channel_size
+
+    last_period_without_harq_subframes = math.floor(pssch_last_period / harq_tranmissions)
+
+    total_pssch_subframes_per_second = shared_channel_without_harq_subframes_per_sec + last_period_without_harq_subframes
+    capacity_bits_per_second = total_pssch_subframes_per_second * transport_block_size
+    average_capacity = capacity_bits_per_period * period_size
+    average_phy_capacity = transport_block_size * shared_channel_size * periods_per_sec
+
+    return capacity_bits_per_second * 1e-6

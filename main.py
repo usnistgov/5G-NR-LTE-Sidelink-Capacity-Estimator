@@ -31,10 +31,12 @@ import sys
 from argparse import ArgumentParser
 from gui import MainWindow
 from cli import cli_nr
-from core import OutOfRangeError
+from core import OutOfRangeError, calculate_lte
 from PySide2.QtWidgets import QApplication
 
 if __name__ == '__main__':
+    calculate_lte(mcs=20, resource_blocks=50, period_size=40, control_channel_size=2)
+
     parser = ArgumentParser()
 
     mode_group = parser.add_mutually_exclusive_group()
