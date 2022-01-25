@@ -185,6 +185,18 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
 
 
 def calculate_lte(mcs: int, resource_blocks: int, period_size: int, control_channel_size: int):
+    if mcs < 0 or mcs > 20:
+        raise OutOfRangeError(field_name="mcs", value=mcs, minimum=0, maximum=20)
+
+    if resource_blocks < 1 or resource_blocks > 128:
+        raise OutOfRangeError(field_name="resource_blocks", value=resource_blocks, minimum=1, maximum=128)
+
+    if period_size < 0 or period_size > 320:
+        raise OutOfRangeError(field_name="period_size", value=period_size, minimum=0, maximum=320)
+
+    if control_channel_size < 2 or control_channel_size > 40:
+        raise OutOfRangeError(field_name="control_channel_size", value=control_channel_size, minimum=2, maximum=40)
+
     tbs_index = lte_values.mcs_tbs[mcs]
 
     transport_block_size = lte_values.tbs_prbs[tbs_index][resource_blocks]

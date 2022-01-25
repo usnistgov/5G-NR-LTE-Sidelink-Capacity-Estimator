@@ -28,7 +28,7 @@
 # employees is not subject to copyright protection within the United States.
 
 import sys
-from core import calculate_nr, HarqMode
+from core import calculate_nr, calculate_lte, HarqMode
 
 
 def cli_nr(args):
@@ -76,9 +76,36 @@ def cli_nr(args):
         else:
             feedback_channel_period = 1
 
-    data_rate = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=args.layers,
-                             ue_max_modulation=args.ue_max_modulation,
-                             harq_mode=harq_mode, blind_transmissions=blind_transmissions,
-                             feedback_channel_period=feedback_channel_period)
+    result = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=args.layers,
+                          ue_max_modulation=args.ue_max_modulation,
+                          harq_mode=harq_mode, blind_transmissions=blind_transmissions,
+                          feedback_channel_period=feedback_channel_period)
+
+    return result.data_rate
+
+
+def cli_lte(args):
+    if "mcs" not in args:
+        sys.exit("Argument '--mcs' required in LTE mode")
+
+    mcs = args.mcs
+
+    if args.resource_blocks is None:
+        sys.exit("Argument '--resource-blocks' required in LTE mode")
+
+    resource_blocks = args.resource_blocks
+
+    if args.period_size is None:
+        sys.exit("Argument '--period-size' required in LTE mode")
+
+    period_size = args.period_size
+
+    if args.control_channel_size is None:
+        sys.exit("Argument '--control-channel-size' required in LTE mode")
+
+    control_channel_size = args.control_channel_size
+
+    data_rate = calculate_lte(mcs=mcs, resource_blocks=resource_blocks, period_size=period_size,
+                              control_channel_size=control_channel_size)
 
     return data_rate

@@ -30,7 +30,7 @@
 import sys
 from argparse import ArgumentParser
 from gui import MainWindow
-from cli import cli_nr
+from cli import cli_nr, cli_lte
 from core import OutOfRangeError, calculate_lte
 from PySide2.QtWidgets import QApplication
 
@@ -48,9 +48,11 @@ if __name__ == '__main__':
     nr_lte_group.add_argument("-n", "--nr", help="Perform the calculation for NR", action="store_true")
     nr_lte_group.add_argument("-l", "--lte", help="Perform the calculation for LTE", action="store_true")
 
+    # Shared Args
+    parser.add_argument("--resource-blocks", type=int)
+
     # NR Args
     parser.add_argument("--numerology", choices=[0, 1], type=int)
-    parser.add_argument("--resource-blocks", type=int)
     parser.add_argument("--layers", choices=[1, 2], type=int)
     parser.add_argument("--ue-max-modulation", choices=[64, 256], type=int)
     parser.add_argument("--harq-mode", choices=["B", "Blind", "BlindTransmission", "Blind_Transmission",
@@ -58,17 +60,25 @@ if __name__ == '__main__':
     parser.add_argument("--blind-transmissions", type=int)
     parser.add_argument("--feedback-channel-period", choices=[1, 2, 4], type=int)
 
+    # LTE Args
+    parser.add_argument("--mcs", type=int)
+    parser.add_argument("--period-size", type=int)
+    parser.add_argument("--control-channel-size", type=int)
+
     args = parser.parse_args()
 
     if args.cli:
         try:
-            data_rate = cli_nr(args)
+            if args.nr:
+                data_rate = cli_nr(args)
+            else:
+                data_rate = cli_lte(args)
         except OutOfRangeError as e:
             sys.exit("Out of range error: " + str(e))
         except ValueError as e:
             sys.exit("Value error: " + str(e))
 
-        print(f"Data rate: {data_rate}")
+        print(f"Data rate: {data_rate} Mbps")
     else:
         app = QApplication(sys.argv)
         window = MainWindow()
