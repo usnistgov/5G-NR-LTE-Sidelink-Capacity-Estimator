@@ -540,8 +540,12 @@ class MainWindow(QMainWindow):
         elif column == NrTableColumn.HARQ_MODE:
             return result.harq_mode.value
         elif column == NrTableColumn.BLIND_TRANSMISSIONS:
+            if result.blind_retransmissions is None:
+                return 0
             return result.blind_retransmissions
         elif column == NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
+            if result.feedback_channel_period is None:
+                return 0
             return result.feedback_channel_period
         elif column == NrTableColumn.DATA_RATE:
             return result.nr_result.data_rate
