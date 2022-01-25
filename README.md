@@ -45,5 +45,5 @@ The UI compiler makes a slight mistake with an import in the generated file,
 correct it with the shell command below
 
 ```shell
-sed -i 's/from qtcharts.qchartview import QtCharts.QChartView/from PySide2.QtCharts import */g' ui_mainwindow.py
+sed -i 's/from PySide2.QtCharts import QtCharts.QChartView/from PySide2.QtCharts import */g' ui_mainwindow.py
 ```

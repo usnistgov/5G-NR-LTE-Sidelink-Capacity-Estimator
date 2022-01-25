@@ -37,6 +37,12 @@ class HarqMode(Enum):
     BLIND_TRANSMISSION = 0
     FEEDBACK = 1
 
+    def __str__(self):
+        if self is HarqMode.BLIND_TRANSMISSION:
+            return "Blind Transmission"
+        else:
+            return "Feedback"
+
 
 class OutOfRangeError(ValueError):
     def __init__(self, field_name: str, value, minimum, maximum):

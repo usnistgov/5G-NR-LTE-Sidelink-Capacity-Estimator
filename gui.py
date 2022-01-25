@@ -32,7 +32,41 @@ from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
 from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox
+from PySide2.QtCharts import *
 from ui_mainwindow import Ui_MainWindow
+from enum import Enum
+
+
+class NrTableColumn(Enum):
+    RUN_INDEX = 0
+    NUMEROLOGY = 1
+    RESOURCE_BLOCKS = 2
+    LAYERS = 3
+    UE_MAX_MODULATION = 4
+    HARQ_MODE = 5
+    BLIND_TRANSMISSIONS = 6
+    FEEDBACK_CHANNEL_PERIOD = 7
+    DATA_RATE = 8
+
+    def __str__(self):
+        if self is NrTableColumn.RUN_INDEX:
+            return "Run Index"
+        elif self is NrTableColumn.NUMEROLOGY:
+            return "Numerology"
+        elif self is NrTableColumn.RESOURCE_BLOCKS:
+            return "Resource Blocks"
+        elif self is NrTableColumn.LAYERS:
+            return "Layers"
+        elif self is NrTableColumn.UE_MAX_MODULATION:
+            return "UE Max Modulation"
+        elif self is NrTableColumn.HARQ_MODE:
+            return "HARQ Mode"
+        elif self is NrTableColumn.BLIND_TRANSMISSIONS:
+            return "Blind Transmissions"
+        elif self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
+            return "Feedback Channel Period"
+        elif self is NrTableColumn.DATA_RATE:
+            return "Data Rate (Mbps)"
 
 
 class ResultRow:
@@ -247,6 +281,29 @@ class OverheadTableModel(QAbstractTableModel):
         self.dataChanged.emit(QModelIndex(), QModelIndex())
 
 
+class LteTableColumn(Enum):
+    RUN_INDEX = 0
+    MCS = 1
+    RESOURCE_BLOCKS = 2
+    PERIOD_SIZE = 3
+    PSCCH_SIZE = 4
+    DATA_RATE = 5
+
+    def __str__(self):
+        if self is LteTableColumn.RUN_INDEX:
+            return "Run Index"
+        elif self is LteTableColumn.MCS:
+            return "MCS"
+        elif self is LteTableColumn.RESOURCE_BLOCKS:
+            return "Resource Blocks (PRB)"
+        elif self is LteTableColumn.PERIOD_SIZE:
+            return "Period Size [SF]"
+        elif self is LteTableColumn.PSCCH_SIZE:
+            return "PSCCH Size [SF]"
+        elif self is LteTableColumn.DATA_RATE:
+            return "Data Rate (Mbps)"
+
+
 class ResultRowLte:
     def __init__(self, run: int, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
         self.run = run
@@ -320,6 +377,9 @@ class ResultTableLteModel(QAbstractTableModel):
         self._results.append(new_result)
         self.endInsertRows()
 
+    def results(self):
+        return self._results
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -347,6 +407,18 @@ class MainWindow(QMainWindow):
         self.ui.comboFeedbackChannel.addItem("1", userData=1)
         self.ui.comboFeedbackChannel.addItem("2", userData=2)
         self.ui.comboFeedbackChannel.addItem("4", userData=4)
+
+        # Remove margins around charts
+        self.ui.chartNr.chart().layout().setContentsMargins(0, 0, 0, 0)
+        self.ui.chartLte.chart().layout().setContentsMargins(0, 0, 0, 0)
+
+        for table_item in list(NrTableColumn):
+            self.ui.comboNrChartXAxis.addItem(str(table_item), userData=table_item.value)
+            self.ui.comboNrChartYAxis.addItem(str(table_item), userData=table_item.value)
+
+        for table_item in list(LteTableColumn):
+            self.ui.comboLteChartXAxis.addItem(str(table_item), userData=table_item.value)
+            self.ui.comboLteChartYAxis.addItem(str(table_item), userData=table_item.value)
 
         # Result table
 
@@ -376,6 +448,12 @@ class MainWindow(QMainWindow):
         self.ui.comboNumerology.activated.connect(self.numerology_changed)
         self.ui.comboHarq.activated.connect(self.harq_mode_changed)
         self.ui.btnCalculateLte.clicked.connect(self.btn_clicked_lte)
+
+        self.ui.comboNrChartXAxis.activated.connect(self.chart_nr_axis_changed)
+        self.ui.comboNrChartYAxis.activated.connect(self.chart_nr_axis_changed)
+
+        self.ui.comboLteChartXAxis.activated.connect(self.chart_lte_axis_changed)
+        self.ui.comboLteChartYAxis.activated.connect(self.chart_lte_axis_changed)
 
     @QtCore.Slot()
     def numerology_changed(self):  # We don't need the new index, so ignore it
@@ -445,6 +523,95 @@ class MainWindow(QMainWindow):
             blind_retransmissions=blind_retransmissions,
             feedback_channel_period=feedback_channel_period,
         )
+        # Update the chart with the new result
+        self.chart_nr_axis_changed()
+
+    def value_for_axis(self, result: ResultRow, column: NrTableColumn):
+        if column == NrTableColumn.RUN_INDEX:
+            return result.run
+        elif column == NrTableColumn.NUMEROLOGY:
+            return result.numerology
+        elif column == NrTableColumn.RESOURCE_BLOCKS:
+            return result.resource_blocks
+        elif column == NrTableColumn.LAYERS:
+            return result.layers
+        elif column == NrTableColumn.UE_MAX_MODULATION:
+            return result.max_modulation
+        elif column == NrTableColumn.HARQ_MODE:
+            return result.harq_mode.value
+        elif column == NrTableColumn.BLIND_TRANSMISSIONS:
+            return result.blind_retransmissions
+        elif column == NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
+            return result.feedback_channel_period
+        elif column == NrTableColumn.DATA_RATE:
+            return result.nr_result.data_rate
+
+    def value_for_axis_lte(self, result: ResultRowLte, column: LteTableColumn):
+        if column == LteTableColumn.RUN_INDEX:
+            return result.run
+        elif column == LteTableColumn.MCS:
+            return result.mcs
+        elif column == LteTableColumn.RESOURCE_BLOCKS:
+            return result.resource_blocks
+        elif column == LteTableColumn.PERIOD_SIZE:
+            return result.period_size
+        elif column == LteTableColumn.PSCCH_SIZE:
+            return result.pscch_size
+        elif column == LteTableColumn.DATA_RATE:
+            return result.result
+
+    def make_harq_axis(self):
+        category_axis = QtCharts.QCategoryAxis(self)
+        category_axis.append(str(HarqMode.BLIND_TRANSMISSION), HarqMode.BLIND_TRANSMISSION.value)
+        category_axis.append(str(HarqMode.FEEDBACK), HarqMode.FEEDBACK.value)
+        category_axis.setMin(-0.01)
+        category_axis.setMax(1.01)
+        return category_axis
+
+    @QtCore.Slot()
+    def chart_nr_axis_changed(self):
+        x_value = NrTableColumn(self.ui.comboNrChartXAxis.currentData(Qt.UserRole))
+        y_value = NrTableColumn(self.ui.comboNrChartYAxis.currentData(Qt.UserRole))
+
+        series = QtCharts.QLineSeries()
+
+        for result in self.tableModel.results():
+            series.append(self.value_for_axis(result, x_value), self.value_for_axis(result, y_value))
+
+        chart = QtCharts.QChart()
+        chart.setTitle(f"NR: '{x_value}' - '{y_value}'")
+        chart.addSeries(series)
+        chart.createDefaultAxes()
+
+        # Special Handling for HARQ Mode, since those are Enum values
+        if x_value == NrTableColumn.HARQ_MODE:
+            chart.setAxisX(self.make_harq_axis(), series)
+        if y_value == NrTableColumn.HARQ_MODE:
+            chart.setAxisY(self.make_harq_axis(), series)
+
+        chart.axisX().setTitleText(str(x_value))
+        chart.axisY().setTitleText(str(y_value))
+
+        self.ui.chartNr.setChart(chart)
+
+    @QtCore.Slot()
+    def chart_lte_axis_changed(self):
+        x_value = LteTableColumn(self.ui.comboLteChartXAxis.currentData(Qt.UserRole))
+        y_value = LteTableColumn(self.ui.comboLteChartYAxis.currentData(Qt.UserRole))
+
+        series = QtCharts.QLineSeries()
+
+        for result in self.tableModelLte.results():
+            series.append(self.value_for_axis_lte(result, x_value), self.value_for_axis_lte(result, y_value))
+
+        chart = QtCharts.QChart()
+        chart.setTitle(f"LTE: '{x_value}' - '{y_value}'")
+        chart.addSeries(series)
+        chart.createDefaultAxes()
+        chart.axisX().setTitleText(str(x_value))
+        chart.axisY().setTitleText(str(y_value))
+
+        self.ui.chartLte.setChart(chart)
 
     @QtCore.Slot()
     def btn_clicked_lte(self):
@@ -467,6 +634,7 @@ class MainWindow(QMainWindow):
             pscch_size=pscch_size,
             result=data_rate
         )
+        self.chart_lte_axis_changed()
 
     @QtCore.Slot()
     def toggle_overhead_table_clicked(self):

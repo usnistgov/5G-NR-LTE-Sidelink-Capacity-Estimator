@@ -12,6 +12,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
+from PySide2.QtCharts import QtCharts
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -221,6 +223,99 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.tableResultLte)
 
         self.tabWidget.addTab(self.tabLte, "")
+        self.tabCharts = QWidget()
+        self.tabCharts.setObjectName(u"tabCharts")
+        self.horizontalLayout_4 = QHBoxLayout(self.tabCharts)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.verticalLayoutChart1 = QVBoxLayout()
+        self.verticalLayoutChart1.setSpacing(0)
+        self.verticalLayoutChart1.setObjectName(u"verticalLayoutChart1")
+        self.lblChartNr = QLabel(self.tabCharts)
+        self.lblChartNr.setObjectName(u"lblChartNr")
+        font = QFont()
+        font.setPointSize(15)
+        self.lblChartNr.setFont(font)
+        self.lblChartNr.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayoutChart1.addWidget(self.lblChartNr)
+
+        self.chartNr = QtCharts.QChartView(self.tabCharts)
+        self.chartNr.setObjectName(u"chartNr")
+
+        self.verticalLayoutChart1.addWidget(self.chartNr)
+
+        self.formLayout_3 = QFormLayout()
+        self.formLayout_3.setObjectName(u"formLayout_3")
+        self.comboNrChartXAxis = QComboBox(self.tabCharts)
+        self.comboNrChartXAxis.setObjectName(u"comboNrChartXAxis")
+
+        self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.comboNrChartXAxis)
+
+        self.lblNrChartYAxis = QLabel(self.tabCharts)
+        self.lblNrChartYAxis.setObjectName(u"lblNrChartYAxis")
+
+        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.lblNrChartYAxis)
+
+        self.comboNrChartYAxis = QComboBox(self.tabCharts)
+        self.comboNrChartYAxis.setObjectName(u"comboNrChartYAxis")
+
+        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.comboNrChartYAxis)
+
+        self.lblNrChartXAxis = QLabel(self.tabCharts)
+        self.lblNrChartXAxis.setObjectName(u"lblNrChartXAxis")
+
+        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.lblNrChartXAxis)
+
+
+        self.verticalLayoutChart1.addLayout(self.formLayout_3)
+
+
+        self.horizontalLayout_4.addLayout(self.verticalLayoutChart1)
+
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setSpacing(0)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.lblChartLte = QLabel(self.tabCharts)
+        self.lblChartLte.setObjectName(u"lblChartLte")
+        self.lblChartLte.setFont(font)
+        self.lblChartLte.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayout_3.addWidget(self.lblChartLte)
+
+        self.chartLte = QtCharts.QChartView(self.tabCharts)
+        self.chartLte.setObjectName(u"chartLte")
+
+        self.verticalLayout_3.addWidget(self.chartLte)
+
+        self.formLayout_4 = QFormLayout()
+        self.formLayout_4.setObjectName(u"formLayout_4")
+        self.lblLteChartXAxis = QLabel(self.tabCharts)
+        self.lblLteChartXAxis.setObjectName(u"lblLteChartXAxis")
+
+        self.formLayout_4.setWidget(0, QFormLayout.LabelRole, self.lblLteChartXAxis)
+
+        self.comboLteChartXAxis = QComboBox(self.tabCharts)
+        self.comboLteChartXAxis.setObjectName(u"comboLteChartXAxis")
+
+        self.formLayout_4.setWidget(0, QFormLayout.FieldRole, self.comboLteChartXAxis)
+
+        self.lblLteChartYAxis = QLabel(self.tabCharts)
+        self.lblLteChartYAxis.setObjectName(u"lblLteChartYAxis")
+
+        self.formLayout_4.setWidget(1, QFormLayout.LabelRole, self.lblLteChartYAxis)
+
+        self.comboLteChartYAxis = QComboBox(self.tabCharts)
+        self.comboLteChartYAxis.setObjectName(u"comboLteChartYAxis")
+
+        self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.comboLteChartYAxis)
+
+
+        self.verticalLayout_3.addLayout(self.formLayout_4)
+
+
+        self.horizontalLayout_4.addLayout(self.verticalLayout_3)
+
+        self.tabWidget.addTab(self.tabCharts, "")
 
         self.horizontalLayout_2.addWidget(self.tabWidget)
 
@@ -262,5 +357,12 @@ class Ui_MainWindow(object):
         self.spinPscchSize.setSuffix(QCoreApplication.translate("MainWindow", u" Subframes", None))
         self.btnCalculateLte.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabLte), QCoreApplication.translate("MainWindow", u"LTE", None))
+        self.lblChartNr.setText(QCoreApplication.translate("MainWindow", u"NR", None))
+        self.lblNrChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
+        self.lblNrChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
+        self.lblChartLte.setText(QCoreApplication.translate("MainWindow", u"LTE", None))
+        self.lblLteChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
+        self.lblLteChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabCharts), QCoreApplication.translate("MainWindow", u"Charts", None))
     # retranslateUi
 

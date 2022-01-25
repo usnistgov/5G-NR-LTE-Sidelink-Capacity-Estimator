@@ -267,6 +267,111 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tabCharts">
+       <attribute name="title">
+        <string>Charts</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayoutChart1">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="lblChartNr">
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>NR</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QtCharts.QChartView" name="chartNr"/>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout_3">
+            <item row="0" column="1">
+             <widget class="QComboBox" name="comboNrChartXAxis"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="lblNrChartYAxis">
+              <property name="text">
+               <string>Y Axis</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="comboNrChartYAxis"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="lblNrChartXAxis">
+              <property name="text">
+               <string>X Axis</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="lblChartLte">
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>LTE</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QtCharts.QChartView" name="chartLte"/>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout_4">
+            <item row="0" column="0">
+             <widget class="QLabel" name="lblLteChartXAxis">
+              <property name="text">
+               <string>X Axis</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="comboLteChartXAxis"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="lblLteChartYAxis">
+              <property name="text">
+               <string>Y Axis</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="comboLteChartYAxis"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -283,6 +388,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtCharts.QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>PySide2.QtCharts</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
