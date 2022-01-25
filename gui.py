@@ -27,7 +27,7 @@
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
 
-from core import calculate_nr, calculate_lte, HarqMode, OutOfRangeError
+from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
@@ -37,7 +37,7 @@ from ui_mainwindow import Ui_MainWindow
 
 class ResultRow:
     def __init__(self, run: int, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
-                 harq_mode: HarqMode, result: float, blind_retransmissions: Optional[int],
+                 harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                  feedback_channel_period: Optional[int]):
         self.run = run
         self.numerology = numerology
@@ -45,7 +45,7 @@ class ResultRow:
         self.layers = layers
         self.max_modulation = max_modulation
         self.harq_mode = harq_mode
-        self.result = result
+        self.nr_result = nr_result
         self.blind_retransmissions = blind_retransmissions
         self.feedback_channel_period = feedback_channel_period
 
@@ -94,7 +94,7 @@ class ResultTableModel(QAbstractTableModel):
                 else:
                     return "N/A"
             elif index.column() == 8:
-                return result.result
+                return result.nr_result.data_rate
 
         if role == Qt.TextAlignmentRole:
             if index.column() != 5:
@@ -124,7 +124,7 @@ class ResultTableModel(QAbstractTableModel):
             return "Data Rate (Mbps)"
 
     def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
-               harq_mode: HarqMode, result: float, blind_retransmissions: Optional[int],
+               harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                feedback_channel_period: Optional[int]):
         new_result = ResultRow(
             run=len(self._results),
@@ -133,7 +133,7 @@ class ResultTableModel(QAbstractTableModel):
             layers=layers,
             max_modulation=max_modulation,
             harq_mode=harq_mode,
-            result=result,
+            nr_result=nr_result,
             blind_retransmissions=blind_retransmissions,
             feedback_channel_period=feedback_channel_period
         )
@@ -141,6 +141,110 @@ class ResultTableModel(QAbstractTableModel):
         self.beginInsertRows(QModelIndex(), len(self._results), len(self._results))
         self._results.append(new_result)
         self.endInsertRows()
+
+    def results(self):
+        return self._results
+
+    def get_result(self, row: int) -> ResultRow:
+        return self._results[row]
+
+
+class OverheadTableModel(QAbstractTableModel):
+    def __init__(self):
+        super().__init__()
+        self._currentResult: Optional[NrResult] = None
+
+    def rowCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
+        return 10
+
+    def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
+        return 2
+
+    def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
+             role: int = ...) -> Any:
+        if role == Qt.TextAlignmentRole:
+            return Qt.AlignRight  # TODO: AlignVCenter as well
+
+        if role == Qt.DisplayRole and self._currentResult is not None:
+            if index.column() == 0:
+                if index.row() == 0:
+                    return self._currentResult.psfch
+                elif index.row() == 1:
+                    return self._currentResult.csi_rs
+                elif index.row() == 2:
+                    return self._currentResult.pt_rs
+                elif index.row() == 3:
+                    return self._currentResult.pscch
+                elif index.row() == 4:
+                    return self._currentResult.sci2
+                elif index.row() == 5:
+                    return self._currentResult.dm_rs
+                elif index.row() == 6:
+                    return self._currentResult.agc
+                elif index.row() == 7:
+                    return self._currentResult.guard
+                elif index.row() == 8:
+                    return self._currentResult.s_ssb
+                elif index.row() == 9:
+                    return self._currentResult.total
+            elif index.column() == 1:
+                if index.row() == 0:
+                    return self._currentResult.psfch / self._currentResult.resource_total * 100
+                elif index.row() == 1:
+                    return self._currentResult.csi_rs / self._currentResult.resource_total * 100
+                elif index.row() == 2:
+                    return self._currentResult.pt_rs / self._currentResult.resource_total * 100
+                elif index.row() == 3:
+                    return self._currentResult.pscch / self._currentResult.resource_total * 100
+                elif index.row() == 4:
+                    return self._currentResult.sci2 / self._currentResult.resource_total * 100
+                elif index.row() == 5:
+                    return self._currentResult.dm_rs / self._currentResult.resource_total * 100
+                elif index.row() == 6:
+                    return self._currentResult.agc / self._currentResult.resource_total * 100
+                elif index.row() == 7:
+                    return self._currentResult.guard / self._currentResult.resource_total * 100
+                elif index.row() == 8:
+                    return self._currentResult.s_ssb / self._currentResult.resource_total * 100
+                elif index.row() == 9:
+                    return 100.00
+
+    def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
+        if role != Qt.DisplayRole:
+            return
+
+        if orientation == Qt.Vertical:
+            if section == 0:
+                return "PSFCH"
+            elif section == 1:
+                return "CSI-RS"
+            elif section == 2:
+                return "PT-RS"
+            elif section == 3:
+                return "PSCCH"
+            elif section == 4:
+                return "SCI2"
+            elif section == 5:
+                return "DM-RS"
+            elif section == 6:
+                return "AGC"
+            elif section == 7:
+                return "Guard"
+            elif section == 8:
+                return "S-SSB"
+            elif section == 9:
+                return "Total"
+
+        # TODO: Horizontal Headers
+        if orientation == Qt.Horizontal:
+            if section == 0:
+                return "Overhead Components"
+            elif section == 1:
+                return "Percent Total Overhead"
+
+    def set_result(self, nr_result: NrResult):
+        self._currentResult = nr_result
+        self.dataChanged.emit(QModelIndex(), QModelIndex())
 
 
 class ResultRowLte:
@@ -251,6 +355,13 @@ class MainWindow(QMainWindow):
         self.ui.tableResult.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
 
+        # NR Overhead Table
+
+        self.tableModelOverHead = OverheadTableModel()
+        self.ui.tableOverHead.setModel(self.tableModelOverHead)
+        self.ui.tableOverHead.horizontalHeader().setStretchLastSection(True)
+        self.ui.tableOverHead.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
+
         # LTE Result Table
 
         self.tableModelLte = ResultTableLteModel()
@@ -260,6 +371,8 @@ class MainWindow(QMainWindow):
 
         # Signals
         self.ui.btnCalculate.clicked.connect(self.btn_clicked)
+        self.ui.btnToggleOverhead.clicked.connect(self.toggle_overhead_table_clicked)
+        self.ui.tableResult.clicked.connect(self.row_clicked_nr)
         self.ui.comboNumerology.activated.connect(self.numerology_changed)
         self.ui.comboHarq.activated.connect(self.harq_mode_changed)
         self.ui.btnCalculateLte.clicked.connect(self.btn_clicked_lte)
@@ -311,7 +424,7 @@ class MainWindow(QMainWindow):
             feedback_channel_period = self.ui.comboFeedbackChannel.currentData(Qt.UserRole)
 
         try:
-            data_rate = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=layers,
+            nr_result = calculate_nr(numerology=numerology, resource_blocks=resource_blocks, layers=layers,
                                      ue_max_modulation=max_modulation,
                                      harq_mode=harq_mode, blind_transmissions=blind_retransmissions,
                                      feedback_channel_period=feedback_channel_period)
@@ -328,7 +441,7 @@ class MainWindow(QMainWindow):
             layers=layers,
             max_modulation=max_modulation,
             harq_mode=harq_mode,
-            result=data_rate,
+            nr_result=nr_result,
             blind_retransmissions=blind_retransmissions,
             feedback_channel_period=feedback_channel_period,
         )
@@ -354,3 +467,16 @@ class MainWindow(QMainWindow):
             pscch_size=pscch_size,
             result=data_rate
         )
+
+    @QtCore.Slot()
+    def toggle_overhead_table_clicked(self):
+        self.ui.tableOverHead.setVisible(not self.ui.tableOverHead.isVisible())
+        if self.ui.tableOverHead.isVisible():
+            self.ui.btnToggleOverhead.setText("⮟ Toggle Overhead")
+        else:
+            self.ui.btnToggleOverhead.setText("⮞ Toggle Overhead")
+
+    @QtCore.Slot()
+    def row_clicked_nr(self, index: QModelIndex):
+        result = self.tableModel.get_result(index.row())
+        self.tableModelOverHead.set_result(result.nr_result)

@@ -123,11 +123,26 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addLayout(self.verticalLayout)
 
+        self.verticalLayout_4 = QVBoxLayout()
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.tableResult = QTableView(self.tabNr)
         self.tableResult.setObjectName(u"tableResult")
         self.tableResult.horizontalHeader().setVisible(True)
 
-        self.horizontalLayout.addWidget(self.tableResult)
+        self.verticalLayout_4.addWidget(self.tableResult)
+
+        self.btnToggleOverhead = QPushButton(self.tabNr)
+        self.btnToggleOverhead.setObjectName(u"btnToggleOverhead")
+
+        self.verticalLayout_4.addWidget(self.btnToggleOverhead)
+
+        self.tableOverHead = QTableView(self.tabNr)
+        self.tableOverHead.setObjectName(u"tableOverHead")
+
+        self.verticalLayout_4.addWidget(self.tableOverHead)
+
+
+        self.horizontalLayout.addLayout(self.verticalLayout_4)
 
         self.tabWidget.addTab(self.tabNr, "")
         self.tabLte = QWidget()
@@ -212,7 +227,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1028, 23))
+        self.menubar.setGeometry(QRect(0, 0, 1028, 26))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -237,6 +252,7 @@ class Ui_MainWindow(object):
         self.lblBlindTransmissions.setText(QCoreApplication.translate("MainWindow", u"Blind Transmissions", None))
         self.lblFeedbackChannel.setText(QCoreApplication.translate("MainWindow", u"Feedback Channel Period", None))
         self.btnCalculate.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
+        self.btnToggleOverhead.setText(QCoreApplication.translate("MainWindow", u"\u2b9f Toggle Overhead Table", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabNr), QCoreApplication.translate("MainWindow", u"NR", None))
         self.lblMcs.setText(QCoreApplication.translate("MainWindow", u"MCS", None))
         self.lblResourceBlocks_2.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))

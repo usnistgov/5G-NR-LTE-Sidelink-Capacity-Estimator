@@ -47,9 +47,28 @@ class OutOfRangeError(ValueError):
         super().__init__(f"Value for field: `{field_name}`: {value} out of range: [{minimum}, {maximum}]")
 
 
+class NrResult:
+    def __init__(self, data_rate: float, resource_total: float, psfch: float, pscch: float, sci2: float, dm_rs: float,
+                 agc: float, guard: float, s_ssb: float):
+        self.resource_total = resource_total
+        self.data_rate = data_rate
+        self.psfch = psfch
+        self.csi_rs = 0
+        self.pt_rs = 0
+        self.pscch = pscch
+        self.sci2 = sci2
+        self.dm_rs = dm_rs
+        self.agc = agc
+        self.guard = guard
+        self.s_ssb = s_ssb
+
+        # This excludes `csi_rs` & `pt_rs`, since they're both 0
+        self.total = data_rate + psfch + pscch + sci2 + dm_rs + agc + guard + s_ssb
+
+
 def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modulation: int,
                  harq_mode: HarqMode, blind_transmissions: Optional[int],
-                 feedback_channel_period: Optional[int]) -> float:
+                 feedback_channel_period: Optional[int]) -> NrResult:
     # ----- Range checks -----
     # numerology
     if numerology != 0 and numerology != 1:
@@ -155,7 +174,8 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     data_rate = 1e-6 * layers * modulation_order * coding_rate * resource_blocks * 12 * (
             1 - overhead_ratio) / symbol_duration
 
-    return data_rate
+    return NrResult(data_rate=data_rate, resource_total=resource_total, psfch=re_feedback, pscch=re_sci1, sci2=re_sci2,
+                    dm_rs=dmrs, agc=agc, guard=guard, s_ssb=ssb_per_slot)
 
 
 def calculate_lte(mcs: int, resource_blocks: int, period_size: int, control_channel_size: int):

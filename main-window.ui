@@ -137,11 +137,25 @@
          </layout>
         </item>
         <item>
-         <widget class="QTableView" name="tableResult">
-          <attribute name="horizontalHeaderVisible">
-           <bool>true</bool>
-          </attribute>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QTableView" name="tableResult">
+            <attribute name="horizontalHeaderVisible">
+             <bool>true</bool>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnToggleOverhead">
+            <property name="text">
+             <string>⮟ Toggle Overhead Table</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableView" name="tableOverHead"/>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -263,7 +277,7 @@
      <x>0</x>
      <y>0</y>
      <width>1028</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
