@@ -34,16 +34,17 @@ python main.py
 Follow the [Installation](#installation) instructions above
 
 ## Compiling UI Files
-If the UI is updated, then the Python class(es) need to be recompiled, run the
+If the UI is updated, then the UI files need to be recompiled, run the
 following in the virtual environment
 
 ```shell
-pyside2-uic  main-window.ui > ui_mainwindow.py
+pyside2-uic main-window.ui > ui_mainwindow.py
+pyside2-uic csv_dialog.ui > ui_csvdialog.py
 ```
 
 The UI compiler makes a slight mistake with an import in the generated file,
 correct it with the shell command below
 
 ```shell
-sed -i 's/from PySide2.QtCharts import QtCharts.QChartView/from PySide2.QtCharts import */g' ui_mainwindow.py
+sed -i 's/from PySide2.QtCharts import QtCharts.QChartView/from PySide2.QtCharts import QtCharts/g' ui_mainwindow.py
 ```

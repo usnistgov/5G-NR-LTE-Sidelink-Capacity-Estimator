@@ -385,8 +385,20 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>&amp;Export</string>
+    </property>
+    <addaction name="action_CSV"/>
+   </widget>
+   <addaction name="menuExport"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_CSV">
+   <property name="text">
+    <string>&amp;CSV</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

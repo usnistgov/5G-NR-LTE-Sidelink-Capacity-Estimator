@@ -26,15 +26,42 @@
 # software is not intended to be used in any situation where a failure could
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
+import csv
 
 from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
-from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox
+from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
 from PySide2.QtCharts import *
 from ui_mainwindow import Ui_MainWindow
+from ui_csvdialog import Ui_CsvDialog
 from enum import Enum
+
+
+class ExportTable(Enum):
+    NR = 0
+    LTE = 1
+
+
+class CsvDialog(QDialog):
+    def __init__(self, parent=None):
+        super(CsvDialog, self).__init__(parent)
+        self.ui = Ui_CsvDialog()
+        self.ui.setupUi(self)
+
+        self.ui.comboTable.addItem("NR", userData=ExportTable.NR.value)
+        self.ui.comboTable.addItem("LTE", userData=ExportTable.LTE.value)
+
+        # Have one selected by default
+        self.ui.comboTable.setCurrentIndex(self.ui.comboTable.findData(ExportTable.NR.value, Qt.UserRole))
+
+    def selected_table(self) -> ExportTable:
+        data = self.ui.comboTable.currentData(Qt.UserRole)
+        if data == ExportTable.NR.value:
+            return ExportTable.NR
+        else:
+            return ExportTable.LTE
 
 
 class NrTableColumn(Enum):
@@ -82,6 +109,10 @@ class ResultRow:
         self.nr_result = nr_result
         self.blind_retransmissions = blind_retransmissions
         self.feedback_channel_period = feedback_channel_period
+
+    def to_csv(self):
+        return [self.run, self.numerology, self.resource_blocks, self.layers, self.max_modulation, str(self.harq_mode),
+                self.blind_retransmissions, self.feedback_channel_period, self.nr_result.data_rate]
 
 
 class ResultTableModel(QAbstractTableModel):
@@ -313,6 +344,9 @@ class ResultRowLte:
         self.pscch_size = pscch_size
         self.result = result
 
+    def to_csv(self):
+        return [self.run, self.mcs, self.resource_blocks, self.period_size, self.pscch_size, self.result]
+
 
 class ResultTableLteModel(QAbstractTableModel):
     def __init__(self):
@@ -454,6 +488,34 @@ class MainWindow(QMainWindow):
 
         self.ui.comboLteChartXAxis.activated.connect(self.chart_lte_axis_changed)
         self.ui.comboLteChartYAxis.activated.connect(self.chart_lte_axis_changed)
+
+        self.ui.action_CSV.triggered.connect(self.export_csv)
+
+    @QtCore.Slot()
+    def export_csv(self):
+        dialog = CsvDialog(self)
+        if not dialog.exec_():
+            return
+        file = QFileDialog.getSaveFileName(self, caption="Save CSV", dir="export.csv", filter="CSV (*.csv)")
+        # No file selected
+        if not file[0]:
+            return
+        with open(file[0], mode='w') as csv_file:
+            selected_table = dialog.selected_table()
+            writer = csv.writer(csv_file, delimiter=',', quotechar='"')
+
+            results = []
+            if selected_table == ExportTable.NR:
+                if dialog.ui.checkHeaders.isChecked():
+                    writer.writerow(list(NrTableColumn))
+                results = self.tableModel.results()
+            else:
+                if dialog.ui.checkHeaders.isChecked():
+                    writer.writerow(list(LteTableColumn))
+                results = self.tableModelLte.results()
+
+            for result in results:
+                writer.writerow(result.to_csv())
 
     @QtCore.Slot()
     def numerology_changed(self):  # We don't need the new index, so ignore it

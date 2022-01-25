@@ -20,6 +20,8 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1028, 698)
+        self.action_CSV = QAction(MainWindow)
+        self.action_CSV.setObjectName(u"action_CSV")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout_2 = QHBoxLayout(self.centralwidget)
@@ -323,10 +325,15 @@ class Ui_MainWindow(object):
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 1028, 26))
+        self.menuExport = QMenu(self.menubar)
+        self.menuExport.setObjectName(u"menuExport")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+
+        self.menubar.addAction(self.menuExport.menuAction())
+        self.menuExport.addAction(self.action_CSV)
 
         self.retranslateUi(MainWindow)
 
@@ -338,6 +345,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Sidelink Capacity Tool", None))
+        self.action_CSV.setText(QCoreApplication.translate("MainWindow", u"&CSV", None))
         self.lblNumerology.setText(QCoreApplication.translate("MainWindow", u"Numerology", None))
         self.lblResourceBlocks.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))
         self.spinResourceBlocksNr.setSuffix(QCoreApplication.translate("MainWindow", u"PRB", None))
@@ -364,5 +372,6 @@ class Ui_MainWindow(object):
         self.lblLteChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
         self.lblLteChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabCharts), QCoreApplication.translate("MainWindow", u"Charts", None))
+        self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"&Export", None))
     # retranslateUi
 
