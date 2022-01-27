@@ -69,7 +69,7 @@ class NrResult:
         self.s_ssb = s_ssb
 
         # This excludes `csi_rs` & `pt_rs`, since they're both 0
-        self.total = data_rate + psfch + pscch + sci2 + dm_rs + agc + guard + s_ssb
+        self.overhead_total = psfch + pscch + sci2 + dm_rs + agc + guard + s_ssb
 
 
 def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modulation: int,

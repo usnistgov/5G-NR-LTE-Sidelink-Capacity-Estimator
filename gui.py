@@ -251,26 +251,26 @@ class OverheadTableModel(QAbstractTableModel):
                 elif index.row() == 8:
                     return self._currentResult.s_ssb
                 elif index.row() == 9:
-                    return self._currentResult.total
+                    return self._currentResult.overhead_total
             elif index.column() == 1:
                 if index.row() == 0:
-                    return self._currentResult.psfch / self._currentResult.resource_total * 100
+                    return self._currentResult.psfch / self._currentResult.overhead_total * 100
                 elif index.row() == 1:
-                    return self._currentResult.csi_rs / self._currentResult.resource_total * 100
+                    return self._currentResult.csi_rs / self._currentResult.overhead_total * 100
                 elif index.row() == 2:
-                    return self._currentResult.pt_rs / self._currentResult.resource_total * 100
+                    return self._currentResult.pt_rs / self._currentResult.overhead_total * 100
                 elif index.row() == 3:
-                    return self._currentResult.pscch / self._currentResult.resource_total * 100
+                    return self._currentResult.pscch / self._currentResult.overhead_total * 100
                 elif index.row() == 4:
-                    return self._currentResult.sci2 / self._currentResult.resource_total * 100
+                    return self._currentResult.sci2 / self._currentResult.overhead_total * 100
                 elif index.row() == 5:
-                    return self._currentResult.dm_rs / self._currentResult.resource_total * 100
+                    return self._currentResult.dm_rs / self._currentResult.overhead_total * 100
                 elif index.row() == 6:
-                    return self._currentResult.agc / self._currentResult.resource_total * 100
+                    return self._currentResult.agc / self._currentResult.overhead_total * 100
                 elif index.row() == 7:
-                    return self._currentResult.guard / self._currentResult.resource_total * 100
+                    return self._currentResult.guard / self._currentResult.overhead_total * 100
                 elif index.row() == 8:
-                    return self._currentResult.s_ssb / self._currentResult.resource_total * 100
+                    return self._currentResult.s_ssb / self._currentResult.overhead_total * 100
                 elif index.row() == 9:
                     return 100.00
 
