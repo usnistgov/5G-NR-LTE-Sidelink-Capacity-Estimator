@@ -177,7 +177,7 @@ class Ui_MainWindow(object):
         self.spinResourceBlocksLte = QSpinBox(self.tabLte)
         self.spinResourceBlocksLte.setObjectName(u"spinResourceBlocksLte")
         self.spinResourceBlocksLte.setMinimum(1)
-        self.spinResourceBlocksLte.setMaximum(128)
+        self.spinResourceBlocksLte.setMaximum(110)
         self.spinResourceBlocksLte.setValue(50)
 
         self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.spinResourceBlocksLte)
@@ -344,7 +344,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Sidelink Capacity Tool", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"LTE/NR Maximum Sidelink Capacity Estimator", None))
         self.action_CSV.setText(QCoreApplication.translate("MainWindow", u"&CSV", None))
         self.lblNumerology.setText(QCoreApplication.translate("MainWindow", u"Numerology", None))
         self.lblResourceBlocks.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))

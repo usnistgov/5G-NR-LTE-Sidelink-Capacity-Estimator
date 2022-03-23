@@ -32,7 +32,7 @@ from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeErro
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
-from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
+from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog, QAbstractItemView
 from PySide2.QtCharts import *
 from ui_mainwindow import Ui_MainWindow
 from ui_csvdialog import Ui_CsvDialog
@@ -93,7 +93,7 @@ class NrTableColumn(Enum):
         elif self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
             return "Feedback Channel Period"
         elif self is NrTableColumn.DATA_RATE:
-            return "Data Rate (Mbps)"
+            return "Data Rate (Mb/s)"
 
 
 class ResultRow:
@@ -186,7 +186,7 @@ class ResultTableModel(QAbstractTableModel):
         elif section == 7:
             return "Feedback Channel Period"
         elif section == 8:
-            return "Data Rate (Mbps)"
+            return "Data Rate (Mb/s)"
 
     def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
@@ -328,11 +328,11 @@ class LteTableColumn(Enum):
         elif self is LteTableColumn.RESOURCE_BLOCKS:
             return "Resource Blocks (PRB)"
         elif self is LteTableColumn.PERIOD_SIZE:
-            return "Period Size [SF]"
+            return "Period Size (subframe)"
         elif self is LteTableColumn.PSCCH_SIZE:
-            return "PSCCH Size [SF]"
+            return "PSCCH Size (subframe)"
         elif self is LteTableColumn.DATA_RATE:
-            return "Data Rate (Mbps)"
+            return "Data Rate (Mb/s)"
 
 
 class ResultRowLte:
@@ -391,11 +391,11 @@ class ResultTableLteModel(QAbstractTableModel):
         elif section == 2:
             return "Resource Blocks (PRB)"
         elif section == 3:
-            return "Period Size [SF]"
+            return "Period Size (subframe)"
         elif section == 4:
-            return "PSCCH Size [SF]"
+            return "PSCCH Size (subframe)"
         elif section == 5:
-            return "Data Rate (Mbps)"
+            return "Data Rate (Mb/s)"
 
     def append(self, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
         new_result = ResultRowLte(
@@ -458,6 +458,8 @@ class MainWindow(QMainWindow):
 
         self.tableModel = ResultTableModel()
         self.ui.tableResult.setModel(self.tableModel)
+        self.ui.tableResult.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.ui.tableResult.setSelectionMode(QAbstractItemView.SingleSelection)
         self.ui.tableResult.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
 
@@ -465,6 +467,7 @@ class MainWindow(QMainWindow):
 
         self.tableModelOverHead = OverheadTableModel()
         self.ui.tableOverHead.setModel(self.tableModelOverHead)
+        self.ui.tableOverHead.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.ui.tableOverHead.horizontalHeader().setStretchLastSection(True)
         self.ui.tableOverHead.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
 
@@ -472,6 +475,8 @@ class MainWindow(QMainWindow):
 
         self.tableModelLte = ResultTableLteModel()
         self.ui.tableResultLte.setModel(self.tableModelLte)
+        self.ui.tableResultLte.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.ui.tableResultLte.setSelectionMode(QAbstractItemView.SingleSelection)
         self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
 

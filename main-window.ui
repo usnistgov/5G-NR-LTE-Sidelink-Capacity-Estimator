@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Sidelink Capacity Tool</string>
+   <string>LTE/NR Maximum Sidelink Capacity Estimator</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -198,7 +198,7 @@
                <number>1</number>
               </property>
               <property name="maximum">
-               <number>128</number>
+               <number>110</number>
               </property>
               <property name="value">
                <number>50</number>
