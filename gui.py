@@ -31,6 +31,8 @@ import csv
 from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
+import PySide2.QtGui as QtGui
+import PySide2.QtWidgets as QtWidgets
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
 from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
 from PySide2.QtCharts import *
@@ -460,6 +462,7 @@ class MainWindow(QMainWindow):
         self.ui.tableResult.setModel(self.tableModel)
         self.ui.tableResult.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
+        self.ui.tableResult.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
 
         # NR Overhead Table
 
@@ -474,6 +477,7 @@ class MainWindow(QMainWindow):
         self.ui.tableResultLte.setModel(self.tableModelLte)
         self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
+        self.ui.tableResultLte.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
 
         # Signals
         self.ui.btnCalculate.clicked.connect(self.btn_clicked)
