@@ -34,6 +34,16 @@ python main.py
 Follow the [Installation](#installation) instructions above
 
 ## Compiling UI Files
+
+### The Quick Way
+There's a convenience script to run the following commands,
+be sure virtual environment is activated.
+```shell
+./compile_ui.sh
+```
+
+### Manual
+
 If the UI is updated, then the UI files need to be recompiled, run the
 following in the virtual environment
 
