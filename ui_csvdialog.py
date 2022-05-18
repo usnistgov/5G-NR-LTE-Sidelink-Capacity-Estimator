@@ -18,7 +18,7 @@ class Ui_CsvDialog(object):
         if not CsvDialog.objectName():
             CsvDialog.setObjectName(u"CsvDialog")
         CsvDialog.setWindowModality(Qt.ApplicationModal)
-        CsvDialog.resize(395, 139)
+        CsvDialog.resize(415, 152)
         CsvDialog.setStyleSheet(u"QCheckBox::indicator {\n"
 "     width: 20px;\n"
 "     height: 20px;\n"
@@ -35,36 +35,60 @@ class Ui_CsvDialog(object):
 
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.comboTable)
 
-        self.lblHeader = QLabel(CsvDialog)
-        self.lblHeader.setObjectName(u"lblHeader")
-
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.lblHeader)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer)
-
-        self.checkHeaders = QCheckBox(CsvDialog)
-        self.checkHeaders.setObjectName(u"checkHeaders")
-        self.checkHeaders.setChecked(True)
-
-        self.horizontalLayout.addWidget(self.checkHeaders)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer_2)
-
-
-        self.formLayout.setLayout(1, QFormLayout.FieldRole, self.horizontalLayout)
-
         self.buttons = QDialogButtonBox(CsvDialog)
         self.buttons.setObjectName(u"buttons")
         self.buttons.setOrientation(Qt.Horizontal)
         self.buttons.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
 
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.buttons)
+        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.buttons)
+
+        self.hlHeader = QHBoxLayout()
+        self.hlHeader.setObjectName(u"hlHeader")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.hlHeader.addItem(self.horizontalSpacer)
+
+        self.checkOverhead = QCheckBox(CsvDialog)
+        self.checkOverhead.setObjectName(u"checkOverhead")
+        self.checkOverhead.setChecked(True)
+
+        self.hlHeader.addWidget(self.checkOverhead)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.hlHeader.addItem(self.horizontalSpacer_2)
+
+
+        self.formLayout.setLayout(3, QFormLayout.FieldRole, self.hlHeader)
+
+        self.hlOverhead = QHBoxLayout()
+        self.hlOverhead.setObjectName(u"hlOverhead")
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.hlOverhead.addItem(self.horizontalSpacer_3)
+
+        self.checkHeaders = QCheckBox(CsvDialog)
+        self.checkHeaders.setObjectName(u"checkHeaders")
+        self.checkHeaders.setChecked(True)
+
+        self.hlOverhead.addWidget(self.checkHeaders)
+
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.hlOverhead.addItem(self.horizontalSpacer_4)
+
+
+        self.formLayout.setLayout(2, QFormLayout.FieldRole, self.hlOverhead)
+
+        self.lblHeader = QLabel(CsvDialog)
+        self.lblHeader.setObjectName(u"lblHeader")
+
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.lblHeader)
+
+        self.lblOverhead = QLabel(CsvDialog)
+        self.lblOverhead.setObjectName(u"lblOverhead")
+
+        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.lblOverhead)
 
 
         self.retranslateUi(CsvDialog)
@@ -77,7 +101,9 @@ class Ui_CsvDialog(object):
     def retranslateUi(self, CsvDialog):
         CsvDialog.setWindowTitle(QCoreApplication.translate("CsvDialog", u"Export CSV", None))
         self.lblTable.setText(QCoreApplication.translate("CsvDialog", u"Table", None))
-        self.lblHeader.setText(QCoreApplication.translate("CsvDialog", u"Include Header Row", None))
+        self.checkOverhead.setText("")
         self.checkHeaders.setText("")
+        self.lblHeader.setText(QCoreApplication.translate("CsvDialog", u"Include Header Row", None))
+        self.lblOverhead.setText(QCoreApplication.translate("CsvDialog", u"Include Overhead Values", None))
     # retranslateUi
 

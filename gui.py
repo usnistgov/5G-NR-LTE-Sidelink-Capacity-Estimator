@@ -58,6 +58,12 @@ class CsvDialog(QDialog):
         # Have one selected by default
         self.ui.comboTable.setCurrentIndex(self.ui.comboTable.findData(ExportTable.NR.value, Qt.UserRole))
 
+        self.ui.comboTable.currentIndexChanged.connect(self.table_changed)
+
+    def table_changed(self):
+        # Only enable the Overhead checkbox for the NR table
+        self.ui.checkOverhead.setEnabled(self.ui.comboTable.currentData(Qt.UserRole) == ExportTable.NR.value)
+
     def selected_table(self) -> ExportTable:
         data = self.ui.comboTable.currentData(Qt.UserRole)
         if data == ExportTable.NR.value:
@@ -115,6 +121,35 @@ class ResultRow:
     def to_csv(self):
         return [self.run, self.numerology, self.resource_blocks, self.layers, self.max_modulation, str(self.harq_mode),
                 self.blind_retransmissions, self.feedback_channel_period, self.nr_result.data_rate]
+
+    def _overhead_row(self, value: float):
+        return [value, value / self.nr_result.overhead_total * 100, value / self.nr_result.resource_total * 100]
+
+    def to_csv_overhead(self):
+        result = self.nr_result
+        data = self.to_csv()
+        # PSFCH
+        data.extend(self._overhead_row(result.psfch))
+        # CSI-RS
+        data.extend(self._overhead_row(result.csi_rs))
+        # PT-RS
+        data.extend(self._overhead_row(result.pt_rs))
+        # PSCCH
+        data.extend(self._overhead_row(result.pscch))
+        # SCI2
+        data.extend(self._overhead_row(result.sci2))
+        # DM-RS
+        data.extend(self._overhead_row(result.dm_rs))
+        # AGC
+        data.extend(self._overhead_row(result.agc))
+        # Guard
+        data.extend(self._overhead_row(result.guard))
+        # S-SSB
+        data.extend(self._overhead_row(result.s_ssb))
+        # Total
+        data.append(result.overhead_total)
+
+        return data
 
 
 class ResultTableModel(QAbstractTableModel):
@@ -226,6 +261,95 @@ class ResultTableModel(QAbstractTableModel):
 
     def get_result(self, row: int) -> ResultRow:
         return self._results[row]
+
+
+class OverheadTableRow(Enum):
+    PSFCH = 0
+    PSFCH_PERCENT_TOTAL_OH = 1
+    PSFCH_PERCENT_TOTAL = 2
+    CSI_RS = 3
+    CSI_RS_PERCENT_TOTAL_OH = 4
+    CSI_RS_PERCENT_TOTAL = 5
+    PT_RS = 6
+    PT_RS_PERCENT_TOTAL_OH = 7
+    PT_RS_PERCENT_TOTAL = 8
+    PSCCH = 9
+    PSCCH_PERCENT_TOTAL_OH = 10
+    PSCCH_PERCENT_TOTAL = 11
+    SCI2 = 12
+    SCI2_PERCENT_TOTAL_OH = 13
+    SCI2_PERCENT_TOTAL = 14
+    DM_RS = 15
+    DM_RS_PERCENT_TOTAL_OH = 16
+    DM_RS_PERCENT_TOTAL = 17
+    AGC = 18
+    AGC_PERCENT_TOTAL_OH = 19
+    AGC_PERCENT_TOTAL = 20
+    GUARD = 21
+    GUARD_PERCENT_TOTAL_OH = 22
+    GUARD_PERCENT_TOTAL = 23
+    S_SSB = 24
+    S_SSB_PERCENT_TOTAL_OH = 25
+    S_SSB_PERCENT_TOTAL = 26
+    TOTAL_OVERHEAD = 27
+
+    def __str__(self) -> str:
+        if self is OverheadTableRow.PSFCH:
+            return "PSFCH"
+        elif self is OverheadTableRow.PSFCH_PERCENT_TOTAL_OH:
+            return "PSFCH % Total Overhead"
+        elif self is OverheadTableRow.PSFCH_PERCENT_TOTAL:
+            return "PSFCH % Total"
+        elif self is OverheadTableRow.CSI_RS:
+            return "CSI-RS"
+        elif self is OverheadTableRow.CSI_RS_PERCENT_TOTAL_OH:
+            return "CSI-RS % Total Overhead"
+        elif self is OverheadTableRow.CSI_RS_PERCENT_TOTAL:
+            return "CSI-RS % Total"
+        elif self is OverheadTableRow.PT_RS:
+            return "PT-RS"
+        elif self is OverheadTableRow.PT_RS_PERCENT_TOTAL_OH:
+            return "PT-RS % Total Overhead"
+        elif self is OverheadTableRow.PT_RS_PERCENT_TOTAL:
+            return "PT-RS % Total"
+        elif self is OverheadTableRow.PSCCH:
+            return "PSCCH"
+        elif self is OverheadTableRow.PSCCH_PERCENT_TOTAL_OH:
+            return "PSCCH % Total Overhead"
+        elif self is OverheadTableRow.PSCCH_PERCENT_TOTAL:
+            return "PSCCH % Total"
+        elif self is OverheadTableRow.SCI2:
+            return "SCI2"
+        elif self is OverheadTableRow.SCI2_PERCENT_TOTAL_OH:
+            return "SCI2 % Total Overhead"
+        elif self is OverheadTableRow.SCI2_PERCENT_TOTAL:
+            return "SCI2 % Total"
+        elif self is OverheadTableRow.DM_RS:
+            return "DM-RS"
+        elif self is OverheadTableRow.DM_RS_PERCENT_TOTAL_OH:
+            return "DM-RS % Total Overhead"
+        elif self is OverheadTableRow.DM_RS_PERCENT_TOTAL:
+            return "DM-RS % Total"
+        elif self is OverheadTableRow.AGC:
+            return "AGC"
+        elif self is OverheadTableRow.AGC_PERCENT_TOTAL_OH:
+            return "AGC % Total Overhead"
+        elif self is OverheadTableRow.AGC_PERCENT_TOTAL:
+            return "AGC % Total"
+        elif self is OverheadTableRow.GUARD:
+            return "Guard"
+        elif self is OverheadTableRow.GUARD_PERCENT_TOTAL_OH:
+            return "Guard % Total Overhead"
+        elif self is OverheadTableRow.GUARD_PERCENT_TOTAL:
+            return "Guard % Total"
+        elif self is OverheadTableRow.S_SSB:
+            return "S-SSB"
+        elif self is OverheadTableRow.S_SSB_PERCENT_TOTAL_OH:
+            return "S-SSB % Total Overhead"
+        elif self is OverheadTableRow.S_SSB_PERCENT_TOTAL:
+            return "S-SSB % Total"
+        elif self is OverheadTableRow.TOTAL_OVERHEAD:
+            return "Total Overhead"
 
 
 class OverheadTableModel(QAbstractTableModel):
@@ -569,7 +693,10 @@ class MainWindow(QMainWindow):
             results = []
             if selected_table == ExportTable.NR:
                 if dialog.ui.checkHeaders.isChecked():
-                    writer.writerow(list(NrTableColumn))
+                    headers = list(NrTableColumn)
+                    if dialog.ui.checkOverhead.isChecked():
+                        headers.extend(list(OverheadTableRow))
+                    writer.writerow(headers)
                 results = self.tableModel.results()
             else:
                 if dialog.ui.checkHeaders.isChecked():
@@ -577,7 +704,10 @@ class MainWindow(QMainWindow):
                 results = self.tableModelLte.results()
 
             for result in results:
-                writer.writerow(result.to_csv())
+                if selected_table == ExportTable.NR and dialog.ui.checkOverhead.isChecked():
+                    writer.writerow(result.to_csv_overhead())
+                else:
+                    writer.writerow(result.to_csv())
 
     @QtCore.Slot()
     def numerology_changed(self):  # We don't need the new index, so ignore it
