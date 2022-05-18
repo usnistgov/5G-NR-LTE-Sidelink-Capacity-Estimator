@@ -256,6 +256,12 @@ class ResultTableModel(QAbstractTableModel):
             del self._results[row]
             self.endRemoveRows()
 
+    def reset(self):
+        self.beginResetModel()
+        self._results = []
+        self._run_index = 0
+        self.endResetModel()
+
     def results(self):
         return self._results
 
@@ -561,6 +567,12 @@ class ResultTableLteModel(QAbstractTableModel):
             del self._results[row]
             self.endRemoveRows()
 
+    def reset(self):
+        self.beginResetModel()
+        self._results = []
+        self._run_index = 0
+        self.endResetModel()
+
     def results(self):
         return self._results
 
@@ -641,17 +653,49 @@ class MainWindow(QMainWindow):
         self.ui.comboLteChartXAxis.activated.connect(self.chart_lte_axis_changed)
         self.ui.comboLteChartYAxis.activated.connect(self.chart_lte_axis_changed)
 
+        self.ui.btnClearNr.clicked.connect(self.reset_nr)
+        self.ui.btnClearLte.clicked.connect(self.reset_lte)
+
+        # Edit Menu
+        self.ui.actionDelete_Selected.triggered.connect(self.delete_from_active_table)
+        self.ui.actionClear_Tables.triggered.connect(self.reset_tables)
+
+        # Export Menu
         self.ui.action_CSV.triggered.connect(self.export_csv)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if event.key() == Qt.Key_Delete:
-            if self.ui.tabWidget.currentIndex() == 0:
-                self.delete_from_nr()
-            elif self.ui.tabWidget.currentIndex() == 1:
-                self.delete_from_lte()
-            # Index 3 is the charts tab
+            self.delete_from_active_table()
 
         super().keyPressEvent(event)
+
+    def reset_tables(self):
+        result = QMessageBox.question(self, "Clear Tables", "Are you sure you want to clear all results")
+        if result is not QMessageBox.StandardButton.Yes:
+            return
+        self.reset_nr()
+        self.reset_lte()
+
+    def reset_nr(self):
+        result = QMessageBox.question(self, "Clear NR Table", "Are you sure you want to clear all NR results")
+        if result is not QMessageBox.StandardButton.Yes:
+            return
+        self.tableModel.reset()
+        self.chart_nr_axis_changed()
+
+    def reset_lte(self):
+        result = QMessageBox.question(self, "Clear LTE Table", "Are you sure you want to clear all LTE results")
+        if result is not QMessageBox.StandardButton.Yes:
+            return
+        self.tableModelLte.reset()
+        self.chart_lte_axis_changed()
+
+    def delete_from_active_table(self):
+        if self.ui.tabWidget.currentIndex() == 0:
+            self.delete_from_nr()
+        elif self.ui.tabWidget.currentIndex() == 1:
+            self.delete_from_lte()
+        # Index 3 is the charts tab
 
     def delete_from_nr(self):
         delete_rows = []

@@ -22,6 +22,10 @@ class Ui_MainWindow(object):
         MainWindow.resize(1028, 698)
         self.action_CSV = QAction(MainWindow)
         self.action_CSV.setObjectName(u"action_CSV")
+        self.actionClear_Tables = QAction(MainWindow)
+        self.actionClear_Tables.setObjectName(u"actionClear_Tables")
+        self.actionDelete_Selected = QAction(MainWindow)
+        self.actionDelete_Selected.setObjectName(u"actionDelete_Selected")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout_2 = QHBoxLayout(self.centralwidget)
@@ -135,6 +139,21 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.tableResult)
 
+        self.hlNrButtons = QHBoxLayout()
+        self.hlNrButtons.setObjectName(u"hlNrButtons")
+        self.btnDeleteSelectedNr = QPushButton(self.tabNr)
+        self.btnDeleteSelectedNr.setObjectName(u"btnDeleteSelectedNr")
+
+        self.hlNrButtons.addWidget(self.btnDeleteSelectedNr)
+
+        self.btnClearNr = QPushButton(self.tabNr)
+        self.btnClearNr.setObjectName(u"btnClearNr")
+
+        self.hlNrButtons.addWidget(self.btnClearNr)
+
+
+        self.verticalLayout_4.addLayout(self.hlNrButtons)
+
         self.btnToggleOverhead = QPushButton(self.tabNr)
         self.btnToggleOverhead.setObjectName(u"btnToggleOverhead")
 
@@ -219,10 +238,30 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_3.addLayout(self.verticalLayout_2)
 
+        self.verticalLayout_5 = QVBoxLayout()
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.tableResultLte = QTableView(self.tabLte)
         self.tableResultLte.setObjectName(u"tableResultLte")
 
-        self.horizontalLayout_3.addWidget(self.tableResultLte)
+        self.verticalLayout_5.addWidget(self.tableResultLte)
+
+        self.hlLteButtons = QHBoxLayout()
+        self.hlLteButtons.setObjectName(u"hlLteButtons")
+        self.btnDeleteSelectedLte = QPushButton(self.tabLte)
+        self.btnDeleteSelectedLte.setObjectName(u"btnDeleteSelectedLte")
+
+        self.hlLteButtons.addWidget(self.btnDeleteSelectedLte)
+
+        self.btnClearLte = QPushButton(self.tabLte)
+        self.btnClearLte.setObjectName(u"btnClearLte")
+
+        self.hlLteButtons.addWidget(self.btnClearLte)
+
+
+        self.verticalLayout_5.addLayout(self.hlLteButtons)
+
+
+        self.horizontalLayout_3.addLayout(self.verticalLayout_5)
 
         self.tabWidget.addTab(self.tabLte, "")
         self.tabCharts = QWidget()
@@ -324,16 +363,21 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1028, 26))
+        self.menubar.setGeometry(QRect(0, 0, 1028, 24))
         self.menuExport = QMenu(self.menubar)
         self.menuExport.setObjectName(u"menuExport")
+        self.menuEdit = QMenu(self.menubar)
+        self.menuEdit.setObjectName(u"menuEdit")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuExport.menuAction())
         self.menuExport.addAction(self.action_CSV)
+        self.menuEdit.addAction(self.actionClear_Tables)
+        self.menuEdit.addAction(self.actionDelete_Selected)
 
         self.retranslateUi(MainWindow)
 
@@ -346,6 +390,8 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Sidelink Capacity Tool", None))
         self.action_CSV.setText(QCoreApplication.translate("MainWindow", u"&CSV", None))
+        self.actionClear_Tables.setText(QCoreApplication.translate("MainWindow", u"&Clear Tables", None))
+        self.actionDelete_Selected.setText(QCoreApplication.translate("MainWindow", u"&Delete Selected", None))
         self.lblNumerology.setText(QCoreApplication.translate("MainWindow", u"Numerology", None))
         self.lblResourceBlocks.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))
         self.spinResourceBlocksNr.setSuffix(QCoreApplication.translate("MainWindow", u"PRB", None))
@@ -355,6 +401,8 @@ class Ui_MainWindow(object):
         self.lblBlindTransmissions.setText(QCoreApplication.translate("MainWindow", u"Blind Transmissions", None))
         self.lblFeedbackChannel.setText(QCoreApplication.translate("MainWindow", u"Feedback Channel Period", None))
         self.btnCalculate.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
+        self.btnDeleteSelectedNr.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
+        self.btnClearNr.setText(QCoreApplication.translate("MainWindow", u"Clear Table", None))
         self.btnToggleOverhead.setText(QCoreApplication.translate("MainWindow", u"\u2b9f Toggle Overhead Table", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabNr), QCoreApplication.translate("MainWindow", u"NR", None))
         self.lblMcs.setText(QCoreApplication.translate("MainWindow", u"MCS", None))
@@ -364,6 +412,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Control Channel Size", None))
         self.spinPscchSize.setSuffix(QCoreApplication.translate("MainWindow", u" Subframes", None))
         self.btnCalculateLte.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
+        self.btnDeleteSelectedLte.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
+        self.btnClearLte.setText(QCoreApplication.translate("MainWindow", u"Clear Table", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabLte), QCoreApplication.translate("MainWindow", u"LTE", None))
         self.lblChartNr.setText(QCoreApplication.translate("MainWindow", u"NR", None))
         self.lblNrChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
@@ -372,6 +422,7 @@ class Ui_MainWindow(object):
         self.lblLteChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
         self.lblLteChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabCharts), QCoreApplication.translate("MainWindow", u"Charts", None))
-        self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"&Export", None))
+        self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"E&xport", None))
+        self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", u"&Edit", None))
     # retranslateUi
 

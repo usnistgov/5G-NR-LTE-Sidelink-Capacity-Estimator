@@ -146,6 +146,24 @@
            </widget>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="hlNrButtons">
+            <item>
+             <widget class="QPushButton" name="btnDeleteSelectedNr">
+              <property name="text">
+               <string>Delete Selected</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnClearNr">
+              <property name="text">
+               <string>Clear Table</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QPushButton" name="btnToggleOverhead">
             <property name="text">
              <string>⮟ Toggle Overhead Table</string>
@@ -263,7 +281,29 @@
          </layout>
         </item>
         <item>
-         <widget class="QTableView" name="tableResultLte"/>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QTableView" name="tableResultLte"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hlLteButtons">
+            <item>
+             <widget class="QPushButton" name="btnDeleteSelectedLte">
+              <property name="text">
+               <string>Delete Selected</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnClearLte">
+              <property name="text">
+               <string>Clear Table</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -382,21 +422,39 @@
      <x>0</x>
      <y>0</y>
      <width>1028</width>
-     <height>26</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuExport">
     <property name="title">
-     <string>&amp;Export</string>
+     <string>E&amp;xport</string>
     </property>
     <addaction name="action_CSV"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionClear_Tables"/>
+    <addaction name="actionDelete_Selected"/>
+   </widget>
+   <addaction name="menuEdit"/>
    <addaction name="menuExport"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_CSV">
    <property name="text">
     <string>&amp;CSV</string>
+   </property>
+  </action>
+  <action name="actionClear_Tables">
+   <property name="text">
+    <string>&amp;Clear Tables</string>
+   </property>
+  </action>
+  <action name="actionDelete_Selected">
+   <property name="text">
+    <string>&amp;Delete Selected</string>
    </property>
   </action>
  </widget>
