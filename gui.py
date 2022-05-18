@@ -26,9 +26,9 @@
 # software is not intended to be used in any situation where a failure could
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
-import csv
 
 from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError
+import csv
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
 import PySide2.QtGui as QtGui
@@ -121,6 +121,7 @@ class ResultTableModel(QAbstractTableModel):
     def __init__(self):
         super().__init__()
         self._results: List[ResultRow] = []
+        self._run_index = 0
 
     def rowCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
         return len(self._results)
@@ -194,7 +195,7 @@ class ResultTableModel(QAbstractTableModel):
                harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                feedback_channel_period: Optional[int]):
         new_result = ResultRow(
-            run=len(self._results),
+            run=self._run_index,
             numerology=numerology,
             resource_blocks=resource_blocks,
             layers=layers,
@@ -208,6 +209,17 @@ class ResultTableModel(QAbstractTableModel):
         self.beginInsertRows(QModelIndex(), len(self._results), len(self._results))
         self._results.append(new_result)
         self.endInsertRows()
+        self._run_index += 1
+
+    def remove(self, rows: List[int]):
+        # Sort descending, so we don't change higher indexes
+        # when removing lower rows
+        rows.sort(reverse=True)
+
+        for row in rows:
+            self.beginRemoveRows(QModelIndex(), row, row)
+            del self._results[row]
+            self.endRemoveRows()
 
     def results(self):
         return self._results
@@ -354,6 +366,7 @@ class ResultTableLteModel(QAbstractTableModel):
     def __init__(self):
         super().__init__()
         self._results: List[ResultRowLte] = []
+        self._run_index = 0
 
     def rowCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
         return len(self._results)
@@ -401,7 +414,7 @@ class ResultTableLteModel(QAbstractTableModel):
 
     def append(self, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
         new_result = ResultRowLte(
-            run=len(self._results),
+            run=self._run_index,
             mcs=mcs,
             resource_blocks=resource_blocks,
             period_size=period_size,
@@ -412,6 +425,17 @@ class ResultTableLteModel(QAbstractTableModel):
         self.beginInsertRows(QModelIndex(), len(self._results), len(self._results))
         self._results.append(new_result)
         self.endInsertRows()
+        self._run_index += 1
+
+    def remove(self, rows: List[int]):
+        # Sort descending, so we don't change higher indexes
+        # when removing lower rows
+        rows.sort(reverse=True)
+
+        for row in rows:
+            self.beginRemoveRows(QModelIndex(), row, row)
+            del self._results[row]
+            self.endRemoveRows()
 
     def results(self):
         return self._results
@@ -494,6 +518,40 @@ class MainWindow(QMainWindow):
         self.ui.comboLteChartYAxis.activated.connect(self.chart_lte_axis_changed)
 
         self.ui.action_CSV.triggered.connect(self.export_csv)
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        if event.key() == Qt.Key_Delete:
+            if self.ui.tabWidget.currentIndex() == 0:
+                self.delete_from_nr()
+            elif self.ui.tabWidget.currentIndex() == 1:
+                self.delete_from_lte()
+            # Index 3 is the charts tab
+
+        super().keyPressEvent(event)
+
+    def delete_from_nr(self):
+        delete_rows = []
+        for selected_index in self.ui.tableResult.selectedIndexes():
+            # We'll get an index from every selected cell,
+            # but we only need the row number,
+            # so ignore duplicate row numbers
+            if selected_index.row() not in delete_rows:
+                delete_rows.append(selected_index.row())
+        self.tableModel.remove(delete_rows)
+        # Remove the deleted rows from the chart
+        self.chart_nr_axis_changed()
+
+    def delete_from_lte(self):
+        delete_rows = []
+        for selected_index in self.ui.tableResultLte.selectedIndexes():
+            # We'll get an index from every selected cell,
+            # but we only need the row number,
+            # so ignore duplicate row numbers
+            if selected_index.row() not in delete_rows:
+                delete_rows.append(selected_index.row())
+        self.tableModelLte.remove(delete_rows)
+        # Remove the deleted rows from the chart
+        self.chart_lte_axis_changed()
 
     @QtCore.Slot()
     def export_csv(self):
