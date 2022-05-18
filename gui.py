@@ -649,6 +649,11 @@ class MainWindow(QMainWindow):
         )
         # Update the chart with the new result
         self.chart_nr_axis_changed()
+        # Select the new result
+        self.ui.tableResult.selectionModel().select(self.tableModel.index(self.tableModel.rowCount() - 1, 0),
+                                                    QtCore.QItemSelectionModel.ClearAndSelect | QtCore.QItemSelectionModel.Rows)
+        # Populate the overhead table with our latest result
+        self.tableModelOverHead.set_result(nr_result)
 
     def value_for_axis(self, result: ResultRow, column: NrTableColumn):
         if column == NrTableColumn.RUN_INDEX:
@@ -763,6 +768,8 @@ class MainWindow(QMainWindow):
             result=data_rate
         )
         self.chart_lte_axis_changed()
+        self.ui.tableResultLte.selectionModel().select(self.tableModelLte.index(self.tableModelLte.rowCount() - 1, 0),
+                                                       QtCore.QItemSelectionModel.ClearAndSelect | QtCore.QItemSelectionModel.Rows)
 
     @QtCore.Slot()
     def toggle_overhead_table_clicked(self):
