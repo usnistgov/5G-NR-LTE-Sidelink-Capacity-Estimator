@@ -943,6 +943,7 @@ class MainWindow(QMainWindow):
             return
         except NotAcceptableValueError as e:
             QMessageBox.critical(self, "Value not acceptable", str(e))
+            return
         except ValueError as e:
             QMessageBox.critical(self, "Invalid Value", str(e))
             return
