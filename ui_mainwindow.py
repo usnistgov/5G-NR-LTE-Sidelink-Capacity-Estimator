@@ -136,6 +136,7 @@ class Ui_MainWindow(object):
         self.tableResult = QTableView(self.tabNr)
         self.tableResult.setObjectName(u"tableResult")
         self.tableResult.horizontalHeader().setVisible(True)
+        self.tableResult.horizontalHeader().setHighlightSections(False)
 
         self.verticalLayout_4.addWidget(self.tableResult)
 
@@ -161,6 +162,7 @@ class Ui_MainWindow(object):
 
         self.tableOverHead = QTableView(self.tabNr)
         self.tableOverHead.setObjectName(u"tableOverHead")
+        self.tableOverHead.horizontalHeader().setHighlightSections(False)
 
         self.verticalLayout_4.addWidget(self.tableOverHead)
 
@@ -240,6 +242,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.tableResultLte = QTableView(self.tabLte)
         self.tableResultLte.setObjectName(u"tableResultLte")
+        self.tableResultLte.horizontalHeader().setHighlightSections(False)
 
         self.verticalLayout_5.addWidget(self.tableResultLte)
 
@@ -379,7 +382,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

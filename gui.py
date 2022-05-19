@@ -35,6 +35,7 @@ import PySide2.QtCore as QtCore
 import PySide2.QtGui as QtGui
 import PySide2.QtWidgets as QtWidgets
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
+from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
 from PySide2.QtCharts import *
 from ui_mainwindow import Ui_MainWindow
@@ -205,6 +206,11 @@ class ResultTableModel(QAbstractTableModel):
                 return Qt.AlignRight  # TODO: AlignVCenter as well
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
+        if role == Qt.FontRole:
+            font = QFont()
+            font.setBold(section == 8)
+            return font
+
         if orientation != Qt.Horizontal or role != Qt.DisplayRole:
             return
 
@@ -527,6 +533,11 @@ class ResultTableLteModel(QAbstractTableModel):
             return Qt.AlignRight  # TODO: AlignVCenter as well
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
+        if role == Qt.FontRole:
+            font = QFont()
+            font.setBold(section == 5)
+            return font
+
         if orientation != Qt.Horizontal or role != Qt.DisplayRole:
             return
 
