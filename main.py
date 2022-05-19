@@ -31,7 +31,7 @@ import sys
 from argparse import ArgumentParser
 from gui import MainWindow
 from cli import cli_nr, cli_lte
-from core import OutOfRangeError, calculate_lte
+from core import POSSIBLE_SL_PERIOD_SIZES_LTE, OutOfRangeError, NotAcceptableValueError, calculate_lte
 from PySide2.QtWidgets import QApplication
 
 if __name__ == '__main__':
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
     # LTE Args
     parser.add_argument("--mcs", type=int)
-    parser.add_argument("--period-size", type=int)
+    parser.add_argument("--period-size", choices=POSSIBLE_SL_PERIOD_SIZES_LTE, type=int)
     parser.add_argument("--control-channel-size", type=int)
 
     args = parser.parse_args()
@@ -75,6 +75,8 @@ if __name__ == '__main__':
                 data_rate = cli_lte(args)
         except OutOfRangeError as e:
             sys.exit("Out of range error: " + str(e))
+        except NotAcceptableValueError as e:
+            sys.exit("Not Acceptable value: " + str(e))
         except ValueError as e:
             sys.exit("Value error: " + str(e))
 

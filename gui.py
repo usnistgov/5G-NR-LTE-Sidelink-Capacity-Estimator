@@ -27,7 +27,8 @@
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
 
-from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError
+from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError, NotAcceptableValueError, \
+    POSSIBLE_SL_PERIOD_SIZES_LTE
 import csv
 from typing import List, Union, Any, Optional
 import PySide2.QtCore as QtCore
@@ -97,7 +98,7 @@ class NrTableColumn(Enum):
         elif self is NrTableColumn.HARQ_MODE:
             return "HARQ Mode"
         elif self is NrTableColumn.BLIND_TRANSMISSIONS:
-            return "Blind Transmissions"
+            return "# Blind Transmissions"
         elif self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
             return "Feedback Channel Period"
         elif self is NrTableColumn.DATA_RATE:
@@ -119,8 +120,8 @@ class ResultRow:
         self.feedback_channel_period = feedback_channel_period
 
     def to_csv(self):
-        return [self.run, self.numerology, self.resource_blocks, self.layers, self.max_modulation, str(self.harq_mode),
-                self.blind_retransmissions, self.feedback_channel_period, self.nr_result.data_rate]
+        return [self.run, self.numerology, self.resource_blocks, self.layers, str(self.max_modulation) + "QAM",
+                str(self.harq_mode), self.blind_retransmissions, self.feedback_channel_period, self.nr_result.data_rate]
 
     def _overhead_row(self, value: float):
         return [value, value / self.nr_result.overhead_total * 100, value / self.nr_result.resource_total * 100]
@@ -178,7 +179,7 @@ class ResultTableModel(QAbstractTableModel):
             elif index.column() == 3:
                 return result.layers
             elif index.column() == 4:
-                return result.max_modulation
+                return str(result.max_modulation) + "QAM"
             elif index.column() == 5:
                 if result.harq_mode == HarqMode.BLIND_TRANSMISSION:
                     return "Blind Transmission"
@@ -216,11 +217,11 @@ class ResultTableModel(QAbstractTableModel):
         elif section == 3:
             return "Layers"
         elif section == 4:
-            return "UE Max Modulation (QAM)"
+            return "UE Max Modulation"
         elif section == 5:
             return "HARQ Mode"
         elif section == 6:
-            return "Blind Transmissions"
+            return "# Blind Transmissions"
         elif section == 7:
             return "Feedback Channel Period"
         elif section == 8:
@@ -472,9 +473,9 @@ class LteTableColumn(Enum):
         elif self is LteTableColumn.RESOURCE_BLOCKS:
             return "Resource Blocks (PRB)"
         elif self is LteTableColumn.PERIOD_SIZE:
-            return "Period Size [SF]"
+            return "SL Period (SF)"
         elif self is LteTableColumn.PSCCH_SIZE:
-            return "PSCCH Size [SF]"
+            return "PSCCH Length (SF)"
         elif self is LteTableColumn.DATA_RATE:
             return "Data Rate (Mbps)"
 
@@ -530,17 +531,17 @@ class ResultTableLteModel(QAbstractTableModel):
             return
 
         if section == 0:
-            return "Run Index"
+            return str(LteTableColumn.RUN_INDEX)
         elif section == 1:
-            return "MCS"
+            return str(LteTableColumn.MCS)
         elif section == 2:
-            return "Resource Blocks (PRB)"
+            return str(LteTableColumn.RESOURCE_BLOCKS)
         elif section == 3:
-            return "Period Size [SF]"
+            return str(LteTableColumn.PERIOD_SIZE)
         elif section == 4:
-            return "PSCCH Size [SF]"
+            return str(LteTableColumn.PSCCH_SIZE)
         elif section == 5:
-            return "Data Rate (Mbps)"
+            return str(LteTableColumn.DATA_RATE)
 
     def append(self, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
         new_result = ResultRowLte(
@@ -603,6 +604,9 @@ class MainWindow(QMainWindow):
         self.ui.comboFeedbackChannel.addItem("1", userData=1)
         self.ui.comboFeedbackChannel.addItem("2", userData=2)
         self.ui.comboFeedbackChannel.addItem("4", userData=4)
+
+        for possible_value in POSSIBLE_SL_PERIOD_SIZES_LTE:
+            self.ui.comboLteSlPeriod.addItem(str(possible_value), userData=possible_value)
 
         # Remove margins around charts
         self.ui.chartNr.chart().layout().setContentsMargins(0, 0, 0, 0)
@@ -924,15 +928,24 @@ class MainWindow(QMainWindow):
     def btn_clicked_lte(self):
         mcs = self.ui.spinMcs.value()
         resource_blocks = self.ui.spinResourceBlocksLte.value()
-        period_size = self.ui.spinPeriodSize.value()
+        period_size = self.ui.comboLteSlPeriod.currentData(role=Qt.UserRole)
         pscch_size = self.ui.spinPscchSize.value()
 
-        data_rate = calculate_lte(
-            mcs=mcs,
-            resource_blocks=resource_blocks,
-            period_size=period_size,
-            control_channel_size=pscch_size
-        )
+        try:
+            data_rate = calculate_lte(
+                mcs=mcs,
+                resource_blocks=resource_blocks,
+                period_size=period_size,
+                control_channel_size=pscch_size
+            )
+        except OutOfRangeError as e:
+            QMessageBox.critical(self, "Value out of Range", str(e))
+            return
+        except NotAcceptableValueError as e:
+            QMessageBox.critical(self, "Value not acceptable", str(e))
+        except ValueError as e:
+            QMessageBox.critical(self, "Invalid Value", str(e))
+            return
 
         self.tableModelLte.append(
             mcs=mcs,

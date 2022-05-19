@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabNr">
        <attribute name="title">
@@ -42,14 +42,14 @@
             <item row="1" column="0">
              <widget class="QLabel" name="lblResourceBlocks">
               <property name="text">
-               <string>Resource Blocks</string>
+               <string># PRBs</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
              <widget class="QSpinBox" name="spinResourceBlocksNr">
               <property name="suffix">
-               <string>PRB</string>
+               <string/>
               </property>
               <property name="minimum">
                <number>11</number>
@@ -65,7 +65,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="lblLayers">
               <property name="text">
-               <string>Layers</string>
+               <string># Layers</string>
               </property>
              </widget>
             </item>
@@ -74,6 +74,9 @@
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="lblModulation">
+              <property name="toolTip">
+               <string>Max modulation supported by the UE</string>
+              </property>
               <property name="text">
                <string>Max Modulation</string>
               </property>
@@ -112,7 +115,7 @@
             <item row="6" column="0">
              <widget class="QLabel" name="lblFeedbackChannel">
               <property name="text">
-               <string>Feedback Channel Period</string>
+               <string>Feedback Channel Period (slot)</string>
               </property>
              </widget>
             </item>
@@ -226,27 +229,17 @@
             <item row="2" column="0">
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>Period Size</string>
+               <string>SL Period</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="spinPeriodSize">
-              <property name="suffix">
-               <string> Subframes</string>
-              </property>
-              <property name="maximum">
-               <number>320</number>
-              </property>
-              <property name="value">
-               <number>40</number>
-              </property>
-             </widget>
+             <widget class="QComboBox" name="comboLteSlPeriod"/>
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>Control Channel Size</string>
+               <string>PSCCH Length</string>
               </property>
              </widget>
             </item>

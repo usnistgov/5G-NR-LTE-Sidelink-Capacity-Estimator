@@ -206,12 +206,10 @@ class Ui_MainWindow(object):
 
         self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label)
 
-        self.spinPeriodSize = QSpinBox(self.tabLte)
-        self.spinPeriodSize.setObjectName(u"spinPeriodSize")
-        self.spinPeriodSize.setMaximum(320)
-        self.spinPeriodSize.setValue(40)
+        self.comboLteSlPeriod = QComboBox(self.tabLte)
+        self.comboLteSlPeriod.setObjectName(u"comboLteSlPeriod")
 
-        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.spinPeriodSize)
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.comboLteSlPeriod)
 
         self.label_2 = QLabel(self.tabLte)
         self.label_2.setObjectName(u"label_2")
@@ -381,7 +379,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -393,13 +391,16 @@ class Ui_MainWindow(object):
         self.actionClear_Tables.setText(QCoreApplication.translate("MainWindow", u"&Clear Tables", None))
         self.actionDelete_Selected.setText(QCoreApplication.translate("MainWindow", u"&Delete Selected", None))
         self.lblNumerology.setText(QCoreApplication.translate("MainWindow", u"Numerology", None))
-        self.lblResourceBlocks.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))
-        self.spinResourceBlocksNr.setSuffix(QCoreApplication.translate("MainWindow", u"PRB", None))
-        self.lblLayers.setText(QCoreApplication.translate("MainWindow", u"Layers", None))
+        self.lblResourceBlocks.setText(QCoreApplication.translate("MainWindow", u"# PRBs", None))
+        self.spinResourceBlocksNr.setSuffix("")
+        self.lblLayers.setText(QCoreApplication.translate("MainWindow", u"# Layers", None))
+#if QT_CONFIG(tooltip)
+        self.lblModulation.setToolTip(QCoreApplication.translate("MainWindow", u"Max modulation supported by the UE", None))
+#endif // QT_CONFIG(tooltip)
         self.lblModulation.setText(QCoreApplication.translate("MainWindow", u"Max Modulation", None))
         self.lblHarq.setText(QCoreApplication.translate("MainWindow", u"HARQ Mode", None))
         self.lblBlindTransmissions.setText(QCoreApplication.translate("MainWindow", u"Blind Transmissions", None))
-        self.lblFeedbackChannel.setText(QCoreApplication.translate("MainWindow", u"Feedback Channel Period", None))
+        self.lblFeedbackChannel.setText(QCoreApplication.translate("MainWindow", u"Feedback Channel Period (slot)", None))
         self.btnCalculate.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
         self.btnDeleteSelectedNr.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
         self.btnClearNr.setText(QCoreApplication.translate("MainWindow", u"Clear Table", None))
@@ -407,9 +408,8 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabNr), QCoreApplication.translate("MainWindow", u"NR", None))
         self.lblMcs.setText(QCoreApplication.translate("MainWindow", u"MCS", None))
         self.lblResourceBlocks_2.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Period Size", None))
-        self.spinPeriodSize.setSuffix(QCoreApplication.translate("MainWindow", u" Subframes", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Control Channel Size", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"SL Period", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"PSCCH Length", None))
         self.spinPscchSize.setSuffix(QCoreApplication.translate("MainWindow", u" Subframes", None))
         self.btnCalculateLte.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
         self.btnDeleteSelectedLte.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))

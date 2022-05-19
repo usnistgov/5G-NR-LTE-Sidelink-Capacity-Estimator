@@ -53,6 +53,14 @@ class OutOfRangeError(ValueError):
         super().__init__(f"Value for field: `{field_name}`: {value} out of range: [{minimum}, {maximum}]")
 
 
+class NotAcceptableValueError(ValueError):
+    def __init__(self, field_name: str, value, possible_values):
+        self.field_name = field_name
+        self.value = value
+        self.possible_values = possible_values
+        super().__init__(f"Value for field: `{field_name}`: {value} not acceptable. Possible values: {possible_values}")
+
+
 class NrResult:
     def __init__(self, data_rate: float, resource_total: float, psfch: float, pscch: float, sci2: float, dm_rs: float,
                  agc: float, guard: float, s_ssb: float):
@@ -184,6 +192,9 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
                     dm_rs=dmrs, agc=agc, guard=guard, s_ssb=ssb_per_slot)
 
 
+POSSIBLE_SL_PERIOD_SIZES_LTE = [40, 60, 70, 80, 120, 140, 160, 240, 280, 320]
+
+
 def calculate_lte(mcs: int, resource_blocks: int, period_size: int, control_channel_size: int):
     if mcs < 0 or mcs > 20:
         raise OutOfRangeError(field_name="mcs", value=mcs, minimum=0, maximum=20)
@@ -191,8 +202,9 @@ def calculate_lte(mcs: int, resource_blocks: int, period_size: int, control_chan
     if resource_blocks < 1 or resource_blocks > 128:
         raise OutOfRangeError(field_name="resource_blocks", value=resource_blocks, minimum=1, maximum=128)
 
-    if period_size < 0 or period_size > 320:
-        raise OutOfRangeError(field_name="period_size", value=period_size, minimum=0, maximum=320)
+    if period_size not in POSSIBLE_SL_PERIOD_SIZES_LTE:
+        raise NotAcceptableValueError(field_name="period_size", value=period_size,
+                                      possible_values=POSSIBLE_SL_PERIOD_SIZES_LTE)
 
     if control_channel_size < 2 or control_channel_size > 40:
         raise OutOfRangeError(field_name="control_channel_size", value=control_channel_size, minimum=2, maximum=40)
