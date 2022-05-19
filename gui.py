@@ -203,7 +203,7 @@ class ResultTableModel(QAbstractTableModel):
 
         if role == Qt.TextAlignmentRole:
             if index.column() != 5:
-                return Qt.AlignRight  # TODO: AlignVCenter as well
+                return int(Qt.AlignVCenter) | int(Qt.AlignRight)
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
         if role == Qt.FontRole:
@@ -379,7 +379,7 @@ class OverheadTableModel(QAbstractTableModel):
     def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
              role: int = ...) -> Any:
         if role == Qt.TextAlignmentRole:
-            return Qt.AlignRight  # TODO: AlignVCenter as well
+            return int(Qt.AlignVCenter) | int(Qt.AlignRight)
 
         if role == Qt.DisplayRole and self._currentResult is not None:
             if index.column() == 0:
@@ -530,7 +530,7 @@ class ResultTableLteModel(QAbstractTableModel):
                 return result.result
 
         if role == Qt.TextAlignmentRole:
-            return Qt.AlignRight  # TODO: AlignVCenter as well
+            return int(Qt.AlignVCenter) | int(Qt.AlignRight)
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
         if role == Qt.FontRole:
