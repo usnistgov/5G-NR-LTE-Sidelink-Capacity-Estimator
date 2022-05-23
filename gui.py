@@ -36,7 +36,8 @@ import PySide2.QtGui as QtGui
 import PySide2.QtWidgets as QtWidgets
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
 from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
+from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog, \
+    QAbstractItemView
 from PySide2.QtCharts import *
 from ui_mainwindow import Ui_MainWindow
 from ui_csvdialog import Ui_CsvDialog
@@ -103,7 +104,7 @@ class NrTableColumn(Enum):
         elif self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
             return "Feedback Channel Period"
         elif self is NrTableColumn.DATA_RATE:
-            return "Data Rate (Mbps)"
+            return "Data Rate (Mb/s)"
 
 
 class ResultRow:
@@ -231,7 +232,7 @@ class ResultTableModel(QAbstractTableModel):
         elif section == 7:
             return "Feedback Channel Period"
         elif section == 8:
-            return "Data Rate (Mbps)"
+            return "Data Rate (Mb/s)"
 
     def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
@@ -479,11 +480,11 @@ class LteTableColumn(Enum):
         elif self is LteTableColumn.RESOURCE_BLOCKS:
             return "Resource Blocks (PRB)"
         elif self is LteTableColumn.PERIOD_SIZE:
-            return "SL Period (SF)"
+            return "Period Size (subframe)"
         elif self is LteTableColumn.PSCCH_SIZE:
-            return "PSCCH Length (SF)"
+            return "PSCCH Size (subframe)"
         elif self is LteTableColumn.DATA_RATE:
-            return "Data Rate (Mbps)"
+            return "Data Rate (Mb/s)"
 
 
 class ResultRowLte:

@@ -199,8 +199,8 @@ def calculate_lte(mcs: int, resource_blocks: int, period_size: int, control_chan
     if mcs < 0 or mcs > 20:
         raise OutOfRangeError(field_name="mcs", value=mcs, minimum=0, maximum=20)
 
-    if resource_blocks < 1 or resource_blocks > 128:
-        raise OutOfRangeError(field_name="resource_blocks", value=resource_blocks, minimum=1, maximum=128)
+    if resource_blocks < 1 or resource_blocks > 110:
+        raise OutOfRangeError(field_name="resource_blocks", value=resource_blocks, minimum=1, maximum=110)
 
     if period_size not in POSSIBLE_SL_PERIOD_SIZES_LTE:
         raise NotAcceptableValueError(field_name="period_size", value=period_size,
@@ -208,6 +208,9 @@ def calculate_lte(mcs: int, resource_blocks: int, period_size: int, control_chan
 
     if control_channel_size < 2 or control_channel_size > 40:
         raise OutOfRangeError(field_name="control_channel_size", value=control_channel_size, minimum=2, maximum=40)
+    
+    if control_channel_size > period_size:
+        raise OutOfRangeError(field_name="control_channel_size", value=control_channel_size, minimum=2, maximum=period_size)
 
     tbs_index = lte_values.mcs_tbs[mcs]
 

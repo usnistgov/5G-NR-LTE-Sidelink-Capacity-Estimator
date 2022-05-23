@@ -80,7 +80,7 @@ if __name__ == '__main__':
         except ValueError as e:
             sys.exit("Value error: " + str(e))
 
-        print(f"Data rate: {data_rate} Mbps")
+        print(f"Data rate: {data_rate} Mb/s")
     else:
         app = QApplication(sys.argv)
         window = MainWindow()
