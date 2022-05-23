@@ -635,7 +635,14 @@ class MainWindow(QMainWindow):
         # Result table
 
         self.tableModel = ResultTableModel()
-        self.ui.tableResult.setModel(self.tableModel)
+
+        # Proxy Model for Filtering/Sorting
+        self._proxy_model_nr = QtCore.QSortFilterProxyModel(self)
+        self._proxy_model_nr.setSourceModel(self.tableModel)
+
+        self.ui.tableResult.setModel(self._proxy_model_nr)
+        self.ui.tableResult.sortByColumn(0, Qt.AscendingOrder)
+
         self.ui.tableResult.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResult.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
@@ -650,7 +657,13 @@ class MainWindow(QMainWindow):
         # LTE Result Table
 
         self.tableModelLte = ResultTableLteModel()
-        self.ui.tableResultLte.setModel(self.tableModelLte)
+
+        # Proxy Model for Filtering/Sorting
+        self._proxy_model_lte = QtCore.QSortFilterProxyModel(self)
+        self._proxy_model_lte.setSourceModel(self.tableModelLte)
+        self.ui.tableResultLte.sortByColumn(0, Qt.AscendingOrder)
+
+        self.ui.tableResultLte.setModel(self._proxy_model_lte)
         self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResultLte.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)

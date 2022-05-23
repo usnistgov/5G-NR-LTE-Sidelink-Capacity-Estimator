@@ -135,6 +135,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.tableResult = QTableView(self.tabNr)
         self.tableResult.setObjectName(u"tableResult")
+        self.tableResult.setSortingEnabled(True)
         self.tableResult.horizontalHeader().setVisible(True)
         self.tableResult.horizontalHeader().setHighlightSections(False)
 
@@ -242,6 +243,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.tableResultLte = QTableView(self.tabLte)
         self.tableResultLte.setObjectName(u"tableResultLte")
+        self.tableResultLte.setSortingEnabled(True)
         self.tableResultLte.horizontalHeader().setHighlightSections(False)
 
         self.verticalLayout_5.addWidget(self.tableResultLte)
