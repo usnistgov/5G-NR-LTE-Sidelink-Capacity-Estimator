@@ -26,6 +26,7 @@
 # software is not intended to be used in any situation where a failure could
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
+import PySide2
 
 from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError, NotAcceptableValueError, \
     POSSIBLE_SL_PERIOD_SIZES_LTE
@@ -36,12 +37,12 @@ import PySide2.QtGui as QtGui
 import PySide2.QtWidgets as QtWidgets
 from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
 from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog, \
-    QAbstractItemView
+from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
 from PySide2.QtCharts import *
 from ui_mainwindow import Ui_MainWindow
 from ui_csvdialog import Ui_CsvDialog
 from enum import Enum
+from operator import attrgetter
 
 
 class ExportTable(Enum):
@@ -155,6 +156,23 @@ class ResultRow:
         return data
 
 
+# Key functions for sorting data
+def _result_row_harq_key(row: ResultRow) -> int:
+    return row.harq_mode.value
+
+
+def _result_row_blind_retransmissions_key(row: ResultRow) -> int:
+    if row.blind_retransmissions:
+        return row.blind_retransmissions
+    return 0
+
+
+def _result_row_feedback_channel_period_key(row: ResultRow) -> int:
+    if row.feedback_channel_period:
+        return row.feedback_channel_period
+    return 0
+
+
 class ResultTableModel(QAbstractTableModel):
     def __init__(self):
         super().__init__()
@@ -166,6 +184,29 @@ class ResultTableModel(QAbstractTableModel):
 
     def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
         return 9
+
+    def sort(self, column: int, order: Qt.SortOrder = ...):
+        self.beginResetModel()
+        reverse = order is Qt.SortOrder.AscendingOrder
+        if column == 0:
+            self._results.sort(key=attrgetter('run'), reverse=reverse)
+        elif column == 1:
+            self._results.sort(key=attrgetter('numerology'), reverse=reverse)
+        elif column == 2:
+            self._results.sort(key=attrgetter('resource_blocks'), reverse=reverse)
+        elif column == 3:
+            self._results.sort(key=attrgetter('layers'), reverse=reverse)
+        elif column == 4:
+            self._results.sort(key=attrgetter('max_modulation'), reverse=reverse)
+        elif column == 5:
+            self._results.sort(key=_result_row_harq_key, reverse=reverse)
+        elif column == 6:
+            self._results.sort(key=_result_row_blind_retransmissions_key, reverse=reverse)
+        elif column == 7:
+            self._results.sort(key=_result_row_feedback_channel_period_key, reverse=reverse)
+        elif column == 8:
+            self._results.sort(key=attrgetter('result'), reverse=reverse)
+        self.endResetModel()
 
     def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
              role: int = ...) -> Any:
@@ -512,6 +553,23 @@ class ResultTableLteModel(QAbstractTableModel):
     def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
         return 6
 
+    def sort(self, column: int, order: Qt.SortOrder = ...):
+        self.beginResetModel()
+        reverse = order is Qt.SortOrder.AscendingOrder
+        if column == 0:
+            self._results.sort(key=attrgetter('run'), reverse=reverse)
+        elif column == 1:
+            self._results.sort(key=attrgetter('mcs'), reverse=reverse)
+        elif column == 2:
+            self._results.sort(key=attrgetter('resource_blocks'), reverse=reverse)
+        elif column == 3:
+            self._results.sort(key=attrgetter('period_size'), reverse=reverse)
+        elif column == 4:
+            self._results.sort(key=attrgetter('pscch_size'), reverse=reverse)
+        elif column == 5:
+            self._results.sort(key=attrgetter('result'), reverse=reverse)
+        self.endResetModel()
+
     def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
              role: int = ...) -> Any:
 
@@ -637,10 +695,10 @@ class MainWindow(QMainWindow):
         self.tableModel = ResultTableModel()
 
         # Proxy Model for Filtering/Sorting
-        self._proxy_model_nr = QtCore.QSortFilterProxyModel(self)
-        self._proxy_model_nr.setSourceModel(self.tableModel)
+        # self._proxy_model_nr = QtCore.QSortFilterProxyModel(self)
+        # self._proxy_model_nr.setSourceModel(self.tableModel)
 
-        self.ui.tableResult.setModel(self._proxy_model_nr)
+        self.ui.tableResult.setModel(self.tableModel)
         self.ui.tableResult.sortByColumn(0, Qt.AscendingOrder)
 
         self.ui.tableResult.horizontalHeader().setStretchLastSection(True)
@@ -659,11 +717,11 @@ class MainWindow(QMainWindow):
         self.tableModelLte = ResultTableLteModel()
 
         # Proxy Model for Filtering/Sorting
-        self._proxy_model_lte = QtCore.QSortFilterProxyModel(self)
-        self._proxy_model_lte.setSourceModel(self.tableModelLte)
-        self.ui.tableResultLte.sortByColumn(0, Qt.AscendingOrder)
+        # self._proxy_model_lte = QtCore.QSortFilterProxyModel(self)
+        # self._proxy_model_lte.setSourceModel(self.tableModelLte)
+        # self.ui.tableResultLte.sortByColumn(0, Qt.AscendingOrder)
 
-        self.ui.tableResultLte.setModel(self._proxy_model_lte)
+        self.ui.tableResultLte.setModel(self.tableModelLte)
         self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResultLte.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
