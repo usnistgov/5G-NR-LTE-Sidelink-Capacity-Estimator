@@ -132,6 +132,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.btnCalculate)
 
+        self.vsNrButton = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout.addItem(self.vsNrButton)
+
 
         self.horizontalLayout.addLayout(self.verticalLayout)
 
@@ -239,6 +243,10 @@ class Ui_MainWindow(object):
         self.btnCalculateLte.setSizePolicy(sizePolicy)
 
         self.verticalLayout_2.addWidget(self.btnCalculateLte)
+
+        self.vsLteButton = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_2.addItem(self.vsLteButton)
 
 
         self.horizontalLayout_3.addLayout(self.verticalLayout_2)
