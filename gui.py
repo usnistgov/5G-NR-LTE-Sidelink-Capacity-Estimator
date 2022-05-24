@@ -647,6 +647,9 @@ class ResultTableLteModel(QAbstractTableModel):
     def results(self):
         return self._results
 
+    def get_result(self, row: int) -> ResultRowLte:
+        return self._results[row]
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -730,18 +733,22 @@ class MainWindow(QMainWindow):
         self.ui.btnCalculate.clicked.connect(self.btn_clicked)
         self.ui.btnToggleOverhead.clicked.connect(self.toggle_overhead_table_clicked)
         self.ui.tableResult.clicked.connect(self.row_clicked_nr)
+        self.ui.tableResultLte.clicked.connect(self.row_clicked_lte)
         self.ui.comboNumerology.activated.connect(self.numerology_changed)
         self.ui.comboHarq.activated.connect(self.harq_mode_changed)
         self.ui.btnCalculateLte.clicked.connect(self.btn_clicked_lte)
 
-        self.ui.comboNrChartXAxis.activated.connect(self.chart_nr_axis_changed)
-        self.ui.comboNrChartYAxis.activated.connect(self.chart_nr_axis_changed)
+        self.ui.comboNrChartXAxis.activated.connect(self.replot_chart_nr)
+        self.ui.comboNrChartYAxis.activated.connect(self.replot_chart_nr)
 
-        self.ui.comboLteChartXAxis.activated.connect(self.chart_lte_axis_changed)
-        self.ui.comboLteChartYAxis.activated.connect(self.chart_lte_axis_changed)
+        self.ui.comboLteChartXAxis.activated.connect(self.replot_chart_lte)
+        self.ui.comboLteChartYAxis.activated.connect(self.replot_chart_lte)
 
         self.ui.btnClearNr.clicked.connect(self.reset_nr)
         self.ui.btnClearLte.clicked.connect(self.reset_lte)
+
+        self.ui.checkPlotSelectedNr.stateChanged.connect(self.replot_chart_nr)
+        self.ui.checkPlotSelectedLte.stateChanged.connect(self.replot_chart_lte)
 
         # Edit Menu
         self.ui.actionDelete_Selected.triggered.connect(self.delete_from_active_table)
@@ -768,14 +775,14 @@ class MainWindow(QMainWindow):
         if result is not QMessageBox.StandardButton.Yes:
             return
         self.tableModel.reset()
-        self.chart_nr_axis_changed()
+        self.replot_chart_nr()
 
     def reset_lte(self):
         result = QMessageBox.question(self, "Clear LTE Table", "Are you sure you want to clear all LTE results")
         if result is not QMessageBox.StandardButton.Yes:
             return
         self.tableModelLte.reset()
-        self.chart_lte_axis_changed()
+        self.replot_chart_lte()
 
     def delete_from_active_table(self):
         if self.ui.tabWidget.currentIndex() == 0:
@@ -794,7 +801,7 @@ class MainWindow(QMainWindow):
                 delete_rows.append(selected_index.row())
         self.tableModel.remove(delete_rows)
         # Remove the deleted rows from the chart
-        self.chart_nr_axis_changed()
+        self.replot_chart_nr()
 
     def delete_from_lte(self):
         delete_rows = []
@@ -806,7 +813,7 @@ class MainWindow(QMainWindow):
                 delete_rows.append(selected_index.row())
         self.tableModelLte.remove(delete_rows)
         # Remove the deleted rows from the chart
-        self.chart_lte_axis_changed()
+        self.replot_chart_lte()
 
     @QtCore.Slot()
     def export_csv(self):
@@ -909,7 +916,7 @@ class MainWindow(QMainWindow):
             feedback_channel_period=feedback_channel_period,
         )
         # Update the chart with the new result
-        self.chart_nr_axis_changed()
+        self.replot_chart_nr()
         # Select the new result
         self.ui.tableResult.selectionModel().select(self.tableModel.index(self.tableModel.rowCount() - 1, 0),
                                                     QtCore.QItemSelectionModel.ClearAndSelect | QtCore.QItemSelectionModel.Rows)
@@ -963,14 +970,25 @@ class MainWindow(QMainWindow):
         return category_axis
 
     @QtCore.Slot()
-    def chart_nr_axis_changed(self):
+    def replot_chart_nr(self):
         x_value = NrTableColumn(self.ui.comboNrChartXAxis.currentData(Qt.UserRole))
         y_value = NrTableColumn(self.ui.comboNrChartYAxis.currentData(Qt.UserRole))
 
         series = QtCharts.QLineSeries()
 
-        for result in self.tableModel.results():
-            series.append(self.value_for_axis(result, x_value), self.value_for_axis(result, y_value))
+        if self.ui.checkPlotSelectedNr.isChecked():  # plot only selected rows
+            visited_rows = []
+            for selected_index in self.ui.tableResult.selectedIndexes():
+                # We'll get an index from every selected cell,
+                # but we only need the row number,
+                # so ignore duplicate row numbers
+                if selected_index.row() not in visited_rows:
+                    visited_rows.append(selected_index.row())
+                    result = self.tableModel.get_result(selected_index.row())
+                    series.append(self.value_for_axis(result, x_value), self.value_for_axis(result, y_value))
+        else:  # Plot all results
+            for result in self.tableModel.results():
+                series.append(self.value_for_axis(result, x_value), self.value_for_axis(result, y_value))
 
         chart = QtCharts.QChart()
         chart.setTitle(f"NR: '{x_value}' - '{y_value}'")
@@ -989,14 +1007,22 @@ class MainWindow(QMainWindow):
         self.ui.chartNr.setChart(chart)
 
     @QtCore.Slot()
-    def chart_lte_axis_changed(self):
+    def replot_chart_lte(self):
         x_value = LteTableColumn(self.ui.comboLteChartXAxis.currentData(Qt.UserRole))
         y_value = LteTableColumn(self.ui.comboLteChartYAxis.currentData(Qt.UserRole))
 
         series = QtCharts.QLineSeries()
 
-        for result in self.tableModelLte.results():
-            series.append(self.value_for_axis_lte(result, x_value), self.value_for_axis_lte(result, y_value))
+        if self.ui.checkPlotSelectedLte.isChecked():  # plot only selected rows
+            visited_rows = []
+            for selected_index in self.ui.tableResultLte.selectedIndexes():
+                if selected_index.row() not in visited_rows:
+                    visited_rows.append(selected_index.row())
+                    result = self.tableModelLte.get_result(selected_index.row())
+                    series.append(self.value_for_axis_lte(result, x_value), self.value_for_axis_lte(result, y_value))
+        else:
+            for result in self.tableModelLte.results():
+                series.append(self.value_for_axis_lte(result, x_value), self.value_for_axis_lte(result, y_value))
 
         chart = QtCharts.QChart()
         chart.setTitle(f"LTE: '{x_value}' - '{y_value}'")
@@ -1038,7 +1064,7 @@ class MainWindow(QMainWindow):
             pscch_size=pscch_size,
             result=data_rate
         )
-        self.chart_lte_axis_changed()
+        self.replot_chart_lte()
         self.ui.tableResultLte.selectionModel().select(self.tableModelLte.index(self.tableModelLte.rowCount() - 1, 0),
                                                        QtCore.QItemSelectionModel.ClearAndSelect | QtCore.QItemSelectionModel.Rows)
 
@@ -1054,3 +1080,15 @@ class MainWindow(QMainWindow):
     def row_clicked_nr(self, index: QModelIndex):
         result = self.tableModel.get_result(index.row())
         self.tableModelOverHead.set_result(result.nr_result)
+
+        # Trigger a replot if the selection is
+        # relevant to the plot
+        if self.ui.checkPlotSelectedNr.isChecked():
+            self.replot_chart_nr()
+
+    @QtCore.Slot()
+    def row_clicked_lte(self, index: QModelIndex):
+        # Trigger a replot if the selection is
+        # relevant to the plot
+        if self.ui.checkPlotSelectedLte.isChecked():
+            self.replot_chart_lte()

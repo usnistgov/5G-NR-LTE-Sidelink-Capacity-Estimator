@@ -19,7 +19,11 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1028, 698)
+        MainWindow.resize(1422, 627)
+        MainWindow.setStyleSheet(u"QCheckBox::indicator {\n"
+"     width: 20px;\n"
+"     height: 20px;\n"
+"}")
         self.action_CSV = QAction(MainWindow)
         self.action_CSV.setObjectName(u"action_CSV")
         self.actionClear_Tables = QAction(MainWindow)
@@ -310,6 +314,30 @@ class Ui_MainWindow(object):
 
         self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.lblNrChartXAxis)
 
+        self.lblPlotSelectedNr = QLabel(self.tabCharts)
+        self.lblPlotSelectedNr.setObjectName(u"lblPlotSelectedNr")
+
+        self.formLayout_3.setWidget(2, QFormLayout.LabelRole, self.lblPlotSelectedNr)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.hsPlotSelectedNrLeft = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.hsPlotSelectedNrLeft)
+
+        self.checkPlotSelectedNr = QCheckBox(self.tabCharts)
+        self.checkPlotSelectedNr.setObjectName(u"checkPlotSelectedNr")
+        self.checkPlotSelectedNr.setIconSize(QSize(16, 16))
+
+        self.horizontalLayout_5.addWidget(self.checkPlotSelectedNr)
+
+        self.hsPlotSelectedNrRight = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.hsPlotSelectedNrRight)
+
+
+        self.formLayout_3.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_5)
+
 
         self.verticalLayoutChart1.addLayout(self.formLayout_3)
 
@@ -353,6 +381,29 @@ class Ui_MainWindow(object):
 
         self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.comboLteChartYAxis)
 
+        self.lblPlotSelectedLte = QLabel(self.tabCharts)
+        self.lblPlotSelectedLte.setObjectName(u"lblPlotSelectedLte")
+
+        self.formLayout_4.setWidget(2, QFormLayout.LabelRole, self.lblPlotSelectedLte)
+
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.hsPlotSelectedLteLeft = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.hsPlotSelectedLteLeft)
+
+        self.checkPlotSelectedLte = QCheckBox(self.tabCharts)
+        self.checkPlotSelectedLte.setObjectName(u"checkPlotSelectedLte")
+
+        self.horizontalLayout_6.addWidget(self.checkPlotSelectedLte)
+
+        self.hsPlotSelectedLteRight = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.hsPlotSelectedLteRight)
+
+
+        self.formLayout_4.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_6)
+
 
         self.verticalLayout_3.addLayout(self.formLayout_4)
 
@@ -366,7 +417,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1028, 24))
+        self.menubar.setGeometry(QRect(0, 0, 1422, 24))
         self.menuExport = QMenu(self.menubar)
         self.menuExport.setObjectName(u"menuExport")
         self.menuEdit = QMenu(self.menubar)
@@ -423,9 +474,13 @@ class Ui_MainWindow(object):
         self.lblChartNr.setText(QCoreApplication.translate("MainWindow", u"NR", None))
         self.lblNrChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
         self.lblNrChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
+        self.lblPlotSelectedNr.setText(QCoreApplication.translate("MainWindow", u"Plot Selected Only", None))
+        self.checkPlotSelectedNr.setText("")
         self.lblChartLte.setText(QCoreApplication.translate("MainWindow", u"LTE", None))
         self.lblLteChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
         self.lblLteChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
+        self.lblPlotSelectedLte.setText(QCoreApplication.translate("MainWindow", u"Plot Selected Only", None))
+        self.checkPlotSelectedLte.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabCharts), QCoreApplication.translate("MainWindow", u"Charts", None))
         self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"E&xport", None))
         self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", u"&Edit", None))
