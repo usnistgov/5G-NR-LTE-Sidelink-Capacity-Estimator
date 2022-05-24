@@ -288,7 +288,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>SL Period</string>
+               <string>Side Link Period</string>
               </property>
              </widget>
             </item>

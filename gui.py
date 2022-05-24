@@ -576,9 +576,9 @@ class LteTableColumn(Enum):
         elif self is LteTableColumn.RESOURCE_BLOCKS:
             return "Resource Blocks (PRB)"
         elif self is LteTableColumn.PERIOD_SIZE:
-            return "Period Size (subframe)"
+            return "Side Link Period (subframe)"
         elif self is LteTableColumn.PSCCH_SIZE:
-            return "PSCCH Size (subframe)"
+            return "PSCCH Length (subframe)"
         elif self is LteTableColumn.DATA_RATE:
             return "Data Rate (Mb/s)"
 
@@ -781,7 +781,7 @@ class MainWindow(QMainWindow):
         self.ui.comboFeedbackChannel.addItem("4", userData=4)
 
         for possible_value in POSSIBLE_SL_PERIOD_SIZES_LTE:
-            self.ui.comboLteSlPeriod.addItem(str(possible_value), userData=possible_value)
+            self.ui.comboLteSlPeriod.addItem(str(possible_value) + " subframes", userData=possible_value)
 
         # Remove margins around charts
         self.ui.chartNr.chart().layout().setContentsMargins(0, 0, 0, 0)

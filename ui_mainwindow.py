@@ -490,7 +490,7 @@ class Ui_MainWindow(object):
         self.lblInputsLte.setText(QCoreApplication.translate("MainWindow", u"Inputs", None))
         self.lblMcs.setText(QCoreApplication.translate("MainWindow", u"MCS", None))
         self.lblResourceBlocks_2.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"SL Period", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Side Link Period", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"PSCCH Length", None))
         self.spinPscchSize.setSuffix(QCoreApplication.translate("MainWindow", u" Subframes", None))
         self.btnCalculateLte.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
