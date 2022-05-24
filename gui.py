@@ -493,7 +493,6 @@ class OverheadTableModel(QAbstractTableModel):
             elif section == 9:
                 return "Total"
 
-        # TODO: Horizontal Headers
         if orientation == Qt.Horizontal:
             if section == 0:
                 return "Overhead Components"
