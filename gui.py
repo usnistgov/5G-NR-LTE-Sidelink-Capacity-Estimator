@@ -272,29 +272,33 @@ class ResultTableModel(QAbstractTableModel):
             font.setBold(section == NrTableColumn.DATA_RATE.value)
             return font
 
-        if orientation != Qt.Horizontal or role != Qt.DisplayRole:
+        if orientation != Qt.Horizontal or (role != Qt.DisplayRole and role != Qt.ToolTipRole):
             return
 
-        if section == 0:
-            return str(NrTableColumn.ROW_NUMBER)
-        elif section == 1:
-            return str(NrTableColumn.RUN_INDEX)
-        elif section == 2:
-            return str(NrTableColumn.NUMEROLOGY)
-        elif section == 3:
-            return str(NrTableColumn.RESOURCE_BLOCKS)
-        elif section == 4:
-            return str(NrTableColumn.LAYERS)
-        elif section == 5:
-            return str(NrTableColumn.UE_MAX_MODULATION)
-        elif section == 6:
-            return str(NrTableColumn.HARQ_MODE)
-        elif section == 7:
-            return str(NrTableColumn.BLIND_TRANSMISSIONS)
-        elif section == 8:
-            return str(NrTableColumn.FEEDBACK_CHANNEL_PERIOD)
-        elif section == 9:
-            return str(NrTableColumn.DATA_RATE)
+        if role == Qt.DisplayRole:
+            if section == 0:
+                return str(NrTableColumn.ROW_NUMBER)
+            elif section == 1:
+                return str(NrTableColumn.RUN_INDEX)
+            elif section == 2:
+                return str(NrTableColumn.NUMEROLOGY)
+            elif section == 3:
+                return str(NrTableColumn.RESOURCE_BLOCKS)
+            elif section == 4:
+                return str(NrTableColumn.LAYERS)
+            elif section == 5:
+                return str(NrTableColumn.UE_MAX_MODULATION)
+            elif section == 6:
+                return str(NrTableColumn.HARQ_MODE)
+            elif section == 7:
+                return str(NrTableColumn.BLIND_TRANSMISSIONS)
+            elif section == 8:
+                return str(NrTableColumn.FEEDBACK_CHANNEL_PERIOD)
+            elif section == 9:
+                return str(NrTableColumn.DATA_RATE)
+        elif role == Qt.ToolTipRole:
+            if section == NrTableColumn.UE_MAX_MODULATION.value:
+                return "Maximum modulation supported by the UE"
 
     def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
