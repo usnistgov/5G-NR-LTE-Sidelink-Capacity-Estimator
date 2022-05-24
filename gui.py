@@ -263,7 +263,7 @@ class ResultTableModel(QAbstractTableModel):
                 return result.nr_result.data_rate
 
         if role == Qt.TextAlignmentRole:
-            if index.column() != 5:
+            if index.column() != NrTableColumn.HARQ_MODE.value:
                 return int(Qt.AlignVCenter) | int(Qt.AlignRight)
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
