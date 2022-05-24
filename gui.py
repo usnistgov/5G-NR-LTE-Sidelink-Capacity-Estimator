@@ -31,11 +31,11 @@ import PySide2
 from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError, NotAcceptableValueError, \
     POSSIBLE_SL_PERIOD_SIZES_LTE
 import csv
-from typing import List, Union, Any, Optional
+from typing import List, Union, Any, Optional, Callable
 import PySide2.QtCore as QtCore
 import PySide2.QtGui as QtGui
 import PySide2.QtWidgets as QtWidgets
-from PySide2.QtCore import Qt, QMargins, QAbstractTableModel, QModelIndex
+from PySide2.QtCore import Qt, QObject, QMargins, QAbstractTableModel, QModelIndex
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
 from PySide2.QtCharts import *
@@ -710,6 +710,26 @@ def _sort_order_changed_lte(index, order, header: QtWidgets.QHeaderView):
         header.setSortIndicator(index, Qt.SortOrder.DescendingOrder)
 
 
+class ArrowKeyEventFilter(QObject):
+    """
+    Workaround for not subclassing QTableView for key events
+    """
+
+    def __init__(self, table: QtWidgets.QTableView, handler: Callable):
+        super(ArrowKeyEventFilter, self).__init__(table)
+        self._table = table
+        self._table.installEventFilter(self)
+        self._handler = handler
+
+    def eventFilter(self, obj, event):
+        # Only handle arrow keys
+        if obj is self._table and event.type() == QtCore.QEvent.KeyPress and event.key() in (
+                QtCore.Qt.Key_Up, QtCore.Qt.Key_Down, Qt.Key_Left, Qt.Key_Right):
+            self._handler()
+
+        return super(ArrowKeyEventFilter, self).eventFilter(obj, event)
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -763,6 +783,8 @@ class MainWindow(QMainWindow):
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResult.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
 
+        self._arrow_handler_nr = ArrowKeyEventFilter(self.ui.tableResult, self.selection_changed_nr)
+
         # Don't show the sort order as descending for the row number
         # since it is entirely dependent on sort order
         self.ui.tableResult.horizontalHeader().sortIndicatorChanged.connect(
@@ -784,6 +806,8 @@ class MainWindow(QMainWindow):
         self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResultLte.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+
+        self._arrow_handler_lte = ArrowKeyEventFilter(self.ui.tableResultLte, self.arrow_key_lte)
 
         # Don't show the sort order as descending for the row number
         # since it is entirely dependent on sort order
@@ -1138,14 +1162,19 @@ class MainWindow(QMainWindow):
     def toggle_overhead_table_clicked(self):
         self.ui.tableOverHead.setVisible(not self.ui.tableOverHead.isVisible())
         if self.ui.tableOverHead.isVisible():
-            self.ui.btnToggleOverhead.setText("⮟ Toggle Overhead")
+            self.ui.btnToggleOverhead.setText("Hide Overhead")
         else:
-            self.ui.btnToggleOverhead.setText("⮞ Toggle Overhead")
+            self.ui.btnToggleOverhead.setText("Show Overhead")
 
     @QtCore.Slot()
     def row_clicked_nr(self, index: QModelIndex):
-        result = self.tableModel.get_result(index.row())
-        self.tableModelOverHead.set_result(result.nr_result)
+        self.row_selected_nr(self.tableModel.get_result(index.row()))
+
+    def selection_changed_nr(self):
+        self.row_selected_nr(self.tableModel.get_result(self.ui.tableResult.currentIndex().row()))
+
+    def row_selected_nr(self, row: ResultRow):
+        self.tableModelOverHead.set_result(row.nr_result)
 
         # Trigger a replot if the selection is
         # relevant to the plot
@@ -1154,6 +1183,12 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def row_clicked_lte(self, index: QModelIndex):
+        # Trigger a replot if the selection is
+        # relevant to the plot
+        if self.ui.checkPlotSelectedLte.isChecked():
+            self.replot_chart_lte()
+
+    def arrow_key_lte(self):
         # Trigger a replot if the selection is
         # relevant to the plot
         if self.ui.checkPlotSelectedLte.isChecked():
