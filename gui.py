@@ -77,18 +77,21 @@ class CsvDialog(QDialog):
 
 
 class NrTableColumn(Enum):
-    RUN_INDEX = 0
-    NUMEROLOGY = 1
-    RESOURCE_BLOCKS = 2
-    LAYERS = 3
-    UE_MAX_MODULATION = 4
-    HARQ_MODE = 5
-    BLIND_TRANSMISSIONS = 6
-    FEEDBACK_CHANNEL_PERIOD = 7
-    DATA_RATE = 8
+    ROW_NUMBER = 0
+    RUN_INDEX = 1
+    NUMEROLOGY = 2
+    RESOURCE_BLOCKS = 3
+    LAYERS = 4
+    UE_MAX_MODULATION = 5
+    HARQ_MODE = 6
+    BLIND_TRANSMISSIONS = 7
+    FEEDBACK_CHANNEL_PERIOD = 8
+    DATA_RATE = 9
 
     def __str__(self):
-        if self is NrTableColumn.RUN_INDEX:
+        if self is NrTableColumn.ROW_NUMBER:
+            return "Row"
+        elif self is NrTableColumn.RUN_INDEX:
             return "Run Index"
         elif self is NrTableColumn.NUMEROLOGY:
             return "Numerology"
@@ -109,9 +112,10 @@ class NrTableColumn(Enum):
 
 
 class ResultRow:
-    def __init__(self, run: int, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
+    def __init__(self, row: int, run: int, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                  harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                  feedback_channel_period: Optional[int]):
+        self.row = row
         self.run = run
         self.numerology = numerology
         self.resource_blocks = resource_blocks
@@ -122,9 +126,11 @@ class ResultRow:
         self.blind_retransmissions = blind_retransmissions
         self.feedback_channel_period = feedback_channel_period
 
+    # Match the `NrTableColumn` enum order
     def to_csv(self):
-        return [self.run, self.numerology, self.resource_blocks, self.layers, str(self.max_modulation) + "QAM",
-                str(self.harq_mode), self.blind_retransmissions, self.feedback_channel_period, self.nr_result.data_rate]
+        return [self.row, self.run, self.numerology, self.resource_blocks, self.layers,
+                str(self.max_modulation) + "QAM", str(self.harq_mode), self.blind_retransmissions,
+                self.feedback_channel_period, self.nr_result.data_rate]
 
     def _overhead_row(self, value: float):
         return [value, value / self.nr_result.overhead_total * 100, value / self.nr_result.resource_total * 100]
@@ -183,64 +189,77 @@ class ResultTableModel(QAbstractTableModel):
         return len(self._results)
 
     def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
-        return 9
+        return len(NrTableColumn)
 
     def sort(self, column: int, order: Qt.SortOrder = ...):
+        # Row number is entirely based on the sorting order,
+        # so it doesn't make sense to sort on th
+        if column == NrTableColumn.ROW_NUMBER.value:
+            return
+
         self.beginResetModel()
         reverse = order is Qt.SortOrder.AscendingOrder
-        if column == 0:
+        if column == NrTableColumn.RUN_INDEX.value:
             self._results.sort(key=attrgetter('run'), reverse=reverse)
-        elif column == 1:
+        elif column == NrTableColumn.NUMEROLOGY.value:
             self._results.sort(key=attrgetter('numerology'), reverse=reverse)
-        elif column == 2:
+        elif column == NrTableColumn.RESOURCE_BLOCKS.value:
             self._results.sort(key=attrgetter('resource_blocks'), reverse=reverse)
-        elif column == 3:
+        elif column == NrTableColumn.LAYERS.value:
             self._results.sort(key=attrgetter('layers'), reverse=reverse)
-        elif column == 4:
+        elif column == NrTableColumn.UE_MAX_MODULATION.value:
             self._results.sort(key=attrgetter('max_modulation'), reverse=reverse)
-        elif column == 5:
+        elif column == NrTableColumn.HARQ_MODE.value:
             self._results.sort(key=_result_row_harq_key, reverse=reverse)
-        elif column == 6:
+        elif column == NrTableColumn.BLIND_TRANSMISSIONS.value:
             self._results.sort(key=_result_row_blind_retransmissions_key, reverse=reverse)
-        elif column == 7:
+        elif column == NrTableColumn.FEEDBACK_CHANNEL_PERIOD.value:
             self._results.sort(key=_result_row_feedback_channel_period_key, reverse=reverse)
-        elif column == 8:
+        elif column == NrTableColumn.DATA_RATE.value:
             self._results.sort(key=attrgetter('result'), reverse=reverse)
+
+        self._update_row_numbers()
         self.endResetModel()
+
+    def _update_row_numbers(self):
+        for index, result in enumerate(self._results):
+            result.row = index
 
     def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
              role: int = ...) -> Any:
 
         if role == Qt.DisplayRole:
             result = self._results[index.row()]
-            if index.column() == 0:
+            if index.column() == NrTableColumn.ROW_NUMBER.value:
+                return result.row
+            elif index.column() == NrTableColumn.RUN_INDEX.value:
                 return result.run
-            elif index.column() == 1:
+            elif index.column() == NrTableColumn.NUMEROLOGY.value:
                 return result.numerology
-            elif index.column() == 2:
+            elif index.column() == NrTableColumn.RESOURCE_BLOCKS.value:
                 return result.resource_blocks
-            elif index.column() == 3:
+            elif index.column() == NrTableColumn.LAYERS.value:
                 return result.layers
-            elif index.column() == 4:
+            elif index.column() == NrTableColumn.UE_MAX_MODULATION.value:
                 return str(result.max_modulation) + "QAM"
-            elif index.column() == 5:
+            elif index.column() == NrTableColumn.HARQ_MODE.value:
                 if result.harq_mode == HarqMode.BLIND_TRANSMISSION:
                     return "Blind Transmission"
                 elif result.harq_mode == HarqMode.FEEDBACK:
                     return "Feedback"
                 else:
                     raise ValueError("Unsupported HARQ Mode")
-            elif index.column() == 6:
+            elif index.column() == NrTableColumn.BLIND_TRANSMISSIONS.value:
                 if result.harq_mode == HarqMode.BLIND_TRANSMISSION:
                     return result.blind_retransmissions
                 else:
                     return "N/A"
-            elif index.column() == 7:
+            elif index.column() == NrTableColumn.FEEDBACK_CHANNEL_PERIOD.value:
                 if result.harq_mode == HarqMode.FEEDBACK:
                     return result.feedback_channel_period
                 else:
                     return "N/A"
-            elif index.column() == 8:
+            elif index.column() == NrTableColumn.DATA_RATE.value:
                 return result.nr_result.data_rate
 
         if role == Qt.TextAlignmentRole:
@@ -250,35 +269,38 @@ class ResultTableModel(QAbstractTableModel):
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
         if role == Qt.FontRole:
             font = QFont()
-            font.setBold(section == 8)
+            font.setBold(section == NrTableColumn.DATA_RATE.value)
             return font
 
         if orientation != Qt.Horizontal or role != Qt.DisplayRole:
             return
 
         if section == 0:
-            return "Run Index"
+            return str(NrTableColumn.ROW_NUMBER)
         elif section == 1:
-            return "Numerology"
+            return str(NrTableColumn.RUN_INDEX)
         elif section == 2:
-            return "Resource Blocks (PRB)"
+            return str(NrTableColumn.NUMEROLOGY)
         elif section == 3:
-            return "Layers"
+            return str(NrTableColumn.RESOURCE_BLOCKS)
         elif section == 4:
-            return "UE Max Modulation"
+            return str(NrTableColumn.LAYERS)
         elif section == 5:
-            return "HARQ Mode"
+            return str(NrTableColumn.UE_MAX_MODULATION)
         elif section == 6:
-            return "# Blind Transmissions"
+            return str(NrTableColumn.HARQ_MODE)
         elif section == 7:
-            return "Feedback Channel Period"
+            return str(NrTableColumn.BLIND_TRANSMISSIONS)
         elif section == 8:
-            return "Data Rate (Mb/s)"
+            return str(NrTableColumn.FEEDBACK_CHANNEL_PERIOD)
+        elif section == 9:
+            return str(NrTableColumn.DATA_RATE)
 
     def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                feedback_channel_period: Optional[int]):
         new_result = ResultRow(
+            row=len(self._results),
             run=self._run_index,
             numerology=numerology,
             resource_blocks=resource_blocks,
@@ -300,10 +322,13 @@ class ResultTableModel(QAbstractTableModel):
         # when removing lower rows
         rows.sort(reverse=True)
 
+        # We need a full reset since we update the row numbers too
+        self.beginResetModel()
         for row in rows:
-            self.beginRemoveRows(QModelIndex(), row, row)
             del self._results[row]
-            self.endRemoveRows()
+
+        self._update_row_numbers()
+        self.endResetModel()
 
     def reset(self):
         self.beginResetModel()
@@ -316,6 +341,11 @@ class ResultTableModel(QAbstractTableModel):
 
     def get_result(self, row: int) -> ResultRow:
         return self._results[row]
+
+
+def _sort_order_changed_nr(index, order, header: QtWidgets.QHeaderView):
+    if index == NrTableColumn.ROW_NUMBER.value:
+        header.setSortIndicator(index, Qt.SortOrder.DescendingOrder)
 
 
 class OverheadTableRow(Enum):
@@ -505,15 +535,18 @@ class OverheadTableModel(QAbstractTableModel):
 
 
 class LteTableColumn(Enum):
-    RUN_INDEX = 0
-    MCS = 1
-    RESOURCE_BLOCKS = 2
-    PERIOD_SIZE = 3
-    PSCCH_SIZE = 4
-    DATA_RATE = 5
+    ROW_NUMBER = 0
+    RUN_INDEX = 1
+    MCS = 2
+    RESOURCE_BLOCKS = 3
+    PERIOD_SIZE = 4
+    PSCCH_SIZE = 5
+    DATA_RATE = 6
 
     def __str__(self):
-        if self is LteTableColumn.RUN_INDEX:
+        if self is LteTableColumn.ROW_NUMBER:
+            return "Row"
+        elif self is LteTableColumn.RUN_INDEX:
             return "Run Index"
         elif self is LteTableColumn.MCS:
             return "MCS"
@@ -528,7 +561,9 @@ class LteTableColumn(Enum):
 
 
 class ResultRowLte:
-    def __init__(self, run: int, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
+    def __init__(self, row: int, run: int, mcs: int, resource_blocks: int, period_size: int, pscch_size: int,
+                 result: float):
+        self.row = row
         self.run = run
         self.mcs = mcs
         self.resource_blocks = resource_blocks
@@ -536,8 +571,9 @@ class ResultRowLte:
         self.pscch_size = pscch_size
         self.result = result
 
+    # Match the `LteTableColumn` enum order
     def to_csv(self):
-        return [self.run, self.mcs, self.resource_blocks, self.period_size, self.pscch_size, self.result]
+        return [self.row, self.run, self.mcs, self.resource_blocks, self.period_size, self.pscch_size, self.result]
 
 
 class ResultTableLteModel(QAbstractTableModel):
@@ -550,23 +586,34 @@ class ResultTableLteModel(QAbstractTableModel):
         return len(self._results)
 
     def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
-        return 6
+        return len(LteTableColumn)
+
+    def _update_row_numbers(self):
+        for index, result in enumerate(self._results):
+            result.row = index
 
     def sort(self, column: int, order: Qt.SortOrder = ...):
+        # Don't sort the Row number column, since that's just the row's postion
+        # in the table
+        if column == LteTableColumn.ROW_NUMBER.value:
+            return
+
         self.beginResetModel()
         reverse = order is Qt.SortOrder.AscendingOrder
-        if column == 0:
+        if column == 1:
             self._results.sort(key=attrgetter('run'), reverse=reverse)
-        elif column == 1:
-            self._results.sort(key=attrgetter('mcs'), reverse=reverse)
         elif column == 2:
-            self._results.sort(key=attrgetter('resource_blocks'), reverse=reverse)
+            self._results.sort(key=attrgetter('mcs'), reverse=reverse)
         elif column == 3:
-            self._results.sort(key=attrgetter('period_size'), reverse=reverse)
+            self._results.sort(key=attrgetter('resource_blocks'), reverse=reverse)
         elif column == 4:
-            self._results.sort(key=attrgetter('pscch_size'), reverse=reverse)
+            self._results.sort(key=attrgetter('period_size'), reverse=reverse)
         elif column == 5:
+            self._results.sort(key=attrgetter('pscch_size'), reverse=reverse)
+        elif column == 6:
             self._results.sort(key=attrgetter('result'), reverse=reverse)
+
+        self._update_row_numbers()
         self.endResetModel()
 
     def data(self, index: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex],
@@ -574,17 +621,19 @@ class ResultTableLteModel(QAbstractTableModel):
 
         if role == Qt.DisplayRole:
             result = self._results[index.row()]
-            if index.column() == 0:
+            if index.column() == LteTableColumn.ROW_NUMBER.value:
+                return result.row
+            elif index.column() == LteTableColumn.RUN_INDEX.value:
                 return result.run
-            elif index.column() == 1:
+            elif index.column() == LteTableColumn.MCS.value:
                 return result.mcs
-            elif index.column() == 2:
+            elif index.column() == LteTableColumn.RESOURCE_BLOCKS.value:
                 return result.resource_blocks
-            elif index.column() == 3:
+            elif index.column() == LteTableColumn.PERIOD_SIZE.value:
                 return result.period_size
-            elif index.column() == 4:
+            elif index.column() == LteTableColumn.PSCCH_SIZE.value:
                 return result.pscch_size
-            elif index.column() == 5:
+            elif index.column() == LteTableColumn.DATA_RATE.value:
                 return result.result
 
         if role == Qt.TextAlignmentRole:
@@ -593,27 +642,30 @@ class ResultTableLteModel(QAbstractTableModel):
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
         if role == Qt.FontRole:
             font = QFont()
-            font.setBold(section == 5)
+            font.setBold(section == LteTableColumn.DATA_RATE.value)
             return font
 
         if orientation != Qt.Horizontal or role != Qt.DisplayRole:
             return
 
-        if section == 0:
+        if section == LteTableColumn.ROW_NUMBER.value:
+            return str(LteTableColumn.ROW_NUMBER)
+        elif section == LteTableColumn.RUN_INDEX.value:
             return str(LteTableColumn.RUN_INDEX)
-        elif section == 1:
+        elif section == LteTableColumn.MCS.value:
             return str(LteTableColumn.MCS)
-        elif section == 2:
+        elif section == LteTableColumn.RESOURCE_BLOCKS.value:
             return str(LteTableColumn.RESOURCE_BLOCKS)
-        elif section == 3:
+        elif section == LteTableColumn.PERIOD_SIZE.value:
             return str(LteTableColumn.PERIOD_SIZE)
-        elif section == 4:
+        elif section == LteTableColumn.PSCCH_SIZE.value:
             return str(LteTableColumn.PSCCH_SIZE)
-        elif section == 5:
+        elif section == LteTableColumn.DATA_RATE.value:
             return str(LteTableColumn.DATA_RATE)
 
     def append(self, mcs: int, resource_blocks: int, period_size: int, pscch_size: int, result: float):
         new_result = ResultRowLte(
+            row=len(self._results),
             run=self._run_index,
             mcs=mcs,
             resource_blocks=resource_blocks,
@@ -632,10 +684,13 @@ class ResultTableLteModel(QAbstractTableModel):
         # when removing lower rows
         rows.sort(reverse=True)
 
+        # We need a full reset since we update the row numbers too
+        self.beginResetModel()
         for row in rows:
-            self.beginRemoveRows(QModelIndex(), row, row)
             del self._results[row]
-            self.endRemoveRows()
+
+        self._update_row_numbers()
+        self.endResetModel()
 
     def reset(self):
         self.beginResetModel()
@@ -648,6 +703,11 @@ class ResultTableLteModel(QAbstractTableModel):
 
     def get_result(self, row: int) -> ResultRowLte:
         return self._results[row]
+
+
+def _sort_order_changed_lte(index, order, header: QtWidgets.QHeaderView):
+    if index == LteTableColumn.ROW_NUMBER.value:
+        header.setSortIndicator(index, Qt.SortOrder.DescendingOrder)
 
 
 class MainWindow(QMainWindow):
@@ -703,6 +763,12 @@ class MainWindow(QMainWindow):
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResult.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
 
+        # Don't show the sort order as descending for the row number
+        # since it is entirely dependent on sort order
+        self.ui.tableResult.horizontalHeader().sortIndicatorChanged.connect(
+            lambda index, order: _sort_order_changed_nr(index=index, order=order,
+                                                        header=self.ui.tableResult.horizontalHeader()))
+
         # NR Overhead Table
 
         self.tableModelOverHead = OverheadTableModel()
@@ -718,6 +784,12 @@ class MainWindow(QMainWindow):
         self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
         self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResultLte.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+
+        # Don't show the sort order as descending for the row number
+        # since it is entirely dependent on sort order
+        self.ui.tableResultLte.horizontalHeader().sortIndicatorChanged.connect(
+            lambda index, order: _sort_order_changed_lte(index=index, order=order,
+                                                         header=self.ui.tableResultLte.horizontalHeader()))
 
         # Signals
         self.ui.btnCalculate.clicked.connect(self.btn_clicked)
@@ -914,31 +986,35 @@ class MainWindow(QMainWindow):
         self.tableModelOverHead.set_result(nr_result)
 
     def value_for_axis(self, result: ResultRow, column: NrTableColumn):
-        if column == NrTableColumn.RUN_INDEX:
+        if column is NrTableColumn.ROW_NUMBER:
+            return result.row
+        elif column is NrTableColumn.RUN_INDEX:
             return result.run
-        elif column == NrTableColumn.NUMEROLOGY:
+        elif column is NrTableColumn.NUMEROLOGY:
             return result.numerology
-        elif column == NrTableColumn.RESOURCE_BLOCKS:
+        elif column is NrTableColumn.RESOURCE_BLOCKS:
             return result.resource_blocks
-        elif column == NrTableColumn.LAYERS:
+        elif column is NrTableColumn.LAYERS:
             return result.layers
-        elif column == NrTableColumn.UE_MAX_MODULATION:
+        elif column is NrTableColumn.UE_MAX_MODULATION:
             return result.max_modulation
-        elif column == NrTableColumn.HARQ_MODE:
+        elif column is NrTableColumn.HARQ_MODE:
             return result.harq_mode.value
-        elif column == NrTableColumn.BLIND_TRANSMISSIONS:
+        elif column is NrTableColumn.BLIND_TRANSMISSIONS:
             if result.blind_retransmissions is None:
                 return 0
             return result.blind_retransmissions
-        elif column == NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
+        elif column is NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
             if result.feedback_channel_period is None:
                 return 0
             return result.feedback_channel_period
-        elif column == NrTableColumn.DATA_RATE:
+        elif column is NrTableColumn.DATA_RATE:
             return result.nr_result.data_rate
 
     def value_for_axis_lte(self, result: ResultRowLte, column: LteTableColumn):
-        if column == LteTableColumn.RUN_INDEX:
+        if column == LteTableColumn.ROW_NUMBER:
+            return result.row
+        elif column == LteTableColumn.RUN_INDEX:
             return result.run
         elif column == LteTableColumn.MCS:
             return result.mcs
