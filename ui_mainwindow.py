@@ -40,8 +40,17 @@ class Ui_MainWindow(object):
         self.tabNr.setObjectName(u"tabNr")
         self.horizontalLayout = QHBoxLayout(self.tabNr)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayoutInputsNr = QVBoxLayout()
+        self.verticalLayoutInputsNr.setObjectName(u"verticalLayoutInputsNr")
+        self.lblInputsNr = QLabel(self.tabNr)
+        self.lblInputsNr.setObjectName(u"lblInputsNr")
+        font = QFont()
+        font.setPointSize(18)
+        self.lblInputsNr.setFont(font)
+        self.lblInputsNr.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayoutInputsNr.addWidget(self.lblInputsNr)
+
         self.formLayout = QFormLayout()
         self.formLayout.setObjectName(u"formLayout")
         self.lblNumerology = QLabel(self.tabNr)
@@ -120,7 +129,7 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(6, QFormLayout.FieldRole, self.comboFeedbackChannel)
 
 
-        self.verticalLayout.addLayout(self.formLayout)
+        self.verticalLayoutInputsNr.addLayout(self.formLayout)
 
         self.btnCalculate = QPushButton(self.tabNr)
         self.btnCalculate.setObjectName(u"btnCalculate")
@@ -130,14 +139,14 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btnCalculate.sizePolicy().hasHeightForWidth())
         self.btnCalculate.setSizePolicy(sizePolicy)
 
-        self.verticalLayout.addWidget(self.btnCalculate)
+        self.verticalLayoutInputsNr.addWidget(self.btnCalculate)
 
         self.vsNrButton = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout.addItem(self.vsNrButton)
+        self.verticalLayoutInputsNr.addItem(self.vsNrButton)
 
 
-        self.horizontalLayout.addLayout(self.verticalLayout)
+        self.horizontalLayout.addLayout(self.verticalLayoutInputsNr)
 
         self.verticalLayout_4 = QVBoxLayout()
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
@@ -185,6 +194,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.lblInputsLte = QLabel(self.tabLte)
+        self.lblInputsLte.setObjectName(u"lblInputsLte")
+        self.lblInputsLte.setFont(font)
+        self.lblInputsLte.setAlignment(Qt.AlignCenter)
+
+        self.verticalLayout_2.addWidget(self.lblInputsLte)
+
         self.formLayout_2 = QFormLayout()
         self.formLayout_2.setObjectName(u"formLayout_2")
         self.lblMcs = QLabel(self.tabLte)
@@ -288,9 +304,9 @@ class Ui_MainWindow(object):
         self.verticalLayoutChart1.setObjectName(u"verticalLayoutChart1")
         self.lblChartNr = QLabel(self.tabCharts)
         self.lblChartNr.setObjectName(u"lblChartNr")
-        font = QFont()
-        font.setPointSize(15)
-        self.lblChartNr.setFont(font)
+        font1 = QFont()
+        font1.setPointSize(15)
+        self.lblChartNr.setFont(font1)
         self.lblChartNr.setAlignment(Qt.AlignCenter)
 
         self.verticalLayoutChart1.addWidget(self.lblChartNr)
@@ -357,7 +373,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.lblChartLte = QLabel(self.tabCharts)
         self.lblChartLte.setObjectName(u"lblChartLte")
-        self.lblChartLte.setFont(font)
+        self.lblChartLte.setFont(font1)
         self.lblChartLte.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_3.addWidget(self.lblChartLte)
@@ -450,10 +466,11 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"LTE/NR Maximum Sidelink Capacity Estimator", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"5G NR/LTE Maximum Sidelink Capacity Estimator", None))
         self.action_CSV.setText(QCoreApplication.translate("MainWindow", u"&CSV", None))
         self.actionClear_Tables.setText(QCoreApplication.translate("MainWindow", u"&Clear Tables", None))
         self.actionDelete_Selected.setText(QCoreApplication.translate("MainWindow", u"&Delete Selected", None))
+        self.lblInputsNr.setText(QCoreApplication.translate("MainWindow", u"Inputs", None))
         self.lblNumerology.setText(QCoreApplication.translate("MainWindow", u"Numerology", None))
         self.lblResourceBlocks.setText(QCoreApplication.translate("MainWindow", u"# PRBs", None))
         self.spinResourceBlocksNr.setSuffix("")
@@ -468,8 +485,9 @@ class Ui_MainWindow(object):
         self.btnCalculate.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
         self.btnDeleteSelectedNr.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
         self.btnClearNr.setText(QCoreApplication.translate("MainWindow", u"Clear Table", None))
-        self.btnToggleOverhead.setText(QCoreApplication.translate("MainWindow", u"\u2b9f Toggle Overhead Table", None))
+        self.btnToggleOverhead.setText(QCoreApplication.translate("MainWindow", u"Hide Overhead Table", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabNr), QCoreApplication.translate("MainWindow", u"NR", None))
+        self.lblInputsLte.setText(QCoreApplication.translate("MainWindow", u"Inputs", None))
         self.lblMcs.setText(QCoreApplication.translate("MainWindow", u"MCS", None))
         self.lblResourceBlocks_2.setText(QCoreApplication.translate("MainWindow", u"Resource Blocks", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"SL Period", None))
