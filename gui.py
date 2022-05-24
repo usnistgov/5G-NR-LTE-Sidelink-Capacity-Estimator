@@ -697,10 +697,6 @@ class MainWindow(QMainWindow):
 
         self.tableModel = ResultTableModel()
 
-        # Proxy Model for Filtering/Sorting
-        # self._proxy_model_nr = QtCore.QSortFilterProxyModel(self)
-        # self._proxy_model_nr.setSourceModel(self.tableModel)
-
         self.ui.tableResult.setModel(self.tableModel)
         self.ui.tableResult.sortByColumn(0, Qt.AscendingOrder)
 
@@ -718,11 +714,6 @@ class MainWindow(QMainWindow):
         # LTE Result Table
 
         self.tableModelLte = ResultTableLteModel()
-
-        # Proxy Model for Filtering/Sorting
-        # self._proxy_model_lte = QtCore.QSortFilterProxyModel(self)
-        # self._proxy_model_lte.setSourceModel(self.tableModelLte)
-        # self.ui.tableResultLte.sortByColumn(0, Qt.AscendingOrder)
 
         self.ui.tableResultLte.setModel(self.tableModelLte)
         self.ui.tableResultLte.horizontalHeader().setStretchLastSection(True)
