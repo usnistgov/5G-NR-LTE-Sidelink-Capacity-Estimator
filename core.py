@@ -62,9 +62,9 @@ class NotAcceptableValueError(ValueError):
 
 
 class NrResult:
-    def __init__(self, data_rate: float, resource_total: float, psfch: float, pscch: float, sci2: float, dm_rs: float,
-                 agc: float, guard: float, s_ssb: float):
-        self.resource_total = resource_total
+    def __init__(self, data_rate: float, resource_per_slot: float, psfch: float, pscch: float, sci2: float, dm_rs: float,
+                 agc: float, guard: float, s_ssb: float, redundant_data: float):
+        self.resource_per_slot = resource_per_slot
         self.data_rate = data_rate
         self.psfch = psfch
         self.csi_rs = 0
@@ -75,9 +75,10 @@ class NrResult:
         self.agc = agc
         self.guard = guard
         self.s_ssb = s_ssb
+	self.redundant_data = redundant_data
 
         # This excludes `csi_rs` & `pt_rs`, since they're both 0
-        self.overhead_total = psfch + pscch + sci2 + dm_rs + agc + guard + s_ssb
+        self.overhead_total = psfch + pscch + sci2 + dm_rs + agc + guard + s_ssb + redundant_data
 
 
 def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modulation: int,
@@ -174,11 +175,22 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     else:
         raise ValueError(f"Unsupported feedback channel period: {feedback_channel_period}")
 
+    # RE Total
+    # Total number of REs: When blind transmission is enabled, resource_total is the total number
+    #                      of REs in the slots for the same TB transmission
+    # Total number of REs in a slot: resource_per_slot
+    resource_per_slot = resource_blocks * 14 * 12
+    resource_total = blind_transmissions * resource_per_slot 
+    overhead_no_redundant_data = re_sci1 + re_sci2 + dmrs + agc + guard + ssb_per_slot + re_feedback
+
+    # Redoundant data -- Blind Transmission
+    # resource_redundant_data_per_slot calculates the average number of REs for data in a retransmitted slot
+    resource_redundant_data_per_slot = (blind_transmissions - 1) * (
+					resource_per_slot - overhead_no_redundant_data)/blind_transmissions
+
     # Overhead Ratio
     # Both below simplified using: resource_blocks = NRB_bw_u = num_subchan * subchannel_size
-    resource_total = blind_transmissions * resource_blocks * 14 * 12
-    overhead_total = re_sci1 + re_sci2 + dmrs + agc + guard + ssb_per_slot + re_feedback + (
-            blind_transmissions - 1) * resource_blocks * 14 * 12
+    overhead_total = overhead_no_redundant_data  + (blind_transmissions - 1) * resource_blocks * 14 * 12
 
     overhead_ratio = overhead_total / resource_total
 
@@ -188,8 +200,9 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     data_rate = 1e-6 * layers * modulation_order * coding_rate * resource_blocks * 12 * (
             1 - overhead_ratio) / symbol_duration
 
-    return NrResult(data_rate=data_rate, resource_total=resource_total, psfch=re_feedback, pscch=re_sci1, sci2=re_sci2,
-                    dm_rs=dmrs, agc=agc, guard=guard, s_ssb=ssb_per_slot)
+    return NrResult(data_rate=data_rate, resource_per_slot=resource_per_slot, psfch=re_feedback, 
+                    pscch=re_sci1, sci2=re_sci2, dm_rs=dmrs, agc=agc, guard=guard, s_ssb=ssb_per_slot, 
+		    redundant_data=resource_redundant_data_per_slot)
 
 
 POSSIBLE_SL_PERIOD_SIZES_LTE = [40, 60, 70, 80, 120, 140, 160, 240, 280, 320]
