@@ -391,63 +391,63 @@ class OverheadTableRow(Enum):
         if self is OverheadTableRow.PSFCH:
             return "PSFCH"
         elif self is OverheadTableRow.PSFCH_PERCENT_TOTAL_OH:
-            return "PSFCH % Total Overhead"
+            return "PSFCH Percent Total Overhead (%)"
         elif self is OverheadTableRow.PSFCH_PERCENT_TOTAL:
-            return "PSFCH % Total"
+            return "PSFCH Percent Total (%)"
         elif self is OverheadTableRow.CSI_RS:
             return "CSI-RS"
         elif self is OverheadTableRow.CSI_RS_PERCENT_TOTAL_OH:
-            return "CSI-RS % Total Overhead"
+            return "CSI-RS Percent Total Overhead (%)"
         elif self is OverheadTableRow.CSI_RS_PERCENT_TOTAL:
-            return "CSI-RS % Total"
+            return "CSI-RS Percent Total (%)"
         elif self is OverheadTableRow.PT_RS:
             return "PT-RS"
         elif self is OverheadTableRow.PT_RS_PERCENT_TOTAL_OH:
-            return "PT-RS % Total Overhead"
+            return "PT-RS Percent Total Overhead (%)"
         elif self is OverheadTableRow.PT_RS_PERCENT_TOTAL:
-            return "PT-RS % Total"
+            return "PT-RS Percent Total (%)"
         elif self is OverheadTableRow.PSCCH:
             return "PSCCH"
         elif self is OverheadTableRow.PSCCH_PERCENT_TOTAL_OH:
-            return "PSCCH % Total Overhead"
+            return "PSCCH Percent Total Overhead (%)"
         elif self is OverheadTableRow.PSCCH_PERCENT_TOTAL:
-            return "PSCCH % Total"
+            return "PSCCH Percent Total (%)"
         elif self is OverheadTableRow.SCI2:
             return "SCI2"
         elif self is OverheadTableRow.SCI2_PERCENT_TOTAL_OH:
-            return "SCI2 % Total Overhead"
+            return "SCI2 Percent Total Overhead (%)"
         elif self is OverheadTableRow.SCI2_PERCENT_TOTAL:
-            return "SCI2 % Total"
+            return "SCI2 Percent Total (%)"
         elif self is OverheadTableRow.DM_RS:
             return "DM-RS"
         elif self is OverheadTableRow.DM_RS_PERCENT_TOTAL_OH:
-            return "DM-RS % Total Overhead"
+            return "DM-RS Percent Total Overhead (%)"
         elif self is OverheadTableRow.DM_RS_PERCENT_TOTAL:
-            return "DM-RS % Total"
+            return "DM-RS Percent Total (%)"
         elif self is OverheadTableRow.AGC:
             return "AGC"
         elif self is OverheadTableRow.AGC_PERCENT_TOTAL_OH:
-            return "AGC % Total Overhead"
+            return "AGC Percent Total Overhead (%)"
         elif self is OverheadTableRow.AGC_PERCENT_TOTAL:
-            return "AGC % Total"
+            return "AGC Percent Total (%)"
         elif self is OverheadTableRow.GUARD:
             return "Guard"
         elif self is OverheadTableRow.GUARD_PERCENT_TOTAL_OH:
-            return "Guard % Total Overhead"
+            return "Guard Percent Total Overhead (%)"
         elif self is OverheadTableRow.GUARD_PERCENT_TOTAL:
-            return "Guard % Total"
+            return "Guard Percent Total (%)"
         elif self is OverheadTableRow.S_SSB:
             return "S-SSB"
         elif self is OverheadTableRow.S_SSB_PERCENT_TOTAL_OH:
-            return "S-SSB % Total Overhead"
+            return "S-SSB Percent Total Overhead (%)"
         elif self is OverheadTableRow.S_SSB_PERCENT_TOTAL:
-            return "S-SSB % Total"
+            return "S-SSB Percent Total (%)"
         elif self is OverheadTableRow.REDUNDANT_DATA:
             return "Redundant Data"
         elif self is OverheadTableRow.REDUNDANT_DATA_TOTAL_OH:
-            return "Redundant Data % Total Overhead"
+            return "Redundant Data Percent Total Overhead (%)"
         elif self is OverheadTableRow.REDUNDANT_PERCENT_TOTAL:
-            return "Redundant Data % Total"
+            return "Redundant Data Percent Total (%)"
         elif self is OverheadTableRow.TOTAL_OVERHEAD:
             return "Total Overhead"
 
@@ -569,11 +569,11 @@ class OverheadTableModel(QAbstractTableModel):
 
         if orientation == Qt.Horizontal:
             if section == 0:
-                return "Overhead Components"
+                return "Average Resources Per Slot"
             elif section == 1:
-                return "Percent Total Overhead"
+                return "Percent Total Overhead (%)"
             elif section == 2:
-                return "Percent Total Resources"
+                return "Percent Total Resources (%)"
 
     def set_result(self, nr_result: NrResult):
         self.beginResetModel()
