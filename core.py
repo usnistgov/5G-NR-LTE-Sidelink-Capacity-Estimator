@@ -75,7 +75,7 @@ class NrResult:
         self.agc = agc
         self.guard = guard
         self.s_ssb = s_ssb
-	self.redundant_data = redundant_data
+        self.redundant_data = redundant_data
 
         # This excludes `csi_rs` & `pt_rs`, since they're both 0
         self.overhead_total = psfch + pscch + sci2 + dm_rs + agc + guard + s_ssb + redundant_data
@@ -183,14 +183,14 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
     resource_total = blind_transmissions * resource_per_slot 
     overhead_no_redundant_data = re_sci1 + re_sci2 + dmrs + agc + guard + ssb_per_slot + re_feedback
 
-    # Redoundant data -- Blind Transmission
+    # Redundant data -- Blind Transmission
     # resource_redundant_data_per_slot calculates the average number of REs for data in a retransmitted slot
     resource_redundant_data_per_slot = (blind_transmissions - 1) * (
-					resource_per_slot - overhead_no_redundant_data)/blind_transmissions
+                resource_per_slot - overhead_no_redundant_data) / blind_transmissions
 
     # Overhead Ratio
     # Both below simplified using: resource_blocks = NRB_bw_u = num_subchan * subchannel_size
-    overhead_total = overhead_no_redundant_data  + (blind_transmissions - 1) * resource_blocks * 14 * 12
+    overhead_total = overhead_no_redundant_data + (blind_transmissions - 1) * resource_blocks * 14 * 12
 
     overhead_ratio = overhead_total / resource_total
 
@@ -201,8 +201,8 @@ def calculate_nr(numerology: int, resource_blocks: int, layers: int, ue_max_modu
             1 - overhead_ratio) / symbol_duration
 
     return NrResult(data_rate=data_rate, resource_per_slot=resource_per_slot, psfch=re_feedback, 
-                    pscch=re_sci1, sci2=re_sci2, dm_rs=dmrs, agc=agc, guard=guard, s_ssb=ssb_per_slot, 
-		    redundant_data=resource_redundant_data_per_slot)
+                    pscch=re_sci1, sci2=re_sci2, dm_rs=dmrs, agc=agc, guard=guard, s_ssb=ssb_per_slot,
+                    redundant_data=resource_redundant_data_per_slot)
 
 
 POSSIBLE_SL_PERIOD_SIZES_LTE = [40, 60, 70, 80, 120, 140, 160, 240, 280, 320]
