@@ -1270,9 +1270,9 @@ class MainWindow(QMainWindow):
     def toggle_overhead_table_clicked(self):
         self.ui.tableOverHead.setVisible(not self.ui.tableOverHead.isVisible())
         if self.ui.tableOverHead.isVisible():
-            self.ui.btnToggleOverhead.setText("Hide Overhead")
+            self.ui.btnToggleOverhead.setText("Hide Overhead Components")
         else:
-            self.ui.btnToggleOverhead.setText("Show Overhead")
+            self.ui.btnToggleOverhead.setText("Show Overhead Components")
 
     @QtCore.Slot()
     def row_clicked_nr(self, index: QModelIndex):

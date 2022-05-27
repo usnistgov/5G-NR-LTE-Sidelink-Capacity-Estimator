@@ -491,7 +491,7 @@ class Ui_MainWindow(object):
         self.btnCalculate.setText(QCoreApplication.translate("MainWindow", u"Calculate Data Rate", None))
         self.btnDeleteSelectedNr.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
         self.btnClearNr.setText(QCoreApplication.translate("MainWindow", u"Reset", None))
-        self.btnToggleOverhead.setText(QCoreApplication.translate("MainWindow", u"Hide Overhead Table", None))
+        self.btnToggleOverhead.setText(QCoreApplication.translate("MainWindow", u"Hide Overhead Components", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabNr), QCoreApplication.translate("MainWindow", u"NR", None))
         self.lblInputsLte.setText(QCoreApplication.translate("MainWindow", u"Inputs", None))
 #if QT_CONFIG(tooltip)

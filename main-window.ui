@@ -215,7 +215,7 @@
           <item>
            <widget class="QPushButton" name="btnToggleOverhead">
             <property name="text">
-             <string>Hide Overhead Table</string>
+             <string>Hide Overhead Components</string>
             </property>
            </widget>
           </item>
