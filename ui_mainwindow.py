@@ -12,7 +12,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from PySide2.QtCharts import QtCharts
+from export_chart import ExportChartView
 
 
 class Ui_MainWindow(object):
@@ -335,8 +335,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayoutChart1.addWidget(self.lblChartNr)
 
-        self.chartNr = QtCharts.QChartView(self.tabCharts)
+        self.chartNr = ExportChartView(self.tabCharts)
         self.chartNr.setObjectName(u"chartNr")
+        self.chartNr.setFrameShape(QFrame.NoFrame)
+        self.chartNr.setFrameShadow(QFrame.Plain)
+        self.chartNr.setLineWidth(0)
 
         self.verticalLayoutChart1.addWidget(self.chartNr)
 
@@ -402,7 +405,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.lblChartLte)
 
-        self.chartLte = QtCharts.QChartView(self.tabCharts)
+        self.chartLte = ExportChartView(self.tabCharts)
         self.chartLte.setObjectName(u"chartLte")
 
         self.verticalLayout_3.addWidget(self.chartLte)

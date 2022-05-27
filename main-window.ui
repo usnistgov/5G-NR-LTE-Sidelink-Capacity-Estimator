@@ -477,7 +477,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QtCharts.QChartView" name="chartNr"/>
+           <widget class="ExportChartView" name="chartNr">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
+           </widget>
           </item>
           <item>
            <layout class="QFormLayout" name="formLayout_3">
@@ -576,7 +586,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QtCharts.QChartView" name="chartLte"/>
+           <widget class="ExportChartView" name="chartLte"/>
           </item>
           <item>
            <layout class="QFormLayout" name="formLayout_4">
@@ -698,9 +708,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtCharts.QChartView</class>
+   <class>ExportChartView</class>
    <extends>QGraphicsView</extends>
-   <header>PySide2.QtCharts</header>
+   <header>export_chart.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

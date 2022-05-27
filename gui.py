@@ -816,11 +816,6 @@ class MainWindow(QMainWindow):
         self.default_lte_inputs()
 
         # Charts
-
-        # Remove margins around charts
-        self.ui.chartNr.chart().layout().setContentsMargins(0, 0, 0, 0)
-        self.ui.chartLte.chart().layout().setContentsMargins(0, 0, 0, 0)
-
         for table_item in list(NrTableColumn):
             self.ui.comboNrChartXAxis.addItem(str(table_item), userData=table_item.value)
             self.ui.comboNrChartYAxis.addItem(str(table_item), userData=table_item.value)
@@ -1211,8 +1206,10 @@ class MainWindow(QMainWindow):
             for result in self.tableModel.results():
                 series.append(self.value_for_axis(result, x_value), self.value_for_axis(result, y_value))
 
-        chart = QtCharts.QChart()
+        chart = self.ui.chartNr.chart()
+        chart.removeAllSeries()
         chart.setTitle(f"NR: '{x_value}' - '{y_value}'")
+        self.ui.chartNr.set_default_filename(f"NR_{x_value}_{y_value}.png")
         chart.addSeries(series)
         chart.createDefaultAxes()
 
@@ -1245,8 +1242,10 @@ class MainWindow(QMainWindow):
             for result in self.tableModelLte.results():
                 series.append(self.value_for_axis_lte(result, x_value), self.value_for_axis_lte(result, y_value))
 
-        chart = QtCharts.QChart()
+        chart = self.ui.chartLte.chart()
+        chart.removeAllSeries()
         chart.setTitle(f"LTE: '{x_value}' - '{y_value}'")
+        self.ui.chartLte.set_default_filename(f"LTE_{x_value}_{y_value}.png")
         chart.addSeries(series)
         chart.createDefaultAxes()
         chart.axisX().setTitleText(str(x_value))
