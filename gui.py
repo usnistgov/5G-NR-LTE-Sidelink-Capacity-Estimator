@@ -580,7 +580,7 @@ class LteTableColumn(Enum):
         elif self is LteTableColumn.RESOURCE_BLOCKS:
             return "Resource Blocks (PRB)"
         elif self is LteTableColumn.PERIOD_SIZE:
-            return "Side Link Period (subframe)"
+            return "Sidelink Period (subframe)"
         elif self is LteTableColumn.PSCCH_SIZE:
             return "PSCCH Length (subframe)"
         elif self is LteTableColumn.DATA_RATE:
