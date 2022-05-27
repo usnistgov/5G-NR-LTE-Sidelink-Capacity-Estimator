@@ -180,6 +180,7 @@ class Ui_MainWindow(object):
 
         self.tableOverHead = QTableView(self.tabNr)
         self.tableOverHead.setObjectName(u"tableOverHead")
+        self.tableOverHead.setCornerButtonEnabled(True)
         self.tableOverHead.horizontalHeader().setHighlightSections(False)
 
         self.verticalLayout_4.addWidget(self.tableOverHead)

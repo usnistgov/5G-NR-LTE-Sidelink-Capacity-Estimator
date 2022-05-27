@@ -865,6 +865,29 @@ class MainWindow(QMainWindow):
         self.ui.tableOverHead.horizontalHeader().setStretchLastSection(True)
         self.ui.tableOverHead.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
 
+        # Use the corner button as if it were a header
+        # Strictly speaking, it *may* not be there...
+        corner_button: QAbstractButton = self.ui.tableOverHead.findChild(QAbstractButton)
+        if corner_button:
+            # Unfortunately, we can't just add text to this button,
+            # So, we add a layout and a label to display text
+            button_layout = QtWidgets.QVBoxLayout(corner_button)
+            button_layout.setContentsMargins(0, 0, 0, 0)
+            label = QtWidgets.QLabel("Overhead Component")
+            label.setAlignment(Qt.AlignCenter)
+            button_layout.addWidget(label)
+
+            # Stretch the vertical header section to fix the text
+            # we added earlier
+            opt = QtWidgets.QStyleOptionHeader()
+            opt.text = label.text()
+            size = QtCore.QSize(label.style().sizeFromContents(
+                QtWidgets.QStyle.CT_HeaderSection, opt, QtCore.QSize(), label).
+                                expandedTo(QtWidgets.QApplication.globalStrut()))
+
+            if size.isValid():
+                self.ui.tableOverHead.verticalHeader().setMinimumWidth(size.width())
+
         # LTE Result Table
 
         self.tableModelLte = ResultTableLteModel()
