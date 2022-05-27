@@ -66,7 +66,7 @@
                <string>Physical Resource Blocks</string>
               </property>
               <property name="text">
-               <string># PRBs</string>
+               <string>Number of PRBs</string>
               </property>
              </widget>
             </item>
@@ -89,7 +89,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="lblLayers">
               <property name="text">
-               <string># Layers</string>
+               <string>Number of Layers</string>
               </property>
              </widget>
             </item>
@@ -125,7 +125,7 @@
             <item row="5" column="0">
              <widget class="QLabel" name="lblBlindTransmissions">
               <property name="text">
-               <string>Blind Transmissions</string>
+               <string>Number of Blind Transmissions</string>
               </property>
              </widget>
             </item>
