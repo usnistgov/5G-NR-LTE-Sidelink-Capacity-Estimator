@@ -133,7 +133,7 @@ class ResultRow:
                 self.feedback_channel_period, self.nr_result.data_rate]
 
     def _overhead_row(self, value: float):
-        return [value, value / self.nr_result.overhead_total * 100, value / self.nr_result.resource_total * 100]
+        return [value, value / self.nr_result.overhead_total * 100, value / self.nr_result.resource_per_slot * 100]
 
     def to_csv_overhead(self):
         result = self.nr_result
@@ -502,25 +502,25 @@ class OverheadTableModel(QAbstractTableModel):
                     return 100.00
             elif index.column() == 2:
                 if index.row() == 0:
-                    return self._currentResult.psfch / self._currentResult.resource_total * 100
+                    return self._currentResult.psfch / self._currentResult.resource_per_slot * 100
                 elif index.row() == 1:
-                    return self._currentResult.csi_rs / self._currentResult.resource_total * 100
+                    return self._currentResult.csi_rs / self._currentResult.resource_per_slot * 100
                 elif index.row() == 2:
-                    return self._currentResult.pt_rs / self._currentResult.resource_total * 100
+                    return self._currentResult.pt_rs / self._currentResult.resource_per_slot * 100
                 elif index.row() == 3:
-                    return self._currentResult.pscch / self._currentResult.resource_total * 100
+                    return self._currentResult.pscch / self._currentResult.resource_per_slot * 100
                 elif index.row() == 4:
-                    return self._currentResult.sci2 / self._currentResult.resource_total * 100
+                    return self._currentResult.sci2 / self._currentResult.resource_per_slot * 100
                 elif index.row() == 5:
-                    return self._currentResult.dm_rs / self._currentResult.resource_total * 100
+                    return self._currentResult.dm_rs / self._currentResult.resource_per_slot * 100
                 elif index.row() == 6:
-                    return self._currentResult.agc / self._currentResult.resource_total * 100
+                    return self._currentResult.agc / self._currentResult.resource_per_slot * 100
                 elif index.row() == 7:
-                    return self._currentResult.guard / self._currentResult.resource_total * 100
+                    return self._currentResult.guard / self._currentResult.resource_per_slot * 100
                 elif index.row() == 8:
-                    return self._currentResult.s_ssb / self._currentResult.resource_total * 100
+                    return self._currentResult.s_ssb / self._currentResult.resource_per_slot * 100
                 elif index.row() == 9:
-                    return self._currentResult.overhead_total / self._currentResult.resource_total * 100
+                    return self._currentResult.overhead_total / self._currentResult.resource_per_slot * 100
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
         if role != Qt.DisplayRole:
