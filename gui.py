@@ -973,7 +973,10 @@ class MainWindow(QMainWindow):
         # No file selected
         if not file[0]:
             return
-        with open(file[0], mode='w') as csv_file:
+
+        # Specify `newline` to avoid extra newlines on Windows
+        # See: https://docs.python.org/3/library/csv.html#examples
+        with open(file[0], mode='w', newline='', encoding='utf-8') as csv_file:
             selected_table = dialog.selected_table()
             writer = csv.writer(csv_file, delimiter=',', quotechar='"')
 
