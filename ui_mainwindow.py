@@ -172,11 +172,20 @@ class Ui_MainWindow(object):
         self.hlNrButtons.setObjectName(u"hlNrButtons")
         self.btnDeleteSelectedNr = QPushButton(self.tabNr)
         self.btnDeleteSelectedNr.setObjectName(u"btnDeleteSelectedNr")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.btnDeleteSelectedNr.sizePolicy().hasHeightForWidth())
+        self.btnDeleteSelectedNr.setSizePolicy(sizePolicy1)
+        self.btnDeleteSelectedNr.setFlat(False)
 
         self.hlNrButtons.addWidget(self.btnDeleteSelectedNr)
 
         self.btnClearNr = QPushButton(self.tabNr)
         self.btnClearNr.setObjectName(u"btnClearNr")
+        sizePolicy1.setHeightForWidth(self.btnClearNr.sizePolicy().hasHeightForWidth())
+        self.btnClearNr.setSizePolicy(sizePolicy1)
+        self.btnClearNr.setFlat(False)
 
         self.hlNrButtons.addWidget(self.btnClearNr)
 
@@ -291,11 +300,15 @@ class Ui_MainWindow(object):
         self.hlLteButtons.setObjectName(u"hlLteButtons")
         self.btnDeleteSelectedLte = QPushButton(self.tabLte)
         self.btnDeleteSelectedLte.setObjectName(u"btnDeleteSelectedLte")
+        sizePolicy1.setHeightForWidth(self.btnDeleteSelectedLte.sizePolicy().hasHeightForWidth())
+        self.btnDeleteSelectedLte.setSizePolicy(sizePolicy1)
 
         self.hlLteButtons.addWidget(self.btnDeleteSelectedLte)
 
         self.btnClearLte = QPushButton(self.tabLte)
         self.btnClearLte.setObjectName(u"btnClearLte")
+        sizePolicy1.setHeightForWidth(self.btnClearLte.sizePolicy().hasHeightForWidth())
+        self.btnClearLte.setSizePolicy(sizePolicy1)
 
         self.hlLteButtons.addWidget(self.btnClearLte)
 

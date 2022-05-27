@@ -225,15 +225,33 @@
            <layout class="QHBoxLayout" name="hlNrButtons">
             <item>
              <widget class="QPushButton" name="btnDeleteSelectedNr">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Delete Selected</string>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="btnClearNr">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Reset</string>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -403,6 +421,12 @@
            <layout class="QHBoxLayout" name="hlLteButtons">
             <item>
              <widget class="QPushButton" name="btnDeleteSelectedLte">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Delete Selected</string>
               </property>
@@ -410,6 +434,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="btnClearLte">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>Reset</string>
               </property>
