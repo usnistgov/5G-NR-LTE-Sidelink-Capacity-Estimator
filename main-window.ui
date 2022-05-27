@@ -62,6 +62,9 @@
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="lblResourceBlocks">
+              <property name="toolTip">
+               <string>Physical Resource Blocks</string>
+              </property>
               <property name="text">
                <string># PRBs</string>
               </property>
@@ -108,6 +111,9 @@
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="lblHarq">
+              <property name="toolTip">
+               <string>Hybrid Automatic Repeat Request</string>
+              </property>
               <property name="text">
                <string>HARQ Mode</string>
               </property>
@@ -250,6 +256,9 @@
            <layout class="QFormLayout" name="formLayout_2">
             <item row="0" column="0">
              <widget class="QLabel" name="lblMcs">
+              <property name="toolTip">
+               <string>Modulation and Coding Scheme</string>
+              </property>
               <property name="text">
                <string>MCS</string>
               </property>
@@ -297,6 +306,9 @@
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_2">
+              <property name="toolTip">
+               <string>Physical Sidelink Control Channel Length</string>
+              </property>
               <property name="text">
                <string>PSCCH Length</string>
               </property>
