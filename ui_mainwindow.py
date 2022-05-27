@@ -96,40 +96,50 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(3, QFormLayout.FieldRole, self.comboModulation)
 
-        self.lblHarq = QLabel(self.tabNr)
+
+        self.verticalLayoutInputsNr.addLayout(self.formLayout)
+
+        self.grpHarq = QGroupBox(self.tabNr)
+        self.grpHarq.setObjectName(u"grpHarq")
+        self.formLayout_5 = QFormLayout(self.grpHarq)
+        self.formLayout_5.setObjectName(u"formLayout_5")
+        self.formLayout_5.setHorizontalSpacing(0)
+        self.formLayout_5.setVerticalSpacing(6)
+        self.formLayout_5.setContentsMargins(0, 8, 0, 8)
+        self.lblHarq = QLabel(self.grpHarq)
         self.lblHarq.setObjectName(u"lblHarq")
 
-        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.lblHarq)
+        self.formLayout_5.setWidget(0, QFormLayout.LabelRole, self.lblHarq)
 
-        self.comboHarq = QComboBox(self.tabNr)
+        self.comboHarq = QComboBox(self.grpHarq)
         self.comboHarq.setObjectName(u"comboHarq")
 
-        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.comboHarq)
+        self.formLayout_5.setWidget(0, QFormLayout.FieldRole, self.comboHarq)
 
-        self.lblBlindTransmissions = QLabel(self.tabNr)
+        self.lblBlindTransmissions = QLabel(self.grpHarq)
         self.lblBlindTransmissions.setObjectName(u"lblBlindTransmissions")
 
-        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.lblBlindTransmissions)
+        self.formLayout_5.setWidget(1, QFormLayout.LabelRole, self.lblBlindTransmissions)
 
-        self.spinBlindTransmissions = QSpinBox(self.tabNr)
+        self.spinBlindTransmissions = QSpinBox(self.grpHarq)
         self.spinBlindTransmissions.setObjectName(u"spinBlindTransmissions")
         self.spinBlindTransmissions.setMinimum(1)
         self.spinBlindTransmissions.setMaximum(32)
 
-        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.spinBlindTransmissions)
+        self.formLayout_5.setWidget(1, QFormLayout.FieldRole, self.spinBlindTransmissions)
 
-        self.lblFeedbackChannel = QLabel(self.tabNr)
+        self.lblFeedbackChannel = QLabel(self.grpHarq)
         self.lblFeedbackChannel.setObjectName(u"lblFeedbackChannel")
 
-        self.formLayout.setWidget(6, QFormLayout.LabelRole, self.lblFeedbackChannel)
+        self.formLayout_5.setWidget(2, QFormLayout.LabelRole, self.lblFeedbackChannel)
 
-        self.comboFeedbackChannel = QComboBox(self.tabNr)
+        self.comboFeedbackChannel = QComboBox(self.grpHarq)
         self.comboFeedbackChannel.setObjectName(u"comboFeedbackChannel")
 
-        self.formLayout.setWidget(6, QFormLayout.FieldRole, self.comboFeedbackChannel)
+        self.formLayout_5.setWidget(2, QFormLayout.FieldRole, self.comboFeedbackChannel)
 
 
-        self.verticalLayoutInputsNr.addLayout(self.formLayout)
+        self.verticalLayoutInputsNr.addWidget(self.grpHarq)
 
         self.btnCalculate = QPushButton(self.tabNr)
         self.btnCalculate.setObjectName(u"btnCalculate")
@@ -483,6 +493,7 @@ class Ui_MainWindow(object):
         self.lblModulation.setToolTip(QCoreApplication.translate("MainWindow", u"Max modulation supported by the UE", None))
 #endif // QT_CONFIG(tooltip)
         self.lblModulation.setText(QCoreApplication.translate("MainWindow", u"UE Max Modulation", None))
+        self.grpHarq.setTitle("")
 #if QT_CONFIG(tooltip)
         self.lblHarq.setToolTip(QCoreApplication.translate("MainWindow", u"Hybrid Automatic Repeat Request", None))
 #endif // QT_CONFIG(tooltip)
