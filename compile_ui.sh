@@ -31,4 +31,3 @@
 
 pyside2-uic main-window.ui > ui_mainwindow.py
 pyside2-uic csv_dialog.ui > ui_csvdialog.py
-sed -i 's/from PySide2.QtCharts import QtCharts.QChartView/from PySide2.QtCharts import QtCharts/g' ui_mainwindow.py
