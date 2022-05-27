@@ -826,7 +826,7 @@ class MainWindow(QMainWindow):
             self.ui.comboNrChartYAxis.addItem(str(table_item), userData=table_item.value)
         # Select RUN_INDEX and DATA_RATE as the default X & Y axes
         self.ui.comboNrChartXAxis.setCurrentIndex(
-            self.ui.comboNrChartXAxis.findData(NrTableColumn.RUN_INDEX.value, Qt.UserRole))
+            self.ui.comboNrChartXAxis.findData(NrTableColumn.ROW_NUMBER.value, Qt.UserRole))
         self.ui.comboNrChartYAxis.setCurrentIndex(
             self.ui.comboNrChartYAxis.findData(NrTableColumn.DATA_RATE.value, Qt.UserRole))
 
@@ -835,7 +835,7 @@ class MainWindow(QMainWindow):
             self.ui.comboLteChartYAxis.addItem(str(table_item), userData=table_item.value)
         # Select RUN_INDEX and DATA_RATE as the default X & Y axes
         self.ui.comboLteChartXAxis.setCurrentIndex(
-            self.ui.comboLteChartXAxis.findData(LteTableColumn.RUN_INDEX.value, Qt.UserRole))
+            self.ui.comboLteChartXAxis.findData(LteTableColumn.ROW_NUMBER.value, Qt.UserRole))
         self.ui.comboLteChartYAxis.setCurrentIndex(
             self.ui.comboLteChartYAxis.findData(LteTableColumn.DATA_RATE.value, Qt.UserRole))
 
