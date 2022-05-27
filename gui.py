@@ -156,6 +156,8 @@ class ResultRow:
         data.extend(self._overhead_row(result.guard))
         # S-SSB
         data.extend(self._overhead_row(result.s_ssb))
+        # Redundant Data
+        data.extend(self._overhead_row(result.redundant_data))
         # Total
         data.append(result.overhead_total)
 
