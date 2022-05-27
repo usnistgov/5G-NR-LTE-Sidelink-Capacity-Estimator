@@ -206,7 +206,7 @@
             <item>
              <widget class="QPushButton" name="btnClearNr">
               <property name="text">
-               <string>Clear Table</string>
+               <string>Reset</string>
               </property>
              </widget>
             </item>
@@ -381,7 +381,7 @@
             <item>
              <widget class="QPushButton" name="btnClearLte">
               <property name="text">
-               <string>Clear Table</string>
+               <string>Reset</string>
               </property>
              </widget>
             </item>

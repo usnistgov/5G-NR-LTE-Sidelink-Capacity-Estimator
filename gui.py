@@ -782,31 +782,34 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # NR Inputs
         self.ui.comboNumerology.addItem("0", userData=0)
         self.ui.comboNumerology.addItem("1", userData=1)
 
         self.ui.comboLayers.addItem("1", userData=1)
         self.ui.comboLayers.addItem("2", userData=2)
-        # Have 2 Layers selected by default
-        self.ui.comboLayers.setCurrentIndex(self.ui.comboLayers.findData(2, Qt.UserRole))
 
         self.ui.comboModulation.addItem("64 QAM", userData=64)
         self.ui.comboModulation.addItem("256 QAM", userData=256)
-        # Have 256 QAM Selected by default
-        self.ui.comboModulation.setCurrentIndex(self.ui.comboModulation.findData(256, Qt.UserRole))
 
         self.ui.comboHarq.addItem("Blind Transmission", userData=HarqMode.BLIND_TRANSMISSION)
         self.ui.comboHarq.addItem("Feedback Channel", userData=HarqMode.FEEDBACK)
-
-        # Manually trigger this slot, so we only see the relevant inputs for the starting HARQ mode
-        self.harq_mode_changed()
 
         self.ui.comboFeedbackChannel.addItem("1", userData=1)
         self.ui.comboFeedbackChannel.addItem("2", userData=2)
         self.ui.comboFeedbackChannel.addItem("4", userData=4)
 
+        # Set default values for NR inputs
+        self.default_nr_inputs()
+
+        # LTE Inputs
         for possible_value in POSSIBLE_SL_PERIOD_SIZES_LTE:
             self.ui.comboLteSlPeriod.addItem(str(possible_value) + " subframes", userData=possible_value)
+
+        # Set default values for LTE inputs
+        self.default_lte_inputs()
+
+        # Charts
 
         # Remove margins around charts
         self.ui.chartNr.chart().layout().setContentsMargins(0, 0, 0, 0)
@@ -912,26 +915,54 @@ class MainWindow(QMainWindow):
 
         super().keyPressEvent(event)
 
+    def default_nr_inputs(self):
+        self.ui.comboNumerology.setCurrentIndex(self.ui.comboNumerology.findData(0, Qt.UserRole))
+        # Trigger this slot manually to change the allowed range of the PRBs
+        self.numerology_changed()
+
+        self.ui.spinResourceBlocksNr.setValue(52)
+        self.ui.comboLayers.setCurrentIndex(self.ui.comboLayers.findData(2, Qt.UserRole))
+        self.ui.comboModulation.setCurrentIndex(self.ui.comboModulation.findData(256, Qt.UserRole))
+
+        self.ui.comboHarq.setCurrentIndex(self.ui.comboHarq.findData(HarqMode.BLIND_TRANSMISSION, Qt.UserRole))
+        # Manually trigger this slot, so we only see the relevant inputs for the current HARQ mode
+        self.harq_mode_changed()
+
+        self.ui.spinBlindTransmissions.setValue(1)
+        self.ui.comboFeedbackChannel.setCurrentIndex(self.ui.comboFeedbackChannel.findData(1, Qt.UserRole))
+
+    def default_lte_inputs(self):
+        self.ui.spinMcs.setValue(20)
+        self.ui.spinResourceBlocksLte.setValue(50)
+        self.ui.comboLteSlPeriod.setCurrentIndex(
+            self.ui.comboLteSlPeriod.findData(POSSIBLE_SL_PERIOD_SIZES_LTE[0], Qt.UserRole))
+        self.ui.spinPscchSize.setValue(2)
+
     def reset_tables(self):
-        result = QMessageBox.question(self, "Clear Tables", "Are you sure you want to clear all results")
+        result = QMessageBox.question(self, "Clear Tables",
+                                      "Are you sure you want to clear all results and reset inputs")
         if result is not QMessageBox.StandardButton.Yes:
             return
         self.reset_nr()
         self.reset_lte()
 
     def reset_nr(self):
-        result = QMessageBox.question(self, "Clear NR Table", "Are you sure you want to clear all NR results")
+        result = QMessageBox.question(self, "Clear NR Table",
+                                      "Are you sure you want to clear all NR results and reset inputs")
         if result is not QMessageBox.StandardButton.Yes:
             return
         self.tableModel.reset()
         self.replot_chart_nr()
+        self.default_nr_inputs()
 
     def reset_lte(self):
-        result = QMessageBox.question(self, "Clear LTE Table", "Are you sure you want to clear all LTE results")
+        result = QMessageBox.question(self, "Clear LTE Table",
+                                      "Are you sure you want to clear all LTE results and reset inputs")
         if result is not QMessageBox.StandardButton.Yes:
             return
         self.tableModelLte.reset()
         self.replot_chart_lte()
+        self.default_lte_inputs()
 
     def delete_from_active_table(self):
         if self.ui.tabWidget.currentIndex() == 0:
