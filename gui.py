@@ -380,7 +380,10 @@ class OverheadTableRow(Enum):
     S_SSB = 24
     S_SSB_PERCENT_TOTAL_OH = 25
     S_SSB_PERCENT_TOTAL = 26
-    TOTAL_OVERHEAD = 27
+    REDUNDANT_DATA = 27
+    REDUNDANT_DATA_TOTAL_OH = 28
+    REDUNDANT_PERCENT_TOTAL = 29
+    TOTAL_OVERHEAD = 30
 
     def __str__(self) -> str:
         if self is OverheadTableRow.PSFCH:
@@ -437,6 +440,12 @@ class OverheadTableRow(Enum):
             return "S-SSB % Total Overhead"
         elif self is OverheadTableRow.S_SSB_PERCENT_TOTAL:
             return "S-SSB % Total"
+        elif self is OverheadTableRow.REDUNDANT_DATA:
+            return "Redundant Data"
+        elif self is OverheadTableRow.REDUNDANT_DATA_TOTAL_OH:
+            return "Redundant Data % Total Overhead"
+        elif self is OverheadTableRow.REDUNDANT_PERCENT_TOTAL:
+            return "Redundant Data % Total"
         elif self is OverheadTableRow.TOTAL_OVERHEAD:
             return "Total Overhead"
 
@@ -447,7 +456,7 @@ class OverheadTableModel(QAbstractTableModel):
         self._currentResult: Optional[NrResult] = None
 
     def rowCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
-        return 10
+        return 11
 
     def columnCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
         return 3
@@ -478,6 +487,8 @@ class OverheadTableModel(QAbstractTableModel):
                 elif index.row() == 8:
                     return self._currentResult.s_ssb
                 elif index.row() == 9:
+                    return self._currentResult.redundant_data
+                elif index.row() == 10:
                     return self._currentResult.overhead_total
             elif index.column() == 1:
                 if index.row() == 0:
@@ -499,6 +510,8 @@ class OverheadTableModel(QAbstractTableModel):
                 elif index.row() == 8:
                     return self._currentResult.s_ssb / self._currentResult.overhead_total * 100
                 elif index.row() == 9:
+                    return self._currentResult.redundant_data / self._currentResult.overhead_total * 100
+                elif index.row() == 10:
                     return 100.00
             elif index.column() == 2:
                 if index.row() == 0:
@@ -520,6 +533,8 @@ class OverheadTableModel(QAbstractTableModel):
                 elif index.row() == 8:
                     return self._currentResult.s_ssb / self._currentResult.resource_per_slot * 100
                 elif index.row() == 9:
+                    return self._currentResult.redundant_data / self._currentResult.resource_per_slot * 100
+                elif index.row() == 10:
                     return self._currentResult.overhead_total / self._currentResult.resource_per_slot * 100
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...) -> Any:
@@ -546,6 +561,8 @@ class OverheadTableModel(QAbstractTableModel):
             elif section == 8:
                 return "S-SSB"
             elif section == 9:
+                return "Redundant Data"
+            elif section == 10:
                 return "Total"
 
         if orientation == Qt.Horizontal:
