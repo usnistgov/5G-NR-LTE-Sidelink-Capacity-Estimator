@@ -102,7 +102,7 @@
                <string>Max modulation supported by the UE</string>
               </property>
               <property name="text">
-               <string>Max Modulation</string>
+               <string>UE Max Modulation</string>
               </property>
              </widget>
             </item>

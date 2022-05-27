@@ -481,7 +481,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.lblModulation.setToolTip(QCoreApplication.translate("MainWindow", u"Max modulation supported by the UE", None))
 #endif // QT_CONFIG(tooltip)
-        self.lblModulation.setText(QCoreApplication.translate("MainWindow", u"Max Modulation", None))
+        self.lblModulation.setText(QCoreApplication.translate("MainWindow", u"UE Max Modulation", None))
 #if QT_CONFIG(tooltip)
         self.lblHarq.setToolTip(QCoreApplication.translate("MainWindow", u"Hybrid Automatic Repeat Request", None))
 #endif // QT_CONFIG(tooltip)
