@@ -773,6 +773,8 @@ class MainWindow(QMainWindow):
 
         self.ui.comboModulation.addItem("64 QAM", userData=64)
         self.ui.comboModulation.addItem("256 QAM", userData=256)
+        # Have 256 QAM Selected by default
+        self.ui.comboModulation.setCurrentIndex(self.ui.comboModulation.findData(256, Qt.UserRole))
 
         self.ui.comboHarq.addItem("Blind Transmission", userData=HarqMode.BLIND_TRANSMISSION)
         self.ui.comboHarq.addItem("Feedback Channel", userData=HarqMode.FEEDBACK)
