@@ -857,8 +857,13 @@ class MainWindow(QMainWindow):
         self.ui.comboLteChartXAxis.activated.connect(self.replot_chart_lte)
         self.ui.comboLteChartYAxis.activated.connect(self.replot_chart_lte)
 
+        # Clear Table Buttons
         self.ui.btnClearNr.clicked.connect(self.reset_nr)
         self.ui.btnClearLte.clicked.connect(self.reset_lte)
+
+        # Clear Selected Buttons
+        self.ui.btnDeleteSelectedNr.clicked.connect(self.delete_from_nr)
+        self.ui.btnDeleteSelectedLte.clicked.connect(self.delete_from_lte)
 
         self.ui.checkPlotSelectedNr.stateChanged.connect(self.replot_chart_nr)
         self.ui.checkPlotSelectedLte.stateChanged.connect(self.replot_chart_lte)
