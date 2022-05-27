@@ -576,8 +576,14 @@ class OverheadTableModel(QAbstractTableModel):
                 return "Percent Total Resources"
 
     def set_result(self, nr_result: NrResult):
+        self.beginResetModel()
         self._currentResult = nr_result
-        self.dataChanged.emit(QModelIndex(), QModelIndex())
+        self.endResetModel()
+
+    def reset(self):
+        self.beginResetModel()
+        self._currentResult = None
+        self.endResetModel()
 
 
 class LteTableColumn(Enum):
@@ -952,6 +958,7 @@ class MainWindow(QMainWindow):
         if result is not QMessageBox.StandardButton.Yes:
             return
         self.tableModel.reset()
+        self.tableModelOverHead.reset()
         self.replot_chart_nr()
         self.default_nr_inputs()
 
@@ -982,6 +989,10 @@ class MainWindow(QMainWindow):
         self.tableModel.remove(delete_rows)
         # Remove the deleted rows from the chart
         self.replot_chart_nr()
+
+        # Since the currently selected row was probably populating the Overhead Table
+        # Reset that as well
+        self.tableModelOverHead.reset()
 
     def delete_from_lte(self):
         delete_rows = []
