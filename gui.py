@@ -26,7 +26,6 @@
 # software is not intended to be used in any situation where a failure could
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
-import PySide2
 
 from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeError, NotAcceptableValueError, \
     POSSIBLE_SL_PERIOD_SIZES_LTE
@@ -46,11 +45,20 @@ from operator import attrgetter
 
 
 class ExportTable(Enum):
+    """
+    Enum for the dropdown in the `CsvDialog`.
+    Used to indicate the table the user wants to
+    export from
+    """
     NR = 0
     LTE = 1
 
 
 class CsvDialog(QDialog):
+    """
+    Dialog fot the user to configure a comma seperated values (CSV)
+    from the application
+    """
     def __init__(self, parent=None):
         super(CsvDialog, self).__init__(parent)
         self.ui = Ui_CsvDialog()
@@ -77,6 +85,14 @@ class CsvDialog(QDialog):
 
 
 class NrTableColumn(Enum):
+    """
+    Representation of each column in the NR Result table.
+    These are in order for how they should be presented in
+    the application.
+
+    The string representation of this enum should be used whenever
+    a given column is displayed to the user
+    """
     ROW_NUMBER = 0
     RUN_INDEX = 1
     NUMEROLOGY = 2
@@ -111,12 +127,20 @@ class NrTableColumn(Enum):
             return "Data Rate (Mb/s)"
 
 
-class ResultRow:
+class ResultRowNr:
+    """
+    Representation of one calculation displayed on
+    the table `tableResult`
+    """
     def __init__(self, row: int, run: int, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                  harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                  feedback_channel_period: Optional[int]):
+        # The index of row on the table. Sensitive to sorting
         self.row = row
+        # The unique ID for each calculation. Never changes
         self.run = run
+
+        # User inputs
         self.numerology = numerology
         self.resource_blocks = resource_blocks
         self.layers = layers
@@ -126,8 +150,8 @@ class ResultRow:
         self.blind_retransmissions = blind_retransmissions
         self.feedback_channel_period = feedback_channel_period
 
-    # Match the `NrTableColumn` enum order
     def to_csv(self):
+        # Match the `NrTableColumn` enum order
         return [self.row, self.run, self.numerology, self.resource_blocks, self.layers,
                 str(self.max_modulation) + "QAM", str(self.harq_mode), self.blind_retransmissions,
                 self.feedback_channel_period, self.nr_result.data_rate]
@@ -165,26 +189,30 @@ class ResultRow:
 
 
 # Key functions for sorting data
-def _result_row_harq_key(row: ResultRow) -> int:
+def _result_row_harq_key(row: ResultRowNr) -> int:
     return row.harq_mode.value
 
 
-def _result_row_blind_retransmissions_key(row: ResultRow) -> int:
+def _result_row_blind_retransmissions_key(row: ResultRowNr) -> int:
     if row.blind_retransmissions:
         return row.blind_retransmissions
     return 0
 
 
-def _result_row_feedback_channel_period_key(row: ResultRow) -> int:
+def _result_row_feedback_channel_period_key(row: ResultRowNr) -> int:
     if row.feedback_channel_period:
         return row.feedback_channel_period
     return 0
 
 
-class ResultTableModel(QAbstractTableModel):
+class ResultTableNrModel(QAbstractTableModel):
+    """
+    Model for the table `tableResult`, which displays
+    the NR results
+    """
     def __init__(self):
         super().__init__()
-        self._results: List[ResultRow] = []
+        self._results: List[ResultRowNr] = []
         self._run_index = 0
 
     def rowCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
@@ -194,8 +222,12 @@ class ResultTableModel(QAbstractTableModel):
         return len(NrTableColumn)
 
     def sort(self, column: int, order: Qt.SortOrder = ...):
+        # We manually define sorting instead of using `QSortFilterProxyModel`
+        # so we can easily set the `row` value from its position in the
+        # results (`QSortFilterProxyModel` does not reorder data)
+
         # Row number is entirely based on the sorting order,
-        # so it doesn't make sense to sort on th
+        # so it doesn't make sense to sort on it
         if column == NrTableColumn.ROW_NUMBER.value:
             return
 
@@ -305,7 +337,7 @@ class ResultTableModel(QAbstractTableModel):
     def append(self, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                feedback_channel_period: Optional[int]):
-        new_result = ResultRow(
+        new_result = ResultRowNr(
             row=len(self._results),
             run=self._run_index,
             numerology=numerology,
@@ -345,16 +377,30 @@ class ResultTableModel(QAbstractTableModel):
     def results(self):
         return self._results
 
-    def get_result(self, row: int) -> ResultRow:
+    def get_result(self, row: int) -> ResultRowNr:
         return self._results[row]
 
 
 def _sort_order_changed_nr(index, order, header: QtWidgets.QHeaderView):
+    """
+    Helper which stops the sort indicator on the row column
+    from being changed, since it will always be descending
+
+    Connected to the `sortIndicatorChanged` signal later
+    """
     if index == NrTableColumn.ROW_NUMBER.value:
         header.setSortIndicator(index, Qt.SortOrder.DescendingOrder)
 
 
 class OverheadTableRow(Enum):
+    """
+    Representation of each column in the NR Result table.
+    These are in order for how they should be presented in
+    the application.
+
+    The string representation of this enum should be used whenever
+    a given column is displayed to the user.
+    """
     PSFCH = 0
     PSFCH_PERCENT_TOTAL_OH = 1
     PSFCH_PERCENT_TOTAL = 2
@@ -453,6 +499,11 @@ class OverheadTableRow(Enum):
 
 
 class OverheadTableModel(QAbstractTableModel):
+    """
+    Model for the table `tableOverHead` in the NR tab.
+    Displays the breakdown of overhead components for
+    a given `NrResult`
+    """
     def __init__(self):
         super().__init__()
         self._currentResult: Optional[NrResult] = None
@@ -587,6 +638,14 @@ class OverheadTableModel(QAbstractTableModel):
 
 
 class LteTableColumn(Enum):
+    """
+    Representation of each column in the LTE Result table.
+    These are in order for how they should be presented in
+    the application.
+
+    The string representation of this enum should be used whenever
+    a given column is displayed to the user
+    """
     ROW_NUMBER = 0
     RUN_INDEX = 1
     MCS = 2
@@ -613,6 +672,10 @@ class LteTableColumn(Enum):
 
 
 class ResultRowLte:
+    """
+    Representation of one calculation displayed on
+    the table `tableResultLte`
+    """
     def __init__(self, row: int, run: int, mcs: int, resource_blocks: int, period_size: int, pscch_size: int,
                  result: float):
         self.row = row
@@ -629,6 +692,10 @@ class ResultRowLte:
 
 
 class ResultTableLteModel(QAbstractTableModel):
+    """
+    Model for the table `tableResultLte`, which displays
+    the LTE results
+    """
     def __init__(self):
         super().__init__()
         self._results: List[ResultRowLte] = []
@@ -645,6 +712,11 @@ class ResultTableLteModel(QAbstractTableModel):
             result.row = index
 
     def sort(self, column: int, order: Qt.SortOrder = ...):
+        # Same justification as `ResultTableNrModel.sort()`
+        # We manually define sorting instead of using `QSortFilterProxyModel`
+        # so we can easily set the `row` value from its position in the
+        # results (`QSortFilterProxyModel` does not reorder data)
+
         # Don't sort the Row number column, since that's just the row's postion
         # in the table
         if column == LteTableColumn.ROW_NUMBER.value:
@@ -758,13 +830,21 @@ class ResultTableLteModel(QAbstractTableModel):
 
 
 def _sort_order_changed_lte(index, order, header: QtWidgets.QHeaderView):
+    """
+    Helper which stops the sort indicator on the row column
+    from being changed, since it will always be descending
+
+    Connected to the `sortIndicatorChanged` signal later
+    """
     if index == LteTableColumn.ROW_NUMBER.value:
         header.setSortIndicator(index, Qt.SortOrder.DescendingOrder)
 
 
 class ArrowKeyEventFilter(QObject):
     """
-    Workaround for not subclassing QTableView for key events
+    Workaround for not subclassing QTableView for key events.
+    Allows for updating the overhead table when the user
+    changes the selected row with arrow keys.
     """
 
     def __init__(self, table: QtWidgets.QTableView, handler: Callable):
@@ -783,6 +863,10 @@ class ArrowKeyEventFilter(QObject):
 
 
 class MainWindow(QMainWindow):
+    """
+    Model for the overarching window that contains all of our widgets.
+    Mostly sets-up, read inputs, & connects signals & slots
+    """
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -805,14 +889,14 @@ class MainWindow(QMainWindow):
         self.ui.comboFeedbackChannel.addItem("2", userData=2)
         self.ui.comboFeedbackChannel.addItem("4", userData=4)
 
-        # Set default values for NR inputs
+        # Start NR inputs in a known state
         self.default_nr_inputs()
 
         # LTE Inputs
         for possible_value in POSSIBLE_SL_PERIOD_SIZES_LTE:
             self.ui.comboLteSlPeriod.addItem(str(possible_value) + " subframes", userData=possible_value)
 
-        # Set default values for LTE inputs
+        # Start LTE inputs in a known state
         self.default_lte_inputs()
 
         # Charts
@@ -834,9 +918,8 @@ class MainWindow(QMainWindow):
         self.ui.comboLteChartYAxis.setCurrentIndex(
             self.ui.comboLteChartYAxis.findData(LteTableColumn.DATA_RATE.value, Qt.UserRole))
 
-        # Result table
-
-        self.tableModel = ResultTableModel()
+        # NR Result table
+        self.tableModel = ResultTableNrModel()
 
         self.ui.tableResult.setModel(self.tableModel)
         self.ui.tableResult.sortByColumn(0, Qt.AscendingOrder)
@@ -845,16 +928,19 @@ class MainWindow(QMainWindow):
         self.ui.tableResult.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResult.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
 
+        # Install the handler to change the overhead table value when using the arrow keys
+        # and update plots if we're only plotting selected values
         self._arrow_handler_nr = ArrowKeyEventFilter(self.ui.tableResult, self.selection_changed_nr)
 
         # Don't show the sort order as descending for the row number
         # since it is entirely dependent on sort order
+        # Use `_sort_order_changed_nr` since Python lambdas
+        # may only be one line
         self.ui.tableResult.horizontalHeader().sortIndicatorChanged.connect(
             lambda index, order: _sort_order_changed_nr(index=index, order=order,
                                                         header=self.ui.tableResult.horizontalHeader()))
 
         # NR Overhead Table
-
         self.tableModelOverHead = OverheadTableModel()
         self.ui.tableOverHead.setModel(self.tableModelOverHead)
         self.ui.tableOverHead.horizontalHeader().setStretchLastSection(True)
@@ -884,7 +970,6 @@ class MainWindow(QMainWindow):
                 self.ui.tableOverHead.verticalHeader().setMinimumWidth(size.width())
 
         # LTE Result Table
-
         self.tableModelLte = ResultTableLteModel()
 
         self.ui.tableResultLte.setModel(self.tableModelLte)
@@ -892,10 +977,13 @@ class MainWindow(QMainWindow):
         self.ui.tableResultLte.horizontalHeader().resizeSections(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.tableResultLte.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
 
+        # Handle arrow key presses and update plots if we're only plotting selected values
         self._arrow_handler_lte = ArrowKeyEventFilter(self.ui.tableResultLte, self.arrow_key_lte)
 
         # Don't show the sort order as descending for the row number
         # since it is entirely dependent on sort order
+        # Use `_sort_order_changed_lte` since Python lambdas
+        # may only be one line
         self.ui.tableResultLte.horizontalHeader().sortIndicatorChanged.connect(
             lambda index, order: _sort_order_changed_lte(index=index, order=order,
                                                          header=self.ui.tableResultLte.horizontalHeader()))
@@ -934,12 +1022,18 @@ class MainWindow(QMainWindow):
         self.ui.action_CSV.triggered.connect(self.export_csv)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
+        """
+        Handler allowing results to be deleted with the delete key
+        """
         if event.key() == Qt.Key_Delete:
             self.delete_from_active_table()
 
         super().keyPressEvent(event)
 
     def default_nr_inputs(self):
+        """
+        Return all the inputs on the NR tab to their initial state
+        """
         self.ui.comboNumerology.setCurrentIndex(self.ui.comboNumerology.findData(0, Qt.UserRole))
         # Trigger this slot manually to change the allowed range of the PRBs
         self.numerology_changed()
@@ -956,6 +1050,9 @@ class MainWindow(QMainWindow):
         self.ui.comboFeedbackChannel.setCurrentIndex(self.ui.comboFeedbackChannel.findData(1, Qt.UserRole))
 
     def default_lte_inputs(self):
+        """
+        Return all the inputs on the LTE tab to their initial state
+        """
         self.ui.spinMcs.setValue(20)
         self.ui.spinResourceBlocksLte.setValue(50)
         self.ui.comboLteSlPeriod.setCurrentIndex(
@@ -963,6 +1060,9 @@ class MainWindow(QMainWindow):
         self.ui.spinPscchSize.setValue(2)
 
     def reset_tables(self):
+        """
+        Handler to erase all results and reset all inputs
+        """
         result = QMessageBox.question(self, "Clear Tables",
                                       "Are you sure you want to clear all results and reset inputs")
         if result is not QMessageBox.StandardButton.Yes:
@@ -971,6 +1071,9 @@ class MainWindow(QMainWindow):
         self.reset_lte()
 
     def reset_nr(self):
+        """
+        Handler to erase all results and reset all inputs on the NR result table/tab
+        """
         result = QMessageBox.question(self, "Clear NR Table",
                                       "Are you sure you want to clear all NR results and reset inputs")
         if result is not QMessageBox.StandardButton.Yes:
@@ -981,6 +1084,9 @@ class MainWindow(QMainWindow):
         self.default_nr_inputs()
 
     def reset_lte(self):
+        """
+        Handler to erase all results and reset all inputs on the LTE result table/tab
+        """
         result = QMessageBox.question(self, "Clear LTE Table",
                                       "Are you sure you want to clear all LTE results and reset inputs")
         if result is not QMessageBox.StandardButton.Yes:
@@ -990,6 +1096,10 @@ class MainWindow(QMainWindow):
         self.default_lte_inputs()
 
     def delete_from_active_table(self):
+        """
+        Handler to delete selected rows
+        from the result table on the currently active tab
+        """
         if self.ui.tabWidget.currentIndex() == 0:
             self.delete_from_nr()
         elif self.ui.tabWidget.currentIndex() == 1:
@@ -997,6 +1107,10 @@ class MainWindow(QMainWindow):
         # Index 3 is the charts tab
 
     def delete_from_nr(self):
+        """
+        Handler to delete selected rows on the NR result table.
+        Also clears the overhead table and resets the NR plot
+        """
         delete_rows = []
         for selected_index in self.ui.tableResult.selectedIndexes():
             # We'll get an index from every selected cell,
@@ -1013,6 +1127,10 @@ class MainWindow(QMainWindow):
         self.tableModelOverHead.reset()
 
     def delete_from_lte(self):
+        """
+        Handler to delete selected rows on the LTE result table.
+        Also resets the LTE plot
+        """
         delete_rows = []
         for selected_index in self.ui.tableResultLte.selectedIndexes():
             # We'll get an index from every selected cell,
@@ -1026,6 +1144,9 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def export_csv(self):
+        """
+        Handler that prompts the user to save results to a CSV file
+        """
         dialog = CsvDialog(self)
         if not dialog.exec_():
             return
@@ -1061,6 +1182,10 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def numerology_changed(self):  # We don't need the new index, so ignore it
+        """
+        Handler to update the possible resource blocks when
+        the user changes the numerology
+        """
         numerology = int(self.ui.comboNumerology.currentData(Qt.UserRole))
         if numerology == 0:
             self.ui.spinResourceBlocksNr.setMaximum(52)
@@ -1073,6 +1198,10 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def harq_mode_changed(self):  # We don't need the new index, so ignore it
+        """
+        Handler that shows the relevant input when the user changes the
+        HARQ mode
+        """
         harq_mode = self.ui.comboHarq.currentData(Qt.UserRole)
         if harq_mode == HarqMode.BLIND_TRANSMISSION:
             self.ui.lblFeedbackChannel.hide()
@@ -1091,6 +1220,10 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def btn_clicked(self):
+        """
+        Handler for when the use clicks the button to calculate the
+        data rate on the NR tab
+        """
         numerology = int(self.ui.comboNumerology.currentData(Qt.UserRole))
         resource_blocks = self.ui.spinResourceBlocksNr.value()
         layers = int(self.ui.comboLayers.currentData(Qt.UserRole))
@@ -1135,7 +1268,18 @@ class MainWindow(QMainWindow):
         # Populate the overhead table with our latest result
         self.tableModelOverHead.set_result(nr_result)
 
-    def value_for_axis(self, result: ResultRow, column: NrTableColumn):
+    def value_for_axis(self, result: ResultRowNr, column: NrTableColumn):
+        """
+        Retrieves the appropriate result from a `ResultRowNr`
+        for a given `NrTableColumn`
+        :param result:
+        The result to pull the data from
+        :param column:
+        The column to match to a field in `result`
+        :return:
+        The data from `result` that would populate the
+        column specified by `column`
+        """
         if column is NrTableColumn.ROW_NUMBER:
             return result.row
         elif column is NrTableColumn.RUN_INDEX:
@@ -1178,15 +1322,27 @@ class MainWindow(QMainWindow):
             return result.result
 
     def make_harq_axis(self):
+        """
+        Makes the category axis for HARQ values
+        :return:
+        A `QCategoryAxis` with both HARQ modes mapped to
+        their enum values
+        """
         category_axis = QtCharts.QCategoryAxis(self)
         category_axis.append(str(HarqMode.BLIND_TRANSMISSION), HarqMode.BLIND_TRANSMISSION.value)
         category_axis.append(str(HarqMode.FEEDBACK), HarqMode.FEEDBACK.value)
+
+        # Streach these slightly longer than needed, so they don't get cut off
         category_axis.setMin(-0.01)
         category_axis.setMax(1.01)
         return category_axis
 
     @QtCore.Slot()
     def replot_chart_nr(self):
+        """
+        Regenerates the NR plot based on the users' axis selections
+        and NR results
+        """
         x_value = NrTableColumn(self.ui.comboNrChartXAxis.currentData(Qt.UserRole))
         y_value = NrTableColumn(self.ui.comboNrChartYAxis.currentData(Qt.UserRole))
 
@@ -1226,6 +1382,10 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def replot_chart_lte(self):
+        """
+        Regenerates the LTE plot based on the users' axis selections
+        and LTE results
+        """
         x_value = LteTableColumn(self.ui.comboLteChartXAxis.currentData(Qt.UserRole))
         y_value = LteTableColumn(self.ui.comboLteChartYAxis.currentData(Qt.UserRole))
 
@@ -1255,6 +1415,10 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def btn_clicked_lte(self):
+        """
+        Handler for when the use clicks the button to calculate the
+        data rate on the LTE tab
+        """
         mcs = self.ui.spinMcs.value()
         resource_blocks = self.ui.spinResourceBlocksLte.value()
         period_size = self.ui.comboLteSlPeriod.currentData(role=Qt.UserRole)
@@ -1290,6 +1454,10 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def toggle_overhead_table_clicked(self):
+        """
+        Handler to show/hide the overhead table when the
+        user clicks the button above it
+        """
         self.ui.tableOverHead.setVisible(not self.ui.tableOverHead.isVisible())
         if self.ui.tableOverHead.isVisible():
             self.ui.btnToggleOverhead.setText("Hide Overhead Components")
@@ -1298,12 +1466,26 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def row_clicked_nr(self, index: QModelIndex):
+        """
+        Handler for when the user explicitly clicks on a row in the NR table.
+        Updates the overhead table
+        :see:row_selected_nr
+        """
         self.row_selected_nr(self.tableModel.get_result(index.row()))
 
     def selection_changed_nr(self):
+        """
+        Handler for when the user changes selection by some other way than clicking.
+        Updates the overhead table
+        :see:row_selected_nr
+        """
         self.row_selected_nr(self.tableModel.get_result(self.ui.tableResult.currentIndex().row()))
 
-    def row_selected_nr(self, row: ResultRow):
+    def row_selected_nr(self, row: ResultRowNr):
+        """
+        Handler to update the overhead table when the user selects a new row
+        on the NR result table
+        """
         self.tableModelOverHead.set_result(row.nr_result)
 
         # Trigger a replot if the selection is
@@ -1313,12 +1495,20 @@ class MainWindow(QMainWindow):
 
     @QtCore.Slot()
     def row_clicked_lte(self, index: QModelIndex):
+        """
+        Handler for when the user explicitly clicks on a row in the LTE table.
+        Potentially updates the LTE plot
+        """
         # Trigger a replot if the selection is
         # relevant to the plot
         if self.ui.checkPlotSelectedLte.isChecked():
             self.replot_chart_lte()
 
     def arrow_key_lte(self):
+        """
+        Handler for when the user uses the arrow keys in the LTE table.
+        Potentially updates the LTE plot
+        """
         # Trigger a replot if the selection is
         # relevant to the plot
         if self.ui.checkPlotSelectedLte.isChecked():

@@ -29,7 +29,7 @@
 
 import typing
 from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCharts import *
+from PySide2.QtCharts import QtCharts
 
 
 class ExportChartView(QtCharts.QChartView):
