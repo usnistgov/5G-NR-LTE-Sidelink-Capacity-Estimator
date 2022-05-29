@@ -35,8 +35,6 @@ from core import POSSIBLE_SL_PERIOD_SIZES_LTE, OutOfRangeError, NotAcceptableVal
 from PySide2.QtWidgets import QApplication
 
 if __name__ == '__main__':
-    calculate_lte(mcs=20, resource_blocks=50, period_size=40, control_channel_size=2)
-
     parser = ArgumentParser()
 
     mode_group = parser.add_mutually_exclusive_group()
