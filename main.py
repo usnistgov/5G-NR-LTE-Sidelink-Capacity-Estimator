@@ -59,9 +59,11 @@ if __name__ == '__main__':
     parser.add_argument("--feedback-channel-period", choices=[1, 2, 4], type=int)
 
     # LTE Args
-    parser.add_argument("--mcs", type=int)
-    parser.add_argument("--period-size", choices=POSSIBLE_SL_PERIOD_SIZES_LTE, type=int)
-    parser.add_argument("--control-channel-size", type=int)
+    # Python's `range` does not include the upper bound, so `range(0, 21)` produces `[1, 2, ... 20]`
+    # `metavar` gives the range suggestion for the help message (not the error message though)
+    parser.add_argument("--mcs", choices=range(0, 21), metavar="[0-20]", type=int, help="Modulation and Coding scheme")
+    parser.add_argument("--sidelink-period-size", choices=POSSIBLE_SL_PERIOD_SIZES_LTE, type=int)
+    parser.add_argument("--pscch-length", type=int, help="Physical side link control channel length in subframes")
 
     args = parser.parse_args()
 
