@@ -41,7 +41,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Inputs</string>
+             <string>Configuration</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -293,7 +293,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Inputs</string>
+             <string>Configuration</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
