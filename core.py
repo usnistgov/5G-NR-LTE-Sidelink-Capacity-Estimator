@@ -39,9 +39,9 @@ class HarqMode(Enum):
 
     def __str__(self):
         if self is HarqMode.BLIND_TRANSMISSION:
-            return "Blind Transmission"
+            return "Blind Based HARQ"
         else:
-            return "Feedback"
+            return "Feedback Based HARQ"
 
 
 class OutOfRangeError(ValueError):

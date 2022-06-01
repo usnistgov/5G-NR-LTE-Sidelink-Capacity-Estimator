@@ -278,9 +278,9 @@ class ResultTableNrModel(QAbstractTableModel):
                 return str(result.max_modulation) + "QAM"
             elif index.column() == NrTableColumn.HARQ_MODE.value:
                 if result.harq_mode == HarqMode.BLIND_TRANSMISSION:
-                    return "Blind Transmission"
+                    return str(HarqMode.BLIND_TRANSMISSION)
                 elif result.harq_mode == HarqMode.FEEDBACK:
-                    return "Feedback"
+                    return str(HarqMode.FEEDBACK)
                 else:
                     raise ValueError("Unsupported HARQ Mode")
             elif index.column() == NrTableColumn.BLIND_TRANSMISSIONS.value:
@@ -882,8 +882,8 @@ class MainWindow(QMainWindow):
         self.ui.comboModulation.addItem("64 QAM", userData=64)
         self.ui.comboModulation.addItem("256 QAM", userData=256)
 
-        self.ui.comboHarq.addItem("Blind Transmission", userData=HarqMode.BLIND_TRANSMISSION)
-        self.ui.comboHarq.addItem("Feedback Channel", userData=HarqMode.FEEDBACK)
+        self.ui.comboHarq.addItem(str(HarqMode.BLIND_TRANSMISSION), userData=HarqMode.BLIND_TRANSMISSION)
+        self.ui.comboHarq.addItem(str(HarqMode.FEEDBACK), userData=HarqMode.FEEDBACK)
 
         self.ui.comboFeedbackChannel.addItem("1", userData=1)
         self.ui.comboFeedbackChannel.addItem("2", userData=2)
