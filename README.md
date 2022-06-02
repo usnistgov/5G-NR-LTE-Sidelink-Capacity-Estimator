@@ -1,6 +1,6 @@
 # Introduction
 
-This is the prototype for the Sidelink Capacity Tool
+This is the prototype for the 5G NR/LTE Sidelink Capacity Estimator
 
 ![Application Screenshot](preview-screenshot.png)
 

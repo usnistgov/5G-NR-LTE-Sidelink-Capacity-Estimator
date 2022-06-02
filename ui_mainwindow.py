@@ -493,7 +493,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"5G NR/LTE Maximum Sidelink Capacity Estimator", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"5G NR/LTE Sidelink Capacity Estimator", None))
         self.action_CSV.setText(QCoreApplication.translate("MainWindow", u"&CSV", None))
         self.actionClear_Tables.setText(QCoreApplication.translate("MainWindow", u"&Clear Tables", None))
         self.actionDelete_Selected.setText(QCoreApplication.translate("MainWindow", u"&Delete Selected", None))

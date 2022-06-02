@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>5G NR/LTE Maximum Sidelink Capacity Estimator</string>
+   <string>5G NR/LTE Sidelink Capacity Estimator</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QCheckBox::indicator {
