@@ -9,7 +9,6 @@ This is the prototype for the 5G NR/LTE Sidelink Capacity Estimator
 ## Requirements
 
 * Python 3.6+
-* Qt 5.9+ (charts, core, widgets)
 
 ## Create a virtual environment
 
