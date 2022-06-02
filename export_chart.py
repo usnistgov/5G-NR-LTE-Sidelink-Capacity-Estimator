@@ -52,6 +52,8 @@ class ExportChartView(QtCharts.QChartView):
         self.chart().setMargins(QtCore.QMargins(0, 0, 0, 0))
         self.chart().layout().setContentsMargins(0, 0, 0, 0)
 
+        self.setRenderHint(QtGui.QPainter.Antialiasing)
+
     def set_default_filename(self, value: str) -> None:
         """
         Sets the default name the user is presented with when
