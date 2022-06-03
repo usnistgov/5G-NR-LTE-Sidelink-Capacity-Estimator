@@ -54,6 +54,9 @@ class ExportChartView(QtCharts.QChartView):
 
         self.setRenderHint(QtGui.QPainter.Antialiasing)
 
+        # Hide the legend, since we don't name our series
+        self.chart().legend().setVisible(False)
+
     def set_default_filename(self, value: str) -> None:
         """
         Sets the default name the user is presented with when
