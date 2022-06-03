@@ -389,6 +389,30 @@ class Ui_MainWindow(object):
 
         self.formLayout_3.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_5)
 
+        self.lblConnectPointsNr = QLabel(self.tabCharts)
+        self.lblConnectPointsNr.setObjectName(u"lblConnectPointsNr")
+
+        self.formLayout_3.setWidget(3, QFormLayout.LabelRole, self.lblConnectPointsNr)
+
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_7.addItem(self.horizontalSpacer)
+
+        self.checkBoxConnectPointsNr = QCheckBox(self.tabCharts)
+        self.checkBoxConnectPointsNr.setObjectName(u"checkBoxConnectPointsNr")
+        self.checkBoxConnectPointsNr.setChecked(True)
+
+        self.horizontalLayout_7.addWidget(self.checkBoxConnectPointsNr)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_7.addItem(self.horizontalSpacer_2)
+
+
+        self.formLayout_3.setLayout(3, QFormLayout.FieldRole, self.horizontalLayout_7)
+
 
         self.verticalLayoutChart1.addLayout(self.formLayout_3)
 
@@ -454,6 +478,30 @@ class Ui_MainWindow(object):
 
 
         self.formLayout_4.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_6)
+
+        self.lblConnectPointsLte = QLabel(self.tabCharts)
+        self.lblConnectPointsLte.setObjectName(u"lblConnectPointsLte")
+
+        self.formLayout_4.setWidget(3, QFormLayout.LabelRole, self.lblConnectPointsLte)
+
+        self.horizontalLayout_8 = QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_3)
+
+        self.checkBoxConnectPointsLte = QCheckBox(self.tabCharts)
+        self.checkBoxConnectPointsLte.setObjectName(u"checkBoxConnectPointsLte")
+        self.checkBoxConnectPointsLte.setChecked(True)
+
+        self.horizontalLayout_8.addWidget(self.checkBoxConnectPointsLte)
+
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_8.addItem(self.horizontalSpacer_4)
+
+
+        self.formLayout_4.setLayout(3, QFormLayout.FieldRole, self.horizontalLayout_8)
 
 
         self.verticalLayout_3.addLayout(self.formLayout_4)
@@ -542,11 +590,15 @@ class Ui_MainWindow(object):
         self.lblNrChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
         self.lblPlotSelectedNr.setText(QCoreApplication.translate("MainWindow", u"Plot Selected Only", None))
         self.checkPlotSelectedNr.setText("")
+        self.lblConnectPointsNr.setText(QCoreApplication.translate("MainWindow", u"Connect Points", None))
+        self.checkBoxConnectPointsNr.setText("")
         self.lblChartLte.setText(QCoreApplication.translate("MainWindow", u"LTE", None))
         self.lblLteChartXAxis.setText(QCoreApplication.translate("MainWindow", u"X Axis", None))
         self.lblLteChartYAxis.setText(QCoreApplication.translate("MainWindow", u"Y Axis", None))
         self.lblPlotSelectedLte.setText(QCoreApplication.translate("MainWindow", u"Plot Selected Only", None))
         self.checkPlotSelectedLte.setText("")
+        self.lblConnectPointsLte.setText(QCoreApplication.translate("MainWindow", u"Connect Points", None))
+        self.checkBoxConnectPointsLte.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabCharts), QCoreApplication.translate("MainWindow", u"Charts", None))
         self.menuExport.setTitle(QCoreApplication.translate("MainWindow", u"E&xport", None))
         self.menuEdit.setTitle(QCoreApplication.translate("MainWindow", u"&Edit", None))

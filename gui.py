@@ -59,6 +59,7 @@ class CsvDialog(QDialog):
     Dialog fot the user to configure a comma seperated values (CSV)
     from the application
     """
+
     def __init__(self, parent=None):
         super(CsvDialog, self).__init__(parent)
         self.ui = Ui_CsvDialog()
@@ -132,6 +133,7 @@ class ResultRowNr:
     Representation of one calculation displayed on
     the table `tableResult`
     """
+
     def __init__(self, row: int, run: int, numerology: int, resource_blocks: int, layers: int, max_modulation: int,
                  harq_mode: HarqMode, nr_result: NrResult, blind_retransmissions: Optional[int],
                  feedback_channel_period: Optional[int]):
@@ -210,6 +212,7 @@ class ResultTableNrModel(QAbstractTableModel):
     Model for the table `tableResult`, which displays
     the NR results
     """
+
     def __init__(self):
         super().__init__()
         self._results: List[ResultRowNr] = []
@@ -504,6 +507,7 @@ class OverheadTableModel(QAbstractTableModel):
     Displays the breakdown of overhead components for
     a given `NrResult`
     """
+
     def __init__(self):
         super().__init__()
         self._currentResult: Optional[NrResult] = None
@@ -676,6 +680,7 @@ class ResultRowLte:
     Representation of one calculation displayed on
     the table `tableResultLte`
     """
+
     def __init__(self, row: int, run: int, mcs: int, resource_blocks: int, period_size: int, pscch_size: int,
                  result: float):
         self.row = row
@@ -696,6 +701,7 @@ class ResultTableLteModel(QAbstractTableModel):
     Model for the table `tableResultLte`, which displays
     the LTE results
     """
+
     def __init__(self):
         super().__init__()
         self._results: List[ResultRowLte] = []
@@ -867,6 +873,7 @@ class MainWindow(QMainWindow):
     Model for the overarching window that contains all of our widgets.
     Mostly sets-up, read inputs, & connects signals & slots
     """
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -1011,8 +1018,13 @@ class MainWindow(QMainWindow):
         self.ui.btnDeleteSelectedNr.clicked.connect(self.delete_from_nr)
         self.ui.btnDeleteSelectedLte.clicked.connect(self.delete_from_lte)
 
+        # Plot Selected Checkboxes
         self.ui.checkPlotSelectedNr.stateChanged.connect(self.replot_chart_nr)
         self.ui.checkPlotSelectedLte.stateChanged.connect(self.replot_chart_lte)
+
+        # Connect Points Checkboxes
+        self.ui.checkBoxConnectPointsNr.stateChanged.connect(self.replot_chart_nr)
+        self.ui.checkBoxConnectPointsLte.stateChanged.connect(self.replot_chart_lte)
 
         # Edit Menu
         self.ui.actionDelete_Selected.triggered.connect(self.delete_from_active_table)
@@ -1346,7 +1358,13 @@ class MainWindow(QMainWindow):
         x_value = NrTableColumn(self.ui.comboNrChartXAxis.currentData(Qt.UserRole))
         y_value = NrTableColumn(self.ui.comboNrChartYAxis.currentData(Qt.UserRole))
 
-        series = QtCharts.QLineSeries()
+        # The default Blue color
+        color = QtGui.QColor.fromRgb(32, 159, 223)
+
+        line_series = QtCharts.QLineSeries(self)
+        point_series = QtCharts.QScatterSeries(self)
+        line_series.setColor(color)
+        point_series.setColor(color)
 
         if self.ui.checkPlotSelectedNr.isChecked():  # plot only selected rows
             visited_rows = []
@@ -1357,23 +1375,47 @@ class MainWindow(QMainWindow):
                 if selected_index.row() not in visited_rows:
                     visited_rows.append(selected_index.row())
                     result = self.tableModel.get_result(selected_index.row())
-                    series.append(self.value_for_axis(result, x_value), self.value_for_axis(result, y_value))
+                    plot_x = self.value_for_axis(result, x_value)
+                    plot_y = self.value_for_axis(result, y_value)
+                    line_series.append(plot_x, plot_y)
+                    point_series.append(plot_x, plot_y)
         else:  # Plot all results
             for result in self.tableModel.results():
-                series.append(self.value_for_axis(result, x_value), self.value_for_axis(result, y_value))
+                plot_x = self.value_for_axis(result, x_value)
+                plot_y = self.value_for_axis(result, y_value)
+                line_series.append(plot_x, plot_y)
+                point_series.append(plot_x, plot_y)
 
         chart = self.ui.chartNr.chart()
         chart.removeAllSeries()
         chart.setTitle(f"NR: '{x_value}' - '{y_value}'")
         self.ui.chartNr.set_default_filename(f"NR_{x_value}_{y_value}.png")
-        chart.addSeries(series)
+        if self.ui.checkBoxConnectPointsNr.isChecked():
+            chart.addSeries(line_series)
+        chart.addSeries(point_series)
         chart.createDefaultAxes()
 
         # Special Handling for HARQ Mode, since those are Enum values
         if x_value == NrTableColumn.HARQ_MODE:
-            chart.setAxisX(self.make_harq_axis(), series)
+            old_x = chart.axisX()
+            point_series.detachAxis(old_x)
+            line_series.detachAxis(old_x)
+            chart.removeAxis(old_x)
+
+            axis = self.make_harq_axis()
+            chart.addAxis(axis, Qt.AlignBottom)
+            point_series.attachAxis(axis)
+            line_series.attachAxis(axis)
         if y_value == NrTableColumn.HARQ_MODE:
-            chart.setAxisY(self.make_harq_axis(), series)
+            old_y = chart.axisY()
+            point_series.detachAxis(old_y)
+            line_series.detachAxis(old_y)
+            chart.removeAxis(old_y)
+
+            axis = self.make_harq_axis()
+            chart.addAxis(axis, Qt.AlignLeft)
+            point_series.attachAxis(axis)
+            line_series.attachAxis(axis)
 
         chart.axisX().setTitleText(str(x_value))
         chart.axisY().setTitleText(str(y_value))
@@ -1389,7 +1431,13 @@ class MainWindow(QMainWindow):
         x_value = LteTableColumn(self.ui.comboLteChartXAxis.currentData(Qt.UserRole))
         y_value = LteTableColumn(self.ui.comboLteChartYAxis.currentData(Qt.UserRole))
 
-        series = QtCharts.QLineSeries()
+        # The default Blue color
+        color = QtGui.QColor.fromRgb(32, 159, 223)
+
+        line_series = QtCharts.QLineSeries(self)
+        point_series = QtCharts.QScatterSeries(self)
+        line_series.setColor(color)
+        point_series.setColor(color)
 
         if self.ui.checkPlotSelectedLte.isChecked():  # plot only selected rows
             visited_rows = []
@@ -1397,16 +1445,24 @@ class MainWindow(QMainWindow):
                 if selected_index.row() not in visited_rows:
                     visited_rows.append(selected_index.row())
                     result = self.tableModelLte.get_result(selected_index.row())
-                    series.append(self.value_for_axis_lte(result, x_value), self.value_for_axis_lte(result, y_value))
+                    plot_x = self.value_for_axis_lte(result, x_value)
+                    plot_y = self.value_for_axis_lte(result, y_value)
+                    line_series.append(plot_x, plot_y)
+                    point_series.append(plot_x, plot_y)
         else:
             for result in self.tableModelLte.results():
-                series.append(self.value_for_axis_lte(result, x_value), self.value_for_axis_lte(result, y_value))
+                plot_x = self.value_for_axis_lte(result, x_value)
+                plot_y = self.value_for_axis_lte(result, y_value)
+                line_series.append(plot_x, plot_y)
+                point_series.append(plot_x, plot_y)
 
         chart = self.ui.chartLte.chart()
         chart.removeAllSeries()
         chart.setTitle(f"LTE: '{x_value}' - '{y_value}'")
         self.ui.chartLte.set_default_filename(f"LTE_{x_value}_{y_value}.png")
-        chart.addSeries(series)
+        if self.ui.checkBoxConnectPointsLte.isChecked():
+            chart.addSeries(line_series)
+        chart.addSeries(point_series)
         chart.createDefaultAxes()
         chart.axisX().setTitleText(str(x_value))
         chart.axisY().setTitleText(str(y_value))
