@@ -1,10 +1,16 @@
-# Introduction
-
-This is the prototype for the 5G NR/LTE Sidelink Capacity Estimator
-
 ![Application Screenshot](preview-screenshot.png)
 
-# Installation
+# Introduction
+This tool computes the expected link capacity (Mbit/s) for Sidelink considering 5G New Radio (NR) and Long Term Evolution (LTE) communication standards, as defined by the The 3rd Generation Partership Project (3GPP). Users can input the respective configuration paramenter and evaluate the resuling capcity.
+
+The tool provides side-by-side chart plotting between NR and LTE Sidelink capacities for easy comparisson. Data and generated charts can be exported to be used outside the tool.
+
+## New Radio (NR) Sidelink Capacity
+
+## Long Term Evolution (LTE) Sidelink Capacity
+
+
+# Installation Instructions
 
 ## Requirements
 
