@@ -1,14 +1,21 @@
-![Application Screenshot](preview-screenshot.png)
-
 # Introduction
-This tool computes the expected link capacity (Mbit/s) for Sidelink considering 5G New Radio (NR) and Long Term Evolution (LTE) communication standards, as defined by the The 3rd Generation Partership Project (3GPP). Users can input the respective configuration paramenter and evaluate the resuling capcity.
+This tool computes the expected link capacity in data rate (Mbit/s) for Sidelink considering 5G New Radio (NR) and Long Term Evolution (LTE) communication standards, as defined by the The 3rd Generation Partnership Project (3GPP). Users can input the respective configuration parameter and evaluate the resulting capacity.
 
-The tool provides side-by-side chart plotting between NR and LTE Sidelink capacities for easy comparisson. Data and generated charts can be exported to be used outside the tool.
+The tool provides side-by-side chart plotting between NR and LTE Sidelink capacities for easy comparison. Data and generated charts can be exported to be used outside the tool.
 
 ## New Radio (NR) Sidelink Capacity
+![Application Screenshot NR](preview-screenshot-NR.png)
 
 ## Long Term Evolution (LTE) Sidelink Capacity
+![Application Screenshot LTE](preview-screenshot-LTE.png)
 
+The LTE Sidelink capacity is dictated by:
+- The duration of the Sidelink period (supported values are defined in 3GPP TS36.331).
+- The duration of the physical Sidelink channels within the period, i.e., Physical Sidelink Control Channel (PSCCH) and Physical Sidelink Shared Channel (PSSCH). The PSCCH time length can be set from 2 Subframes to a maximum of 40 Subframes (as defined in 3GPP TS36.213). In LTE 1 Subframe is equal to 1 millisecond. The PSSCH time length is set to occupy the remaining period duration after the preceding PSCCH. Since the objective of this tools is to determine the maximum capacity in data rate, time offset and subframe masking is not considered.
+- The selected Modulation and Coding Scheme (MCS) and number or Resource Blocks for data transmission.
+
+## Chart Plotting
+![Application Screenshot LTE](preview-screenshot-charts.png)
 
 # Installation Instructions
 
