@@ -18,7 +18,7 @@ At n14, the supported configuration is listed as follows:
 - *BW*: 10 MHz;
 - *v<sub>layers</sub>*: 1, 2;
 
-Because of the constraints on *BW*, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;*=0 and 24 for *&mu;*=1. *T<sub>S</sub><sup>&mu;</sup>* is 1x10<sup>-3</sup> for *&mu;*=0 and 0.5x10<sup>-3</sup> for *&mu;*=1.
+Because of the constraints on *BW*, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. *T<sub>S</sub><sup>&mu;</sup>* is 1 x 10<sup>-3</sup> for *&mu;* = 0 and 0.5 x 10<sup>-3</sup> for *&mu;* = 1.
 
 In addition, to achieve the maximum NR capacity at n14, depending on the user equipment (UE) capability,  max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), *f* is set to be 1, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
 
