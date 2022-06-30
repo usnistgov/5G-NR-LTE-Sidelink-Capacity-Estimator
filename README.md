@@ -6,10 +6,44 @@ The tool provides side-by-side chart plotting between NR and LTE Sidelink capaci
 ## New Radio (NR) Sidelink Capacity
 ![Application Screenshot NR](preview-screenshot-NR.png)
 
-The NR Sidelink capacity calculates the maximum achievable data rate in (Mb/s) at the public safety band (n14), following the equation
+The NR Sidelink capacity calculates the maximum achievable data rate in (Mb/s) in Unicast transmission mode at the public safety band (n14), with feedback-based or blind-based Hybrid automatic repeat request (HARQ) transmission scheme, following the equation:
 ![Application Screenshot LTE](capacity_eq.png)
 
-where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *f* is the scaling factor, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&mu;</sup>* is the number of PRBs for a specific bandwidth *BW*, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in secods for numerology *&mu;*, and *OH* is the overhead ratio.
+where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *f* is the scaling factor, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&mu;</sup>* is the number of Physical Resource Blocks (PRBs) for a specific bandwidth *BW*, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio.
+
+At n14, the supported configuration is listed as follows:
+
+- *&mu;*: 0, 1;
+- *BW*: 10 MHz;
+- *v<sub>layers</sub>*: 1, 2;
+
+Because of the constraints on *BW*, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;*=0 and 24 for *&mu;*=1. *T<sub>S</sub><sup>&mu;</sup>* is 1x10<sup>-3</sup> for *&mu;*=0 and 0.5x10<sup>-3</sup> for *&mu;*=1.
+
+In addition, to achieve the maximum NR capacity at n14, depending on the user equipment (UE) capability,  max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), *f* is set to be 1, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
+
+*OH* is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission. The overhead components can contain
+
+- Physical Sidelink Control Channel (PSCCH),
+- Second-stage Control Information (SCI2) in Physical Sidelink Shared Channel (PSSCH),
+- Physical Sidelink Feedback Channel (PSFCH), if feedback-based HARQ is enabled
+- Sidelink Synchronization Signal Block, (S-SSB),
+- Channel State Information Reference Signal (CSI-RS),
+- Demodulation Reference Signal (DM-RS),
+- Phase-Tracking Reference Signal (PT-RS),
+- Automatic Gain Control (AGC),
+- Guard, and
+- Redundant data, if blind-based HARQ is enabled.
+
+When feedback-based HARQ is enabled, the PSFCH period can be 1, 2, or 4, in unit of slot, and to achieve the maximum data rate, we assume no retransmission is necessary. When blind-based HARQ is used, the number of transmissions for one transport block (TB) can be from 1 to 32.
+
+The NR Sidelink capacity supports all the configurations as stated above, and based on it, the following items can be calculated:
+
+- Data Rate,
+- Average REs per slot for each overhead component, as well as its percent total overhead and percent total resources. 
+
+For computation of multiple configurations, the above items can be displayed by clicking on the corresponding configuration. Each selected configuration can be deleted by depressing the "Delete Selected" button, and all the configurations can be reset to default using the "Reset" button. 
+
+It is also important to note that as subchannel is not critical in our NR sidelink capacity investigation, this software assumes that one subchannel is used, and all of the *N<sub>PRB</sub><sup>BW,&mu;</sup>* are allocated to this single subchannel. Besides, we assume minimum number of S-SSBs is configured, which is one in each 160 ms, and within a sidelink configuration period of 10240 ms, all the rest slots are used as sidelink slots.
 
 ## Long Term Evolution (LTE) Sidelink Capacity
 ![Application Screenshot LTE](preview-screenshot-LTE.png)
