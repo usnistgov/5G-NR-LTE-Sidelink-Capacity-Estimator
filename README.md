@@ -10,17 +10,16 @@ The NR Sidelink capacity calculates the maximum achievable data rate in (Mb/s) i
 
 ![Application Screenshot LTE](capacity_eq.png)
 
-where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *f* is the scaling factor, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&mu;</sup>* is the number of Physical Resource Blocks (PRBs) for a specific bandwidth *BW*, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio.
+where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&mu;</sup>* is the number of Physical Resource Blocks (PRBs) for a specific bandwidth *BW*, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio.
 
 At n14, the supported configuration is listed as follows:
 
 - *&mu;*: 0, 1;
 - *BW*: 10 MHz;
-- *v<sub>layers</sub>*: 1, 2;
 
 Because of the constraints on *BW*, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. *T<sub>S</sub><sup>&mu;</sup>* is 1 x 10<sup>-3</sup> for *&mu;* = 0 and 0.5 x 10<sup>-3</sup> for *&mu;* = 1.
 
-In addition, to achieve the maximum NR capacity at n14, depending on the user equipment (UE) capability,  max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), *f* is set to be 1, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
+In addition, to achieve the maximum NR capacity at n14, depending on the user equipment (UE) capability, max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), v<sub>layers</sub> can be 1 or 2, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
 
 *OH* is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission. The overhead components can contain
 
