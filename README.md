@@ -9,7 +9,7 @@ The tool provides side-by-side chart plotting between NR and LTE Sidelink capaci
 The NR Sidelink capacity calculates the maximum achievable data rate in (Mb/s) at the public safety band (n14), following the equation
 ![Application Screenshot LTE](capacity_eq.png)
 
-where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *f* is the scaling factor, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&‌micro;</sup>* is the number of PRBs for a specific bandwidth *BW*, *T<sub>S</sub><sup>&‌micro;</sup>* is the symbol duration time in secods for numerology *&‌micro;*, and *OH* is the overhead ratio.
+where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *f* is the scaling factor, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&‌micro;</sup>* is the number of PRBs for a specific bandwidth *BW*, *T<sub>S</sub>*<sup>&‌micro;</sup> is the symbol duration time in secods for numerology &‌micro;, and *OH* is the overhead ratio.
 
 ## Long Term Evolution (LTE) Sidelink Capacity
 ![Application Screenshot LTE](preview-screenshot-LTE.png)
