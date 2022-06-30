@@ -7,6 +7,7 @@ The tool provides side-by-side chart plotting between NR and LTE Sidelink capaci
 ![Application Screenshot NR](preview-screenshot-NR.png)
 
 The NR Sidelink capacity calculates the maximum achievable data rate in (Mb/s) in Unicast transmission mode at the public safety band (n14), with feedback-based or blind-based Hybrid automatic repeat request (HARQ) transmission scheme, following the equation:
+
 ![Application Screenshot LTE](capacity_eq.png)
 
 where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *f* is the scaling factor, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&mu;</sup>* is the number of Physical Resource Blocks (PRBs) for a specific bandwidth *BW*, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio.
