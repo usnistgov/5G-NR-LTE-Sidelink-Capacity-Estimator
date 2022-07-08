@@ -1,27 +1,31 @@
 # Introduction
-This tool computes the expected link capacity in data rate (Mbit/s) for Sidelink considering 5G New Radio (NR) and Long Term Evolution (LTE) communication standards, as defined by the The 3rd Generation Partnership Project (3GPP). Users can input the respective configuration parameter and evaluate the resulting capacity.
+This tool computes the expected link capacity in data rate (Mbit/s) for Sidelink considering 5G New Radio (NR) and Long Term Evolution (LTE) communication standards, as defined by the The 3rd Generation Partnership Project (3GPP). Users can input the respective configuration parameters and evaluate the resulting capacity.
 
 The tool provides side-by-side chart plotting between NR and LTE Sidelink capacities for easy comparison. Data and generated charts can be exported to be used outside the tool.
+
+In the current release, the tool applies to the public safety band, Band 14/n14 (the 700 MHz frequency band).
 
 ## New Radio (NR) Sidelink Capacity
 ![Application Screenshot NR](preview-screenshot-NR.png)
 
-The NR Sidelink capacity calculates the maximum achievable data rate in (Mb/s) in Unicast transmission mode at the public safety band (n14), with feedback-based or blind-based Hybrid automatic repeat request (HARQ) transmission scheme, following the equation:
+The NR Sidelink capacity calculates the maximum achievable data rate in (Mb/s) in unicast transmission mode at the public safety band (Band n14), with feedback-based or blind-based Hybrid Automatic Repeat reQuest (HARQ) transmission scheme, following the equation:
 
 ![Application Screenshot LTE](capacity_eq.png)
 
-where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *R<sub>max</sub>* is the coding rate, *N<sub>PRB</sub><sup>BW,&mu;</sup>* is the number of Physical Resource Blocks (PRBs) for a specific bandwidth *BW*, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio.
+where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *R<sub>max</sub>* is the coding rate, *&mu;* is the numerology, *N<sub>PRB</sub><sup>BW,&mu;</sup>* is the number of Physical Resource Blocks (PRBs) for a specific bandwidth *BW* and numerology *&mu;*, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio.
 
-At n14, the supported configuration is listed as follows:
+![Application Screenshot LTE](capacity_eq.png)
 
-- *&mu;*: 0, 1;
+At Band n14, the supported configurations per the 3rd Generation Partnership Project (3GPP) are listed as follows:
+
+- *&mu;*: 0 or 1;
 - *BW*: 10 MHz;
 
-Because of the constraints on *BW*, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. *T<sub>S</sub><sup>&mu;</sup>* is 1 x 10<sup>-3</sup> for *&mu;* = 0 and 0.5 x 10<sup>-3</sup> for *&mu;* = 1.
+Accordingly, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. ********** *T<sub>S</sub><sup>&mu;</sup>* is 1 x 10<sup>-3</sup> for *&mu;* = 0 and 0.5 x 10<sup>-3</sup> for *&mu;* = 1. ==> not correct.  Has a formula if needed. **********
 
-In addition, to achieve the maximum NR capacity at n14, depending on the user equipment (UE) capability, max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), v<sub>layers</sub> can be 1 or 2, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
+In addition, to achieve the maximum NR capacity at Band n14, depending on the user equipment (UE) capability, max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), v<sub>layers</sub> can be 1 or 2, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
 
-*OH* is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission. The overhead components can contain
+*OH* is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission. The overhead components can contain **==> put them in the same order as they are in the tool**
 
 - Physical Sidelink Control Channel (PSCCH),
 - Second-stage Control Information (SCI2) in Physical Sidelink Shared Channel (PSSCH),
