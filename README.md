@@ -13,46 +13,44 @@ For different NR sidelink configurations and unicast at the public safety band (
 The configurations include:
 
 - Numerology. Per the 3rd Generation Partnership Project (3GPP), for Band n14 10 MHz, the valid values are 0 and 1.
-- Number of PRBs (Physical Resource Blockss). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively.
-
-(configuration list)
+- Number of PRBs (Physical Resource Blocks). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively.
+- Number of Layers. Per 3GPP, for NR sidelink, the number of layers can be 1 or 2.
+- UE (User Equipment) Max Modulation. Per 3GPP, depending on the UE's capability, UE's max modulation can be 64QAM or 256QAM.
+- HARQ (hybrid automatic repeat request) Mode
+  - Feedback-Based HARQ.
+    - Feedback Channel Period (slot). Per 3GPP, the valid values are 0, 1, 2, and 4.
+  - Blind-Based HARQ.
+    - Blind Transmissions. Per 3GPP, the valid values are 1, 2, ..., and 32.
 
 The capacity is calculated per equation:
 
-![Application Screenshot LTE](capacity_eq.png)
+![NR capacity equation](capacity_eq.png)
 
-where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *R<sub>max</sub>* is the coding rate, *&mu;* is the numerology, *N<sub>PRB</sub>* is the number of allocated Physical Resource Blocks (PRBs), *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio.  **==> NPRB==> number of PRBs allocated**
+where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *R<sub>max</sub>* is the coding rate, *&mu;* is the numerology, *N<sub>PRB</sub>* is the number of allocated PRBs, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio, which is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission.  
 
-The overhead components calculated include: **==> put them in the same order as they are in the tool**
+The overhead components calculated include: 
 
+- Physical Sidelink Feedback Channel (PSFCH), if feedback-based HARQ is enabled,
+- Channel State Information Reference Signal (CSI-RS),
+- Phase-Tracking Reference Signal (PT-RS),
 - Physical Sidelink Control Channel (PSCCH),
 - Second-stage Control Information (SCI2) in Physical Sidelink Shared Channel (PSSCH),
-- Physical Sidelink Feedback Channel (PSFCH), if feedback-based HARQ is enabled
-- Sidelink Synchronization Signal Block, (S-SSB),
-- Channel State Information Reference Signal (CSI-RS),
 - Demodulation Reference Signal (DM-RS),
-- Phase-Tracking Reference Signal (PT-RS),
 - Automatic Gain Control (AGC),
-- Guard, and
-- Redundant data, if blind-based HARQ is ena
+- Guard,
+- Sidelink Synchronization Signal Block, (S-SSB), and
+- Redundant data, if blind-based HARQ is enabled.
 
-At Band n14, the supported configurations per the 3rd Generation Partnership Project (3GPP) are listed as follows:
+At Band n14, the supported configurations per 3GPP are listed as follows:
 
 - *&mu;*: 0 or 1;
 - *BW*: 10 MHz;
 
-Accordingly, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. ********** *T<sub>S</sub><sup>&mu;</sup>* is 1 x 10<sup>-3</sup> for *&mu;* = 0 and 0.5 x 10<sup>-3</sup> for *&mu;* = 1. ==> not correct.  Has a formula if needed. **********
+Accordingly, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. *T<sub>S</sub><sup>&mu;</sup>* is 1/14 x 10<sup>-3</sup> for *&mu;* = 0 and 1/28 x 10<sup>-3</sup> for *&mu;* = 1.
 
-In addition, to achieve the maximum NR capacity at Band n14, depending on the user equipment (UE) capability, max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), v<sub>layers</sub> can be 1 or 2, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
+In addition, max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), *v<sub>layers</sub>* can be 1 or 2, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
 
-*OH* is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission. The overhead components can contain 
-
-When feedback-based HARQ is enabled, the PSFCH period can be 1, 2, or 4, in unit of slot, and to achieve the maximum data rate, we assume no retransmission is necessary. When blind-based HARQ is used, the number of transmissions for one transport block (TB) can be from 1 to 32.
-
-The NR Sidelink capacity supports all the configurations as stated above, and based on it, the following items can be calculated:
-
-- Data Rate,
-- Average REs per slot for each overhead component, as well as its percent total overhead and percent total resources. 
+When feedback-based HARQ is enabled, to achieve the maximum data rate, we assume no retransmission is necessary.
 
 For computation of multiple configurations, the above items can be displayed by clicking on the corresponding configuration. Each selected configuration can be deleted by depressing the "Delete Selected" button, and all the configurations can be reset to default using the "Reset" button. 
 
