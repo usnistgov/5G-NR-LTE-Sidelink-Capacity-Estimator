@@ -46,7 +46,7 @@ At Band n14, the supported configurations per 3GPP are listed as follows:
 - *&mu;*: 0 or 1;
 - *BW*: 10 MHz;
 
-Accordingly, *N<sub>PRB</sub><sup>BW,&mu;</sup>* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. *T<sub>S</sub><sup>&mu;</sup>* is 1/14 x 10<sup>-3</sup> for *&mu;* = 0 and 1/28 x 10<sup>-3</sup> for *&mu;* = 1.
+Accordingly, *N<sub>PRB* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. *T<sub>S</sub><sup>&mu;</sup>* is 1/14 x 10<sup>-3</sup> for *&mu;* = 0 and 1/28 x 10<sup>-3</sup> for *&mu;* = 1.
 
 In addition, max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), *v<sub>layers</sub>* can be 1 or 2, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
 
