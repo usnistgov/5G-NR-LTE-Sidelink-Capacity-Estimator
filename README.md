@@ -41,9 +41,9 @@ The overhead components calculated include:
 - Sidelink Synchronization Signal Block, (S-SSB), and
 - Redundant data, if blind-based HARQ is enabled.
 
-For computation of multiple configurations, the above items can be displayed by clicking on the corresponding configuration. Each selected configuration can be deleted by depressing the "Delete Selected" button, and all the configurations can be reset to default using the "Reset" button. 
+For computation of multiple configurations, the capacity and overhead components can be displayed by clicking under the corresponding configuration. Each selected configuration can be deleted by depressing the "Delete Selected" button, and all the configurations can be reset to default using the "Reset" button. 
 
-It is also important to note that as subchannel is not critical in our NR sidelink capacity investigation, this software assumes that one subchannel is used, and all of the *N<sub>PRB* are allocated to this single subchannel. Besides, we assume minimum number of S-SSBs is configured, which is one in each 160 ms, and within a sidelink configuration period of 10240 ms, all the rest slots are used as sidelink slots.
+It is also important to note that as subchannel is not critical in our NR sidelink capacity investigation, this tool assumes that one subchannel is used, and all of the *N<sub>PRB* are allocated to this single subchannel. Besides, we assume minimum number of S-SSBs is configured, which is one in each 160 ms, and within a sidelink configuration period of 10240 ms, all the rest slots are used as sidelink slots.
 
 ## Long Term Evolution (LTE) Sidelink Capacity
 ![Application Screenshot LTE](preview-screenshot-LTE.png)
