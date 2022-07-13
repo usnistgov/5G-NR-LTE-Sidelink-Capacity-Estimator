@@ -16,9 +16,8 @@ The configurations include:
 - Number of PRBs (Physical Resource Blocks). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively. The allocated number of PRBs is no larger than the maximum number of PRBs.
 - Number of Layers. Per 3GPP, for NR sidelink, the number of layers can be 1 or 2.
 - UE (User Equipment) Max Modulation. Per 3GPP, depending on the UE's capability, UE's max modulation can be 64QAM or 256QAM.
-- HARQ (hybrid automatic repeat request) Mode
-  - Feedback-Based HARQ.
-    - To achieve the maximum data rate, we assume no retransmission is necessary.
+- HARQ (Hybrid Automatic Repeat reQuest) Mode.
+  - Feedback-Based HARQ. To achieve the maximum data rate, ideal channel and no retransmission is assumed.
     - Feedback Channel Period (slot). Per 3GPP, the valid values are 0, 1, 2, and 4.
   - Blind-Based HARQ.
     - Number of Blind Transmissions. Per 3GPP, the valid values are 1, 2, ..., and 32.
