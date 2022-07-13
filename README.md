@@ -13,20 +13,21 @@ For different NR sidelink configurations and unicast at the public safety band (
 The configurations include:
 
 - Numerology. Per the 3rd Generation Partnership Project (3GPP), for Band n14 10 MHz, the valid values are 0 and 1.
-- Number of PRBs (Physical Resource Blocks). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively.
+- Number of PRBs (Physical Resource Blocks). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively. The allocated number of PRBs is no larger than the maximum number of PRBs.
 - Number of Layers. Per 3GPP, for NR sidelink, the number of layers can be 1 or 2.
 - UE (User Equipment) Max Modulation. Per 3GPP, depending on the UE's capability, UE's max modulation can be 64QAM or 256QAM.
 - HARQ (hybrid automatic repeat request) Mode
   - Feedback-Based HARQ.
+    - To achieve the maximum data rate, we assume no retransmission is necessary.
     - Feedback Channel Period (slot). Per 3GPP, the valid values are 0, 1, 2, and 4.
   - Blind-Based HARQ.
-    - Blind Transmissions. Per 3GPP, the valid values are 1, 2, ..., and 32.
+    - Number of Blind Transmissions. Per 3GPP, the valid values are 1, 2, ..., and 32.
 
 The capacity is calculated per equation:
 
 ![NR capacity equation](capacity_eq.png)
 
-where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, *R<sub>max</sub>* is the coding rate, *&mu;* is the numerology, *N<sub>PRB</sub>* is the number of allocated PRBs, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, and *OH* is the overhead ratio, which is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission.  
+where *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, which can be 6 (64QAM) or 8 (256QAM), *R<sub>max</sub>* is the maximum achievable coding rate, which is 948/1024, *&mu;* is the numerology, *N<sub>PRB</sub>* is the number of allocated PRBs, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, which is 1/14 x 10<sup>-3</sup> for *&mu;* = 0 and 1/28 x 10<sup>-3</sup> for *&mu;* = 1, and *OH* is the overhead ratio, which is the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission.  
 
 The overhead components calculated include: 
 
@@ -40,17 +41,6 @@ The overhead components calculated include:
 - Guard,
 - Sidelink Synchronization Signal Block, (S-SSB), and
 - Redundant data, if blind-based HARQ is enabled.
-
-At Band n14, the supported configurations per 3GPP are listed as follows:
-
-- *&mu;*: 0 or 1;
-- *BW*: 10 MHz;
-
-Accordingly, *N<sub>PRB* can be 52 for *&mu;* = 0 and 24 for *&mu;* = 1. *T<sub>S</sub><sup>&mu;</sup>* is 1/14 x 10<sup>-3</sup> for *&mu;* = 0 and 1/28 x 10<sup>-3</sup> for *&mu;* = 1.
-
-In addition, max *Q<sub>m</sub>* can be 6 (64QAM) or 8 (256QAM), *v<sub>layers</sub>* can be 1 or 2, and *R<sub>max</sub>* is 948/1024, which is the maximum achievable coding rate.
-
-When feedback-based HARQ is enabled, to achieve the maximum data rate, we assume no retransmission is necessary.
 
 For computation of multiple configurations, the above items can be displayed by clicking on the corresponding configuration. Each selected configuration can be deleted by depressing the "Delete Selected" button, and all the configurations can be reset to default using the "Reset" button. 
 
