@@ -10,9 +10,9 @@ In the current release, the tool applies to the public safety band, Band 14/n14 
 
 For unicast and under different NR sidelink configurations at the public safety band (Band n14), the NR Sidelink capacity estimator calculates the maximum achievable data rate in (Mb/s), together with the associated overhead components. 
 
-The configurations include:
+The parametered to be configured are listed as below.  The ranges of the parameters are set per the 3rd Generation Partnership Project (3GPP) specifications.
 
-- Numerology. Per the 3rd Generation Partnership Project (3GPP), for Band n14 10 MHz, the valid values are 0 and 1.
+- Numerology. Per 3GPP, for Band n14 10 MHz, the valid values are 0 and 1.
 - Number of PRBs (Physical Resource Blocks). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively. The allocated number of PRBs is no larger than the maximum number of PRBs.
 - Number of Layers. Per 3GPP, for NR sidelink, the number of layers can be 1 or 2.
 - UE (User Equipment) Max Modulation. Per 3GPP, depending on the UE's capability, UE's max modulation can be 64QAM or 256QAM.
