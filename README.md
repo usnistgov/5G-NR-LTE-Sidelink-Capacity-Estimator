@@ -50,14 +50,18 @@ It is also important to note that as subchannel is not critical in our NR sideli
 
 LTE Sidelink transmissions occur in a periodic manner. Physical channels for the transmission of control information and data are defined, Physical Sidelink Control Channel (PSCCH) and Physical Sidelink Shared Channel (PSSCH), respectively. PSCCH and PSSCH transmissions are multiplexed in time within the Sidelink period, where the transmission of the PSCCH always precedes the PSSCH.
 
-The LTE Sidelink capacity is dictated by:
+The LTE Sidelink data rate capacity is dictated by:
 - The duration of the Sidelink period (supported values are defined in 3GPP TS36.331).
 - The duration of the physical Sidelink channels within the period, i.e., PSCCH and PSSCH.
   - The PSCCH time length can be set from 2 Subframes to a maximum of 40 Subframes (as defined in 3GPP TS36.213). In LTE, 1 Subframe is equal to 1 millisecond.
   - The PSSCH time length is set to occupy the remaining period duration after the preceding PSCCH. Since the objective of this tools is to determine the maximum capacity in data rate, time offset and subframe masking is not considered.
 - The selected Modulation and Coding Scheme (MCS) and number or Physical Resource Blocks (PRBs) for data transmission.
 
-For example, for a Sidelink period lasting 40 Subframes, of which 2 Subframes are reserverd for the PSCCH, leaves 38 Subframes available for the transmission of PSSCH. Blind-Based HARQ with 4 fixed transmissions per every Transport Blocks (TBs) is used in the PSSCH. Hence, the number of TBs containing new information per Sidelink period is 9 (38/4). The TB size is determined from the number of PRBs dedicated to the PSSCH, and the bit size is obtained from the Sidelink procedures and lookup tables especidied in 3GPP TS36.213. Let's assume the PSSCH is configured with 50 PRBs and MCS 20 is used, this       
+For example, let's assume a Sidelink period lasting 40 Subframes, 2 Subframes are reserverd for the PSCCH, leaving 38 Subframes available for the transmission of PSSCH. Blind-Based HARQ with 4 fixed transmissions, for every Transport Block (TB), is used in the PSSCH. Hence, the resulting number of TBs containing new information per Sidelink period is 9 (38/4). The TB size (TBS) in bits is determined from the number of PRBs dedicated to the PSSCH and the selected MCS. Sidelink procedures for TBS determination are especified in 3GPP TS36.213, where a set of TBS lookup tables are provided. Let's assume the PSSCH is configured with 50 PRBs and MCS 20 is used, this results in a TB size of 21384 bits. The resulting data rate is 4.8114 Mb/s, computed from:
+
+![LTE Sidelink capacity equation](lte_capacity_eq.png)
+<!--- data rate (in Mbit/s) = 10e-6 * TBS * TB_per_period / Period length (in seconds)"
+--->
 
 ## Chart Plotting
 ![Application Screenshot LTE](preview-screenshot-charts.png)
