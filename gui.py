@@ -628,7 +628,7 @@ class OverheadTableModel(QAbstractTableModel):
             elif section == 1:
                 return "Percent Total Overhead (%)"
             elif section == 2:
-                return "Percent Total Resources (%)"
+                return "Percent Total Resource Elements (%)"
 
     def set_result(self, nr_result: NrResult):
         self.beginResetModel()
