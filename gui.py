@@ -450,61 +450,61 @@ class OverheadTableRow(Enum):
         elif self is OverheadTableRow.PSFCH_PERCENT_TOTAL_OH:
             return "PSFCH Percent Total Overhead (%)"
         elif self is OverheadTableRow.PSFCH_PERCENT_TOTAL:
-            return "PSFCH Percent Total (%)"
+            return "PSFCH Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.CSI_RS:
             return "CSI-RS"
         elif self is OverheadTableRow.CSI_RS_PERCENT_TOTAL_OH:
             return "CSI-RS Percent Total Overhead (%)"
         elif self is OverheadTableRow.CSI_RS_PERCENT_TOTAL:
-            return "CSI-RS Percent Total (%)"
+            return "CSI-RS Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.PT_RS:
             return "PT-RS"
         elif self is OverheadTableRow.PT_RS_PERCENT_TOTAL_OH:
             return "PT-RS Percent Total Overhead (%)"
         elif self is OverheadTableRow.PT_RS_PERCENT_TOTAL:
-            return "PT-RS Percent Total (%)"
+            return "PT-RS Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.PSCCH:
             return "PSCCH"
         elif self is OverheadTableRow.PSCCH_PERCENT_TOTAL_OH:
             return "PSCCH Percent Total Overhead (%)"
         elif self is OverheadTableRow.PSCCH_PERCENT_TOTAL:
-            return "PSCCH Percent Total (%)"
+            return "PSCCH Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.SCI2:
             return "SCI2"
         elif self is OverheadTableRow.SCI2_PERCENT_TOTAL_OH:
             return "SCI2 Percent Total Overhead (%)"
         elif self is OverheadTableRow.SCI2_PERCENT_TOTAL:
-            return "SCI2 Percent Total (%)"
+            return "SCI2 Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.DM_RS:
             return "DM-RS"
         elif self is OverheadTableRow.DM_RS_PERCENT_TOTAL_OH:
             return "DM-RS Percent Total Overhead (%)"
         elif self is OverheadTableRow.DM_RS_PERCENT_TOTAL:
-            return "DM-RS Percent Total (%)"
+            return "DM-RS Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.AGC:
             return "AGC"
         elif self is OverheadTableRow.AGC_PERCENT_TOTAL_OH:
             return "AGC Percent Total Overhead (%)"
         elif self is OverheadTableRow.AGC_PERCENT_TOTAL:
-            return "AGC Percent Total (%)"
+            return "AGC Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.GUARD:
             return "Guard"
         elif self is OverheadTableRow.GUARD_PERCENT_TOTAL_OH:
             return "Guard Percent Total Overhead (%)"
         elif self is OverheadTableRow.GUARD_PERCENT_TOTAL:
-            return "Guard Percent Total (%)"
+            return "Guard Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.S_SSB:
             return "S-SSB"
         elif self is OverheadTableRow.S_SSB_PERCENT_TOTAL_OH:
             return "S-SSB Percent Total Overhead (%)"
         elif self is OverheadTableRow.S_SSB_PERCENT_TOTAL:
-            return "S-SSB Percent Total (%)"
+            return "S-SSB Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.REDUNDANT_DATA:
             return "Redundant Data"
         elif self is OverheadTableRow.REDUNDANT_DATA_TOTAL_OH:
             return "Redundant Data Percent Total Overhead (%)"
         elif self is OverheadTableRow.REDUNDANT_PERCENT_TOTAL:
-            return "Redundant Data Percent Total (%)"
+            return "Redundant Data Percent Total Resource Elements (%)"
         elif self is OverheadTableRow.TOTAL_OVERHEAD:
             return "Total Overhead"
 
