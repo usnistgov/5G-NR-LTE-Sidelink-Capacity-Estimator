@@ -121,7 +121,7 @@ class NrTableColumn(Enum):
         elif self is NrTableColumn.HARQ_MODE:
             return "HARQ Mode"
         elif self is NrTableColumn.BLIND_TRANSMISSIONS:
-            return "Blind Transmissions"
+            return "Number of Blind Transmissions"
         elif self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
             return "Feedback Channel Period"
         elif self is NrTableColumn.DATA_RATE:
