@@ -127,6 +127,14 @@ class NrTableColumn(Enum):
         elif self is NrTableColumn.DATA_RATE:
             return "Data Rate (Mb/s)"
 
+    def is_integer_value(self) -> bool:
+        return self is NrTableColumn.ROW_NUMBER or \
+               self is NrTableColumn.RUN_INDEX or \
+               self is NrTableColumn.RESOURCE_BLOCKS or \
+               self is NrTableColumn.LAYERS or \
+               self is NrTableColumn.BLIND_TRANSMISSIONS or \
+               self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD
+
 
 class ResultRowNr:
     """
@@ -674,6 +682,14 @@ class LteTableColumn(Enum):
         elif self is LteTableColumn.DATA_RATE:
             return "Data Rate (Mb/s)"
 
+    def is_integer_value(self) -> bool:
+        return self is LteTableColumn.ROW_NUMBER or \
+               self is LteTableColumn.RUN_INDEX or \
+               self is LteTableColumn.MCS or \
+               self is LteTableColumn.RESOURCE_BLOCKS or \
+               self is LteTableColumn.PERIOD_SIZE or \
+               self is LteTableColumn.PSCCH_SIZE
+
 
 class ResultRowLte:
     """
@@ -866,6 +882,29 @@ class ArrowKeyEventFilter(QObject):
             self._handler()
 
         return super(ArrowKeyEventFilter, self).eventFilter(obj, event)
+
+
+class ResultRange:
+    def __init__(self):
+        self.min = 0
+        self.max = 0
+
+    def update_range(self, value: int):
+        if value < self.min:
+            self.min = value
+        if value > self.max:
+            self.max = value
+
+    def range(self) -> int:
+        return int(self.max - self.min)
+
+    def tick_count(self) -> int:
+        count = self.range()
+        if count < 2:
+            return 2
+        elif count < 5:
+            return count
+        return 5
 
 
 class MainWindow(QMainWindow):
@@ -1371,6 +1410,9 @@ class MainWindow(QMainWindow):
         line_series.setColor(color)
         point_series.setColor(color)
 
+        range_x = ResultRange()
+        range_y = ResultRange()
+
         if self.ui.checkPlotSelectedNr.isChecked():  # plot only selected rows
             visited_rows = []
             for selected_index in self.ui.tableResult.selectedIndexes():
@@ -1380,14 +1422,21 @@ class MainWindow(QMainWindow):
                 if selected_index.row() not in visited_rows:
                     visited_rows.append(selected_index.row())
                     result = self.tableModel.get_result(selected_index.row())
+
                     plot_x = self.value_for_axis(result, x_value)
+                    range_x.update_range(plot_x)
+
                     plot_y = self.value_for_axis(result, y_value)
+                    range_y.update_range(plot_y)
+
                     line_series.append(plot_x, plot_y)
                     point_series.append(plot_x, plot_y)
         else:  # Plot all results
             for result in self.tableModel.results():
                 plot_x = self.value_for_axis(result, x_value)
+                range_x.update_range(plot_x)
                 plot_y = self.value_for_axis(result, y_value)
+                range_y.update_range(plot_y)
                 line_series.append(plot_x, plot_y)
                 point_series.append(plot_x, plot_y)
 
@@ -1398,7 +1447,12 @@ class MainWindow(QMainWindow):
         if self.ui.checkBoxConnectPointsNr.isChecked():
             chart.addSeries(line_series)
         chart.addSeries(point_series)
+
         chart.createDefaultAxes()
+        # Use "Nice Numbers" To remove floating point values from
+        # integer axes. Also makes floating point representation cleaner
+        for axis in chart.axes():
+            axis.applyNiceNumbers()
 
         # Special Handling for HARQ Mode, since those are Enum values
         if x_value == NrTableColumn.HARQ_MODE:
@@ -1422,6 +1476,22 @@ class MainWindow(QMainWindow):
             point_series.attachAxis(axis)
             line_series.attachAxis(axis)
 
+        # For axes that only display integers,
+        # do not show decimal points
+        if x_value.is_integer_value():
+            chart.axisX().setLabelFormat("%i")
+            chart.axisX().setTickCount(range_x.tick_count())
+        else:
+            chart.axisX().setLabelFormat("")
+            chart.axisX().setTickCount(5)
+
+        if y_value.is_integer_value():
+            chart.axisY().setLabelFormat("%i")
+            chart.axisY().setTickCount(range_y.tick_count())
+        else:
+            chart.axisY().setLabelFormat("")
+            chart.axisX().setTickCount(5)
+
         chart.axisX().setTitleText(str(x_value))
         chart.axisY().setTitleText(str(y_value))
 
@@ -1444,20 +1514,30 @@ class MainWindow(QMainWindow):
         line_series.setColor(color)
         point_series.setColor(color)
 
+        range_x = ResultRange()
+        range_y = ResultRange()
+
         if self.ui.checkPlotSelectedLte.isChecked():  # plot only selected rows
             visited_rows = []
             for selected_index in self.ui.tableResultLte.selectedIndexes():
                 if selected_index.row() not in visited_rows:
                     visited_rows.append(selected_index.row())
                     result = self.tableModelLte.get_result(selected_index.row())
+
                     plot_x = self.value_for_axis_lte(result, x_value)
+                    range_x.update_range(plot_x)
+
                     plot_y = self.value_for_axis_lte(result, y_value)
+                    range_y.update_range(plot_y)
+
                     line_series.append(plot_x, plot_y)
                     point_series.append(plot_x, plot_y)
         else:
             for result in self.tableModelLte.results():
                 plot_x = self.value_for_axis_lte(result, x_value)
+                range_x.update_range(plot_x)
                 plot_y = self.value_for_axis_lte(result, y_value)
+                range_y.update_range(plot_y)
                 line_series.append(plot_x, plot_y)
                 point_series.append(plot_x, plot_y)
 
@@ -1468,7 +1548,29 @@ class MainWindow(QMainWindow):
         if self.ui.checkBoxConnectPointsLte.isChecked():
             chart.addSeries(line_series)
         chart.addSeries(point_series)
+
         chart.createDefaultAxes()
+        # Use "Nice Numbers" To remove floating point vales from
+        # integer axes. Also makes floating point representation cleaner
+        for axis in chart.axes():
+            axis.applyNiceNumbers()
+
+        # For axes that only display integers,
+        # do not show decimal points
+        if x_value.is_integer_value():
+            chart.axisX().setLabelFormat("%i")
+            chart.axisX().setTickCount(range_x.tick_count())
+        else:
+            chart.axisX().setLabelFormat("")
+            chart.axisX().setTickCount(5)
+
+        if y_value.is_integer_value():
+            chart.axisY().setLabelFormat("%i")
+            chart.axisY().setTickCount(range_y.tick_count())
+        else:
+            chart.axisY().setLabelFormat("")
+            chart.axisX().setTickCount(5)
+
         chart.axisX().setTitleText(str(x_value))
         chart.axisY().setTitleText(str(y_value))
 
