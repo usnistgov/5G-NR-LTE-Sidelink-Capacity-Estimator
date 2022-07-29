@@ -56,7 +56,7 @@ class ExportTable(Enum):
 
 class CsvDialog(QDialog):
     """
-    Dialog fot the user to configure a comma seperated values (CSV)
+    Dialog for the user to configure a comma seperated values (CSV)
     from the application
     """
 
