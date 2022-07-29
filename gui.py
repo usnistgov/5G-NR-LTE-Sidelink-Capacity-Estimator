@@ -1162,7 +1162,12 @@ class MainWindow(QMainWindow):
         dialog = CsvDialog(self)
         if not dialog.exec_():
             return
-        file = QFileDialog.getSaveFileName(self, caption="Save CSV", dir="export.csv", filter="CSV (*.csv)")
+
+        if dialog.selected_table() == ExportTable.NR:
+            default_filename = "export_NR.csv"
+        else:
+            default_filename = "export_LTE.csv"
+        file = QFileDialog.getSaveFileName(self, caption="Save CSV", dir=default_filename, filter="CSV (*.csv)")
         # No file selected
         if not file[0]:
             return
