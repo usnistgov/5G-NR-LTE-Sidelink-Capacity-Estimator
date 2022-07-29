@@ -632,7 +632,7 @@ class OverheadTableModel(QAbstractTableModel):
 
         if orientation == Qt.Horizontal:
             if section == 0:
-                return "Average Resources Per Slot"
+                return "Average Resource Elements Per Slot"
             elif section == 1:
                 return "Percent Total Overhead (%)"
             elif section == 2:
