@@ -123,7 +123,7 @@ class NrTableColumn(Enum):
         elif self is NrTableColumn.BLIND_TRANSMISSIONS:
             return "Number of Blind Transmissions"
         elif self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD:
-            return "Feedback Channel Period"
+            return "Feedback Channel Period (slot)"
         elif self is NrTableColumn.DATA_RATE:
             return "Data Rate (Mb/s)"
 
