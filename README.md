@@ -118,7 +118,7 @@ python main.py
 ```
 
 # Development
-Follow the [Installation](#installation) instructions above
+Follow the [Installation](#installation-instructions) instructions above
 
 ## Compiling UI Files
 
