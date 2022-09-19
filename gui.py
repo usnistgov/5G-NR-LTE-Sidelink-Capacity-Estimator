@@ -136,6 +136,22 @@ class NrTableColumn(Enum):
                self is NrTableColumn.FEEDBACK_CHANNEL_PERIOD
 
 
+class UeMaxModulationValue(Enum):
+    """
+    Enum for each of the possible UE Max Modulation values.
+
+    Used to reduce the chart axis to just 64 & 256, instead
+    of a linear scale
+    """
+    QAM_64 = 0
+    QAM_256 = 1
+
+    def __str__(self):
+        if self is UeMaxModulationValue.QAM_64:
+            return "64 QAM"
+        else:
+            return "256 QAM"
+
 class ResultRowNr:
     """
     Representation of one calculation displayed on
@@ -1348,7 +1364,10 @@ class MainWindow(QMainWindow):
         elif column is NrTableColumn.LAYERS:
             return result.layers
         elif column is NrTableColumn.UE_MAX_MODULATION:
-            return result.max_modulation
+            if result.max_modulation == 64:
+                return UeMaxModulationValue.QAM_64.value
+            else:
+                return UeMaxModulationValue.QAM_256.value
         elif column is NrTableColumn.HARQ_MODE:
             return result.harq_mode.value
         elif column is NrTableColumn.BLIND_TRANSMISSIONS:
@@ -1389,7 +1408,23 @@ class MainWindow(QMainWindow):
         category_axis.append(str(HarqMode.BLIND_TRANSMISSION), HarqMode.BLIND_TRANSMISSION.value)
         category_axis.append(str(HarqMode.FEEDBACK), HarqMode.FEEDBACK.value)
 
-        # Streach these slightly longer than needed, so they don't get cut off
+        # Stretch these slightly longer than needed, so they don't get cut off
+        category_axis.setMin(-0.01)
+        category_axis.setMax(1.01)
+        return category_axis
+
+    def make_modulation_axis(self) -> QCategoryAxis:
+        """
+        Makes the category axis for UE Max Modulation values
+        :return:
+        A `QCategoryAxis` with both UE Max Modulation modes mapped to
+        their enum values
+        """
+        category_axis = QCategoryAxis(self)
+        category_axis.append("64 QAM", UeMaxModulationValue.QAM_64.value)
+        category_axis.append("256 QAM", UeMaxModulationValue.QAM_256.value)
+
+        # Stretch these slightly longer than needed, so they don't get cut off
         category_axis.setMin(-0.01)
         category_axis.setMax(1.01)
         return category_axis
@@ -1456,23 +1491,30 @@ class MainWindow(QMainWindow):
             axis.applyNiceNumbers()
 
         # Special Handling for HARQ Mode, since those are Enum values
-        if x_value == NrTableColumn.HARQ_MODE:
+        # Handle Max Modulation the same way, since it's effectively an Enum value
+        if x_value == NrTableColumn.HARQ_MODE or x_value == NrTableColumn.UE_MAX_MODULATION:
             old_x = chart.axisX()
             point_series.detachAxis(old_x)
             line_series.detachAxis(old_x)
             chart.removeAxis(old_x)
 
-            axis = self.make_harq_axis()
+            if x_value == NrTableColumn.HARQ_MODE:
+                axis = self.make_harq_axis()
+            else:
+                axis = self.make_modulation_axis()
             chart.addAxis(axis, Qt.AlignBottom)
             point_series.attachAxis(axis)
             line_series.attachAxis(axis)
-        if y_value == NrTableColumn.HARQ_MODE:
+        if y_value == NrTableColumn.HARQ_MODE or y_value == NrTableColumn.UE_MAX_MODULATION:
             old_y = chart.axisY()
             point_series.detachAxis(old_y)
             line_series.detachAxis(old_y)
             chart.removeAxis(old_y)
 
-            axis = self.make_harq_axis()
+            if y_value == NrTableColumn.HARQ_MODE:
+                axis = self.make_harq_axis()
+            else:
+                axis = self.make_modulation_axis()
             chart.addAxis(axis, Qt.AlignLeft)
             point_series.attachAxis(axis)
             line_series.attachAxis(axis)
