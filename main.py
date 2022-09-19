@@ -32,7 +32,7 @@ from argparse import ArgumentParser
 from gui import MainWindow
 from cli import cli_nr, cli_lte
 from core import POSSIBLE_SL_PERIOD_SIZES_LTE, OutOfRangeError, NotAcceptableValueError, calculate_lte
-from PySide2.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 
 if __name__ == '__main__':
     parser = ArgumentParser()
@@ -85,4 +85,4 @@ if __name__ == '__main__':
         app = QApplication(sys.argv)
         window = MainWindow()
         window.show()
-        app.exec_()
+        app.exec()

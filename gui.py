@@ -31,13 +31,13 @@ from core import calculate_nr, NrResult, calculate_lte, HarqMode, OutOfRangeErro
     POSSIBLE_SL_PERIOD_SIZES_LTE
 import csv
 from typing import List, Union, Any, Optional, Callable
-import PySide2.QtCore as QtCore
-import PySide2.QtGui as QtGui
-import PySide2.QtWidgets as QtWidgets
-from PySide2.QtCore import Qt, QObject, QMargins, QAbstractTableModel, QModelIndex
-from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
-from PySide2.QtCharts import *
+import PySide6.QtCore as QtCore
+import PySide6.QtGui as QtGui
+import PySide6.QtWidgets as QtWidgets
+from PySide6.QtCore import Qt, QObject, QMargins, QAbstractTableModel, QModelIndex
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QMainWindow, QHeaderView, QMessageBox, QDialog, QAbstractButton, QFileDialog
+from PySide6.QtCharts import *
 from ui_mainwindow import Ui_MainWindow
 from ui_csvdialog import Ui_CsvDialog
 from enum import Enum
@@ -1009,8 +1009,9 @@ class MainWindow(QMainWindow):
             opt = QtWidgets.QStyleOptionHeader()
             opt.text = label.text()
             size = QtCore.QSize(label.style().sizeFromContents(
-                QtWidgets.QStyle.CT_HeaderSection, opt, QtCore.QSize(), label).
-                                expandedTo(QtWidgets.QApplication.globalStrut()))
+                QtWidgets.QStyle.CT_HeaderSection, opt, QtCore.QSize(), label))
+            # Give some slight padding to the text
+            size.setWidth(size.width() + 10)
 
             if size.isValid():
                 self.ui.tableOverHead.verticalHeader().setMinimumWidth(size.width())
@@ -1384,7 +1385,7 @@ class MainWindow(QMainWindow):
         A `QCategoryAxis` with both HARQ modes mapped to
         their enum values
         """
-        category_axis = QtCharts.QCategoryAxis(self)
+        category_axis = QCategoryAxis(self)
         category_axis.append(str(HarqMode.BLIND_TRANSMISSION), HarqMode.BLIND_TRANSMISSION.value)
         category_axis.append(str(HarqMode.FEEDBACK), HarqMode.FEEDBACK.value)
 
@@ -1405,8 +1406,8 @@ class MainWindow(QMainWindow):
         # The default Blue color
         color = QtGui.QColor.fromRgb(32, 159, 223)
 
-        line_series = QtCharts.QLineSeries(self)
-        point_series = QtCharts.QScatterSeries(self)
+        line_series = QLineSeries(self)
+        point_series = QScatterSeries(self)
         line_series.setColor(color)
         point_series.setColor(color)
 
@@ -1509,8 +1510,8 @@ class MainWindow(QMainWindow):
         # The default Blue color
         color = QtGui.QColor.fromRgb(32, 159, 223)
 
-        line_series = QtCharts.QLineSeries(self)
-        point_series = QtCharts.QScatterSeries(self)
+        line_series = QLineSeries(self)
+        point_series = QScatterSeries(self)
         line_series.setColor(color)
         point_series.setColor(color)
 

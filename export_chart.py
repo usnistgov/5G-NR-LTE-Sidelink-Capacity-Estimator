@@ -28,11 +28,11 @@
 # employees is not subject to copyright protection within the United States.
 
 import typing
-from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCharts import QtCharts
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCharts import QChartView
 
 
-class ExportChartView(QtCharts.QChartView):
+class ExportChartView(QChartView):
     """
     A wrapper class around `QChartView`
     removing margins and allowing for saving &
@@ -40,7 +40,7 @@ class ExportChartView(QtCharts.QChartView):
     """
 
     def __init__(self, parent: typing.Optional[QtWidgets.QWidget] = ...) -> None:
-        super().__init__(parent)
+        super().__init__(parent=parent)
         self._defaultFileName = 'chart.png'
 
         # Zero out all possible margins

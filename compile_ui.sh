@@ -29,5 +29,5 @@
 # cause risk of injury or damage to property. The software developed by NIST
 # employees is not subject to copyright protection within the United States.
 
-pyside2-uic main-window.ui > ui_mainwindow.py
-pyside2-uic csv_dialog.ui > ui_csvdialog.py
+pyside6-uic main-window.ui > ui_mainwindow.py
+pyside6-uic csv_dialog.ui > ui_csvdialog.py
