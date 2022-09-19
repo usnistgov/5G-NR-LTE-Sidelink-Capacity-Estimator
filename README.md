@@ -67,6 +67,31 @@ For example, let's assume a Sidelink period lasting 40 Subframes (0.040 s), 2 Su
 ## Chart Plotting
 ![Application Screenshot LTE](preview-screenshot-charts.png)
 
+All the results calculated in the NR and LTE tabs may be visualized in the Charts tab.
+
+In the Charts tab, there are two charts, one on the left for NR results, and one on
+the right for LTE results.
+
+Beneath each chart are dropdowns for the X and Y axis of each chart. These values
+correspond to the inputs/table columns in the NR and LTE tabs. Changing these values
+changes which portion of the result is plotted on the graph.
+
+The "Plot Selected Only", limits the plot above to only the rows selected on
+the result table in the section corresponding to the plot. To select multiple
+rows, hold down the control key (cmd on macOS) and click several rows, or
+click one row, hold the shift key, and click another row to select a range
+of rows.
+
+The "Connect Points" checkbox determines if lines should be drawn
+between the points on the graph.
+
+Each chart may be exported as an image by right-clicking on the chart
+and selecting "Save As Image" to save an image of the chart as a file
+or "Copy to Clipboard" to export the chart to the clipboard for pasting
+
+The values in each chart are always plotted in the order they appear
+in their corresponding result table.
+
 # Installation Instructions
 
 ## Requirements
