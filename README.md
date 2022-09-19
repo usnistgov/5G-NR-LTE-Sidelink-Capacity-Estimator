@@ -24,10 +24,7 @@ The parametered to be configured are listed as below.  The ranges of the paramet
 
 The capacity is calculated per equation:
 
-<!--- Too large to display as is
 ![NR capacity equation](nr_capacity_eq.png)
---->
-<img src="nr_capacity_eq.png" width="500"/>
 
 The variables in the equation map to the parameters configured above, as below. *v<sub>layers</sub>* is the spatial multiplexing number of layers, *Q<sub>m</sub>* is the modulation order, which can be 6 (64QAM) or 8 (256QAM), *R<sub>max</sub>* is the maximum achievable coding rate, which is 948/1024, *&mu;* is the numerology, *N<sub>PRB</sub>* is the number of allocated PRBs, *T<sub>S</sub><sup>&mu;</sup>* is the symbol duration time in seconds for numerology *&mu;*, which is 1/14 x 10<sup>-3</sup> for *&mu;* = 0 and 1/28 x 10<sup>-3</sup> for *&mu;* = 1, and *OH* is the overhead ratio, which is ratio of the resource elements (REs) occupied by the overhead components over the total number of available REs for transmission. Here the overhead components include REs occupied by redundant data due to HARQ retransmissions.  
 
@@ -62,13 +59,10 @@ The LTE Sidelink data rate capacity is dictated by:
 
 For example, let's assume a Sidelink period lasting 40 Subframes (0.040 s), 2 Subframes are reserverd for the PSCCH, leaving 38 Subframes available for the transmission of PSSCH. Blind-Based HARQ with 4 fixed transmissions, for every Transport Block (TB), is used in the PSSCH. Hence, the resulting number of TBs containing new information per Sidelink period is 9 (38/4). The TB size (TBS) in bits is determined from the number of PRBs dedicated to the PSSCH and the selected MCS. Sidelink procedures for TBS determination are especified in 3GPP TS36.213, where a set of TBS lookup tables are provided. Let's assume the PSSCH is configured with 50 PRBs and MCS 20 is used, this results in a TBS of 21384 bits. The resulting data rate is 4.8114 Mb/s, computed from:
 
-<img src="lte_capacity_eq.png" width="450"/>
+![LTE Sidelink capacity equation](lte_capacity_eq.png)
 <!--- data rate (in Mbit/s) = 10e-6 * TBS * TB_per_period / Period length (in seconds)"
 --->
 
-<!--- Too large to display as is
-![LTE Sidelink capacity equation](lte_capacity_eq.png)
---->
 
 ## Chart Plotting
 ![Application Screenshot LTE](preview-screenshot-charts.png)
