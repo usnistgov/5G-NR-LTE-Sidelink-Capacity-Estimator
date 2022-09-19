@@ -1491,7 +1491,7 @@ class MainWindow(QMainWindow):
             chart.axisY().setTickCount(range_y.tick_count())
         else:
             chart.axisY().setLabelFormat("")
-            chart.axisX().setTickCount(5)
+            chart.axisY().setTickCount(5)
 
         chart.axisX().setTitleText(str(x_value))
         chart.axisY().setTitleText(str(y_value))
