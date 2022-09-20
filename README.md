@@ -5,6 +5,38 @@ The tool provides side-by-side chart plotting between NR and LTE Sidelink capaci
 
 In the current release, the tool applies to the public safety band, Band 14/n14 (the 700 MHz frequency band).
 
+# Installation Instructions
+
+## Supported Platforms
+* Windows 10/11
+* macOS 12 Monterey (Intel & Apple M1)
+* Most Linux Distros
+
+## Requirements
+
+* Python 3.6+
+
+## Create a virtual environment
+Some users may need to replace `python` below
+with `python3`
+
+```shell
+python -m venv venv
+source venv/bin/activate
+```
+
+## Install Dependencies
+
+```shell
+pip install -r requirements.txt
+```
+
+## Run
+
+```shell
+python main.py
+```
+
 ## New Radio (NR) Sidelink Capacity
 ![Application Screenshot NR](preview-screenshot-NR.png)
 
@@ -92,37 +124,14 @@ or "Copy to Clipboard" to export the chart to the clipboard for pasting
 The values in each chart are always plotted in the order they appear
 in their corresponding result table.
 
-# Installation Instructions
-
-## Requirements
-
-* Python 3.6+
-
-## Create a virtual environment
-
-```shell
-python -m venv venv
-source venv/bin/activate
-```
-
-## Install Dependencies
-
-```shell
-pip install -r requirements.txt
-```
-
-## Run
-
-```shell
-python main.py
-```
-
-# Development
+# Contributing
 Follow the [Installation](#installation-instructions) instructions above
 
 ## Compiling UI Files
+Most UI elements were created using the Qt Designer. If these files
+are changed, then the UI files must be re-compiled.
 
-### The Quick Way
+### Script
 There's a convenience script to run the following commands,
 be sure virtual environment is activated.
 ```shell
@@ -130,11 +139,9 @@ be sure virtual environment is activated.
 ```
 
 ### Manual
-
-If the UI is updated, then the UI files need to be recompiled, run the
-following in the virtual environment
+Run the following commands with the virtual environment activated
 
 ```shell
-pyside2-uic main-window.ui > ui_mainwindow.py
-pyside2-uic csv_dialog.ui > ui_csvdialog.py
+pyside6-uic main-window.ui > ui_mainwindow.py
+pyside6-uic csv_dialog.ui > ui_csvdialog.py
 ```
