@@ -145,3 +145,8 @@ Run the following commands with the virtual environment activated
 pyside6-uic main-window.ui > ui_mainwindow.py
 pyside6-uic csv_dialog.ui > ui_csvdialog.py
 ```
+
+# License
+Some portions of this project are licensed under a different license than
+the one in [LICENSE.md](LICENSE.md). Please see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES)
+for their specific licences
