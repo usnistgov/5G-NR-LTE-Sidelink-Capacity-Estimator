@@ -42,7 +42,7 @@ python main.py
 
 For unicast and under different NR sidelink configurations at the public safety band (Band n14), the NR Sidelink capacity estimator calculates the maximum achievable data rate in (Mb/s), together with the associated overhead components. 
 
-The parametered to be configured are listed as below.  The ranges of the parameters are set per the 3rd Generation Partnership Project (3GPP) specifications.
+The parameters to be configured are listed as below.  The ranges of the parameters are set per the 3rd Generation Partnership Project (3GPP) specifications.
 
 - Numerology. Per 3GPP, for Band n14 10 MHz, the valid values are 0 and 1.
 - Number of PRBs (Physical Resource Blocks). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively. The allocated number of PRBs is no larger than the maximum number of PRBs.
@@ -124,6 +124,8 @@ or "Copy to Clipboard" to export the chart to the clipboard for pasting
 The values in each chart are always plotted in the order they appear
 in their corresponding result table.
 
+While the Charts tab provides a convenient way for users to visualize the results, users could export the data outside of the tool for further processing and chart generation.
+
 ## Command Line Interface
 In addition to the graphical user interface, there is the option to
 pass in the values for each input, and have the estimated data rate
@@ -131,12 +133,12 @@ printed out.
 
 Unlike the graphical interface, the command line interface
 has no extra dependencies, and likely does not require
-the use of a virtual environment
+the use of a virtual environment.
 
 ### Options
 Numbers in square brackets `[1-10]` represent an inclusive range,
 values in curly brackets `{Blind, Feedback}` represent a list
-of possible options
+of possible options.
 
 #### Standard Options
 Pass `--cli` to use the command line interface mode,
@@ -186,7 +188,7 @@ Data rate: 96.77598749999999 Mb/s
 ```
 
 # Contributing
-Follow the [Installation](#installation-instructions) instructions above
+Follow the [Installation](#installation-instructions) instructions above.
 
 ## Compiling UI Files
 Most UI elements were created using the Qt Designer. If these files
