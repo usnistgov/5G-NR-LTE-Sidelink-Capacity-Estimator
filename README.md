@@ -187,6 +187,23 @@ python ./main.py --cli --nr --resource-blocks 52 --numerology 0 --layers 2 --ue-
 Data rate: 96.77598749999999 Mb/s
 ```
 
+# Testing
+
+To run the automated tests, run `test.py` with
+the virtual environment activated
+
+
+```shell
+python test.py
+```
+
+The current tests cover the `core.py` module,
+but not the command line/graphical interfaces
+
+The application has beenma manually and
+automatically tested on Windows 10,
+macOS 12 Monterey, and Arch Linux
+
 # Contributing
 Follow the [Installation](#installation-instructions) instructions above.
 
