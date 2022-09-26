@@ -95,15 +95,15 @@ def cli_lte(args):
 
     resource_blocks = args.resource_blocks
 
-    if args.period_size is None:
-        sys.exit("Argument '--period-size' required in LTE mode")
+    if args.sidelink_period_size is None:
+        sys.exit("Argument '--sidelink-period-size' required in LTE mode")
 
-    period_size = args.period_size
+    period_size = args.sidelink_period_size
 
-    if args.control_channel_size is None:
-        sys.exit("Argument '--control-channel-size' required in LTE mode")
+    if args.pscch_length is None:
+        sys.exit("Argument '--pscch-length' required in LTE mode")
 
-    control_channel_size = args.control_channel_size
+    control_channel_size = args.pscch_length
 
     data_rate = calculate_lte(mcs=mcs, resource_blocks=resource_blocks, period_size=period_size,
                               control_channel_size=control_channel_size)
