@@ -914,14 +914,6 @@ class ResultRange:
     def range(self) -> int:
         return int(self.max - self.min)
 
-    def tick_count(self) -> int:
-        count = self.range()
-        if count < 2:
-            return 2
-        elif count < 5:
-            return count
-        return 5
-
 
 class MainWindow(QMainWindow):
     """
@@ -1523,17 +1515,13 @@ class MainWindow(QMainWindow):
         # do not show decimal points
         if x_value.is_integer_value():
             chart.axisX().setLabelFormat("%i")
-            chart.axisX().setTickCount(range_x.tick_count())
         else:
             chart.axisX().setLabelFormat("")
-            chart.axisX().setTickCount(5)
 
         if y_value.is_integer_value():
             chart.axisY().setLabelFormat("%i")
-            chart.axisY().setTickCount(range_y.tick_count())
         else:
             chart.axisY().setLabelFormat("")
-            chart.axisY().setTickCount(5)
 
         chart.axisX().setTitleText(str(x_value))
         chart.axisY().setTitleText(str(y_value))
@@ -1602,17 +1590,13 @@ class MainWindow(QMainWindow):
         # do not show decimal points
         if x_value.is_integer_value():
             chart.axisX().setLabelFormat("%i")
-            chart.axisX().setTickCount(range_x.tick_count())
         else:
             chart.axisX().setLabelFormat("")
-            chart.axisX().setTickCount(5)
 
         if y_value.is_integer_value():
             chart.axisY().setLabelFormat("%i")
-            chart.axisY().setTickCount(range_y.tick_count())
         else:
             chart.axisY().setLabelFormat("")
-            chart.axisX().setTickCount(5)
 
         chart.axisX().setTitleText(str(x_value))
         chart.axisY().setTitleText(str(y_value))
