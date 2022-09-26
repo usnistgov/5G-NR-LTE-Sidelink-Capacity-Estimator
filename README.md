@@ -124,6 +124,67 @@ or "Copy to Clipboard" to export the chart to the clipboard for pasting
 The values in each chart are always plotted in the order they appear
 in their corresponding result table.
 
+## Command Line Interface
+In addition to the graphical user interface, there is the option to
+pass in the values for each input, and have the estimated data rate
+printed out.
+
+Unlike the graphical interface, the command line interface
+has no extra dependencies, and likely does not require
+the use of a virtual environment
+
+### Options
+Numbers in square brackets `[1-10]` represent an inclusive range,
+values in curly brackets `{Blind, Feedback}` represent a list
+of possible options
+
+#### Standard Options
+Pass `--cli` to use the command line interface mode,
+then either `--lte` or `--nr` to select the technology
+to perform the calculation for
+
+```
+  -h, --help            show this help message and exit
+  -c, --cli             Run the program in CLI mode
+  -g, --gui             Run the program showing the GUI. Ignores all other arguments
+  -n, --nr              Perform the calculation for NR
+  -l, --lte             Perform the calculation for LTE
+```
+
+#### NR Options
+If `--nr` is passed, then all the following are required
+```
+  --resource-blocks [1-110]
+  --numerology {0,1}
+  --layers {1,2}
+  --ue-max-modulation {64,256}
+  --harq-mode {Blind, Feedback}
+  --blind-transmissions [1-32]
+  --feedback-channel-period {1,2,4}
+```
+
+#### LTE Options
+If `--lte` is passed, then all the following are required
+```
+  --resource-blocks [1-110]
+  --mcs [0-20]          Modulation and Coding scheme
+  --sidelink-period-size {40,60,70,80,120,140,160,240,280,320}
+  --pscch-length [2-`sidelink-period-size`]
+                        Physical side link control channel length in subframes
+```
+
+### LTE Example
+```shell
+python ./main.py --cli --lte --resource-blocks 50 --mcs 20 --sidelink-period-size 40 --pscch-length 2
+Data rate: 4.8114 Mb/s
+```
+
+### NR Example
+```shell
+python ./main.py --cli --nr --resource-blocks 52 --numerology 0 --layers 2 --ue-max-modulation 256 --harq-mode "Blind" --blind-transmissions 1
+Data rate: 96.77598749999999 Mb/s
+```
+
 # Contributing
 Follow the [Installation](#installation-instructions) instructions above
 
@@ -133,7 +194,7 @@ are changed, then the UI files must be re-compiled.
 
 ### Script
 There's a convenience script to run the following commands,
-be sure virtual environment is activated.
+be sure the virtual environment is activated.
 ```shell
 ./compile_ui.sh
 ```
