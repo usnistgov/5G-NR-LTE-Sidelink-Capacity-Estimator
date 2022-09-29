@@ -3,7 +3,7 @@ This tool computes the expected link capacity in data rate (Mbit/s) for sidelink
 
 The tool provides side-by-side chart plotting between NR and LTE sidelink capacities for easy comparison. Data and generated charts can be exported to be used outside the tool.
 
-In the current release, the tool applies to the public safety band, Band 14/n14 (the 700 MHz frequency band).
+In the current release, the tool applies to 10 MHz bands plus numerology 0 and 1 in case of 5G NR.  One example is the public safety band, Band 14/n14 (the 700 MHz frequency band).
 
 # Installation Instructions
 
@@ -40,12 +40,12 @@ python main.py
 ## New Radio Sidelink Capacity
 ![Application Screenshot NR](preview-screenshot-NR.png)
 
-For unicast and under different NR sidelink configurations at the public safety band (Band n14), the NR Sidelink Capacity Estimator calculates the maximum achievable data rate in (Mb/s), together with the associated overhead components. 
+For unicast and under different NR sidelink configurations, the NR Sidelink Capacity Estimator calculates the maximum achievable data rate in (Mb/s), together with the associated overhead components. 
 
 The parameters to be configured are listed as below.  The ranges of the parameters are set per 3GPP specifications.
 
-- Numerology. Per 3GPP, for Band n14 10 MHz, the valid values are 0 and 1.
-- Number of PRBs (Physical Resource Blocks). Per 3GPP, for Band n14 10 MHz, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively. The allocated number of PRBs is no larger than the maximum number of PRBs.
+- Numerology. The valid values of the current release is 0 and 1.
+- Number of PRBs (Physical Resource Blocks). Per 3GPP, for 10 MHz bands, the maximum number of PRBs are 52 and 24 for *&mu;* = 0 and 1, respectively. The allocated number of PRBs is no larger than the maximum number of PRBs.
 - Number of Layers. Per 3GPP, for NR sidelink, the number of layers can be 1 or 2.
 - UE (User Equipment) Max Modulation. Per 3GPP, depending on the UE's capability, UE's max modulation can be 64QAM or 256QAM.
 - HARQ (Hybrid Automatic Repeat reQuest) Mode.
