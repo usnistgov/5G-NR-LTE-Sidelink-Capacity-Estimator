@@ -38,6 +38,13 @@ pip install -r requirements.txt
 python main.py
 ```
 
+# Support Status
+
+This project is feature complete, and will not likely receive updates
+or bugfixes in the future.
+
+# Section Explanation
+
 ## New Radio Sidelink Capacity
 ![Application Screenshot NR](preview-screenshot-NR.png)
 
